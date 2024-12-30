@@ -105,6 +105,44 @@
           </li>
           @endcan
           @endif
+          <li class="nav-item @if(request()->routeIs('attendance.*')) menu-is-opening menu-open @endif">
+            <a href="#" class="nav-link @if(request()->routeIs('attendance.*')) active @endif">
+                <i class="nav-icon fas fa-calendar"></i>
+                <p>
+                    Attendance
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+              @if(auth()->user()->role['name'] === 'Super Admin')
+              <li class="nav-item">
+                <a href="{{ route('attendance.all') }}" class="nav-link @if(request()->routeIs('attendance.all')) active @endif">
+                    {{-- <i class="far fa-circle nav-icon"></i> --}}
+                    <p>Attendance</p>
+                </a>
+            </li>
+              @else
+                <li class="nav-item">
+                    <a href="{{ route('attendance.index') }}" class="nav-link @if(request()->routeIs('attendance.index')) active @endif">
+                        {{-- <i class="far fa-circle nav-icon"></i> --}}
+                        <p>My Attendance</p>
+                    </a>
+                </li>
+                @endif
+                <li class="nav-item">
+                  <a href="{{ route('attendance.checkin') }}" class="nav-link @if (request()->routeIs('attendance.checkin')) active @endif">
+                    
+                    <p>Check-In Request</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('attendance.checkout') }}" class="nav-link @if (request()->routeIs('attendance.checkout')) active @endif">
+                    
+                    <p>Check-Out Request</p>
+                  </a>
+                </li>
+            </ul>
+        </li>
           <li class="nav-item @if(request()->routeIs('setsalary.*')) menu-is-opening menu-open @endif">
             <a href="#" class="nav-link @if(request()->routeIs('setsalary.*')) active @endif">
                 <i class="nav-icon fas fa-receipt"></i>
@@ -154,7 +192,40 @@
             </ul>
           </li>
           @endcan
-          
+          @can('access_sliders')
+          <li class="nav-item @if(request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+            <a href="#" class="nav-link @if(request()->routeIs('products.*')) active @endif">
+                <i class="nav-icon fas fa-image"></i>
+                <p>
+                    Product Mgnt
+                    <i class="right fas fa-angle-left"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{{ route('products-categories.index') }}" class="nav-link @if(request()->routeIs('products-categories.index')) active @endif">
+                        <p>Categories</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('products-brands.index') }}" class="nav-link @if(request()->routeIs('products-brands.index')) active @endif">
+                      <p>Brands</p>
+                  </a>
+              </li>
+                <li class="nav-item">
+                    <a href="{{ route('products-machineries.index') }}" class="nav-link @if(request()->routeIs('products-machineries.index')) active @endif">
+                        <p>Machineries</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('products-accessories.index') }}" class="nav-link @if(request()->routeIs('products-accessories.index')) active @endif">
+                      <p>Accessories</p>
+                  </a>
+              </li>
+            </ul>
+        </li>
+        
+          @endcan
           @can('access_sliders')
           <li class="nav-item @if(request()->routeIs('services.*')) menu-is-opening menu-open @endif">
             <a href="#" class="nav-link @if(request()->routeIs('services.*')) active @endif">
@@ -215,17 +286,18 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
+                <a href="{{ route('expenses-categories.index') }}" class="nav-link {{ request()->routeIs('expenses-categories.index') ? 'active' : '' }}">
+                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                  <p>Category</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="{{ route('expenses.index') }}" class="nav-link {{ request()->routeIs('expenses.index') ? 'active' : '' }}">
                   {{-- <i class="far fa-circle nav-icon"></i> --}}
                   <p>Expenses</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="{{ route('expenses.create') }}" class="nav-link {{ request()->routeIs('expenses.create') ? 'active' : '' }}">
-                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                  <p>Create expenses</p>
-                </a>
-              </li>
+              
             </ul>
           </li>
           @endcan
@@ -360,6 +432,30 @@
                 <i class="far fa-image nav-icon"></i>
                 <p>Gallery</p>
               </a>
+            </li>
+            <li class="nav-item {{ request()->routeIs('expenses.*') ? 'menu-is-opening menu-open' : '' }}">
+              <a href="#" class="nav-link" {{ request()->routeIs('expenses.*') ? 'active' : '' }}>
+                <i class="nav-icon fas fa-newspaper"></i>
+                <p>
+                  Leaves
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{ route('leave-types.index') }}" class="nav-link {{ request()->routeIs('leave-types.index') ? 'active' : '' }}">
+                    {{-- <i class="far fa-circle nav-icon"></i> --}}
+                    <p>Types</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('leaves.index') }}" class="nav-link {{ request()->routeIs('leaves.index') ? 'active' : '' }}">
+                    {{-- <i class="far fa-circle nav-icon"></i> --}}
+                    <p>Expenses</p>
+                  </a>
+                </li>
+                
+              </ul>
             </li>
             <li class="nav-item">
               <a href="{{ route('inquires.index') }}" class="nav-link {{ request()->routeIs('inquires.index') ? 'active' : '' }}">

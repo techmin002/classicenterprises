@@ -9,7 +9,14 @@ class EmployeeAttendance extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = [
+        'employee_id',
+        'branch_id',
+        'check_in',
+        'check_out',
+        'status',
+        'date'
+    ];
     
     protected static function newFactory()
     {

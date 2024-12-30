@@ -12,7 +12,7 @@
             <!-- Super Admin specific content -->
         @else
             @php
-                
+
                 // Get the current time
                 $currentTime = Carbon\Carbon::now()->format('H:i');
                 // dd($currentTime);
@@ -21,10 +21,15 @@
             @endphp
 
             <li class="nav-link">
-                <a href="{{ route('employee.checkin', Auth::user()->id) }}" type="button"
-                    class="btn btn-outline-primary {{ $currentTime >=$checkInTime ? '' : 'disabled' }}">
+                <a href="{{ route('employee.checkin', Auth::user()->id) }}" id="checkInButton" type="button"
+                    class="btn btn-outline-primary">
                     Check In <i class="fa fa-check"></i>
                 </a>
+                <a href="{{ route('employee.checkout', Auth::user()->id) }}" id="checkOutButton" type="button"
+                    class="btn btn-outline-danger" style="display: none;">
+                    Check Out <i class="fa fa-sign-out"></i>
+                </a>
+                <div id="timer"></div> <!-- Timer will display here -->
             </li>
         @endif
 
@@ -90,3 +95,45 @@
         @endguest
     </ul>
 </nav>
+<script>
+    $(document).ready(function() {
+        // Fetch check-in data on page load
+        fetchCheckinData();
+
+        function fetchCheckinData() {
+            $.ajax({
+                url: "{{ route('employee.checkin.status', Auth::user()->id) }}",
+                type: 'GET',
+                success: function(response) {
+                    if (response.checked_in) {
+                        $('#checkInButton').hide();
+                        $('#checkOutButton').show();
+                        if (response.checkin_time) {
+                            startTimer(response.checkin_time);
+                        }
+                    } else {
+                        $('#checkInButton').show();
+                        $('#checkOutButton').hide();
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error fetching check-in data', xhr);
+                }
+            });
+        }
+
+        function startTimer(checkinTime) {
+            setInterval(function() {
+                const now = new Date().getTime();
+                const checkin = new Date(checkinTime).getTime();
+                const elapsedTime = now - checkin;
+
+                const hours = Math.floor((elapsedTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+
+                $('#timer').text(`${hours}h ${minutes}m ${seconds}s`);
+            }, 1000);
+        }
+    });
+</script>

@@ -15,7 +15,12 @@ return new class extends Migration
     {
         Schema::create('employee_attendance_requests', function (Blueprint $table) {
             $table->id();
-
+            $table->integer('employee_id');
+            $table->integer('branch_id');
+            $table->dateTime('date')->nullable();
+            $table->string('request_type')->nullable();
+            $table->text('message')->nullable();
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

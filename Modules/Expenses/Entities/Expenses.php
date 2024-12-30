@@ -13,9 +13,21 @@ class Expenses extends Model
     use SoftDeletes;
 
     protected $guarded=[];
-    protected $fillable = [];
+    protected $fillable = [
+        'title',
+        'amount',
+        'expense_category_id',
+        'date',
+        'status',
+        'descriptions',
+        'mode',
+        'receipt'
+    ];
 
-    
+    public function category()
+    {
+        return $this->belongsTo(ExpenseCategory::class,'expense_category_id','id');
+    }
     protected static function newFactory()
     {
         return \Modules\Expenses\Database\factories\ExpensesFactory::new();

@@ -5,6 +5,8 @@ namespace Modules\Expenses\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\Branch\Entities\Branch;
+use Modules\Expenses\Entities\ExpenseCategory;
 use Modules\Expenses\Entities\Expenses;
 use Yajra\DataTables\DataTables;
 
@@ -16,9 +18,10 @@ class ExpensesController extends Controller
      */
     public function index()
     {
-        $expenses = Expenses::orderBy('created_at','DESC')->get();
-
-        return view('expenses::expenses.index', compact('expenses'));
+        $expenses = Expenses::with('category')->orderBy('created_at','DESC')->get();
+        $categories = ExpenseCategory::where('status','on')->get();
+        $branches = Branch::where('status','on')->get();
+        return view('expenses::expenses.index', compact('expenses','categories','branches'));
     }
   
     /**
@@ -37,18 +40,24 @@ class ExpensesController extends Controller
      */
     public function store(Request $request)
     {
-        // $file = $request->file('files');
-        // $fileName = time().''.$file->getClientOriginalName();
-        // $filePath = $file->storeAs('images', $fileName,'public');
+        $image = '';
+        if($request->receipt)
+        {
+            $image = time().'.'.$request->receipt->extension();
+            $request->receipt->move(public_path('upload/images/expenses-receipt'), $image);
+        }
         
         $expense = new Expenses;
-        $expense->expense_category_id = $request->expense_type;
+        $expense->expense_category_id = $request->categoryId;
         $expense->title = $request->title;
         $expense->amount = $request->amount;
+        $expense->branch_id = $request->branchId;
+        $expense->created_by = auth()->user()->id;
         $expense->date = $request->date;
         $expense->mode = $request->mode;
-        $expense->vendor = $request->vendor;
-        $expense->status = '1';
+        $expense->description = $request->description;
+        $expense->status = 'on';
+        $expense->receipt = $image;
         $expense->save();
         return back()->with('success','Expenses Added Successfully');
     }
@@ -81,7 +90,25 @@ class ExpensesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $expense = Expenses::findOrfail($id);
+        $image = $expense->receipt;
+        if($request->receipt)
+        {
+            $image = time().'.'.$request->receipt->extension();
+            $request->receipt->move(public_path('upload/images/expenses-receipt'), $image);
+        }
+        $expense->expense_category_id = $request->categoryId;
+        $expense->title = $request->title;
+        $expense->amount = $request->amount;
+        $expense->branch_id = $request->branchId;
+        $expense->created_by = auth()->user()->id;
+        $expense->date = $request->date;
+        $expense->mode = $request->mode;
+        $expense->description = $request->description;
+        $expense->status = 'on';
+        $expense->receipt = $image;
+        $expense->save();
+        return back()->with('success','Expenses Updated Successfully');
     }
 
     /**
@@ -91,7 +118,23 @@ class ExpensesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $categorys= Expenses::findOrfail($id);
+        $categorys->delete();
+        return redirect()->back()->with('success','Expense Deleted!');
+    }
+    public function Status($id)
+    {
+        $categorys= Expenses::findOrfail($id);
+        if($categorys->status == 'on')
+        {
+            $status ='off';
+        }else{
+            $status ='on';
+        }
+        $categorys->update([
+            'status' => $status
+        ]);
+        return redirect()->back()->with('success','Expense Status Updated!');
     }
     public function getExpense(Request $request)
     {

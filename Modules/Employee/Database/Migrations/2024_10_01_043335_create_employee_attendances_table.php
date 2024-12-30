@@ -15,7 +15,13 @@ return new class extends Migration
     {
         Schema::create('employee_attendances', function (Blueprint $table) {
             $table->id();
-            $table->integer('employeeid');
+            $table->integer('employee_id');
+            $table->integer('branch_id');
+            $table->dateTime('check_in')->nullable();
+            $table->dateTime('check_out')->nullable();
+            $table->date('date');
+            $table->string('status')->default('on');
+            $table->text('message')->nullable();    
             $table->timestamps();
         });
     }

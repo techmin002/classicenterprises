@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Modules\Branch\Entities\Branch;
+use Modules\Employee\Entities\Employee;
 use Modules\Upload\Entities\Upload;
 use Spatie\Permission\Models\Role;
 
@@ -32,6 +33,7 @@ class UsersController extends Controller
 
 
     public function store(Request $request) {
+        dd($request->all());
         abort_if(Gate::denies('access_user_management'), 403);
 
         $request->validate([
@@ -53,6 +55,7 @@ class UsersController extends Controller
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
+            'access_type'    => $request->role,
             'branch_id'    => $request->branch_id,
             'created_by'    => $request->created_by,
             'password' => Hash::make($request->password),
@@ -62,7 +65,17 @@ class UsersController extends Controller
         ]);
 
         $user->assignRole($request->role);
-
+        $employee = new Employee();
+        $employee->name = $request['name'];
+        $employee->branch_id = $request['branch_id'];
+        $employee->email = $request['email'];
+        $employee->phone = $request['phone  '];
+        $employee->address = $request['address'];
+        $employee->role = $request->role;
+        $employee->created_by = auth()->user()->id;
+        $employee->user_id = $user->id;
+        $employee->status = $request['status'] ?? 'on';
+        $employee->save();
         return redirect()->route('users.index')->with('success', 'Created Successfully');
     }
 
