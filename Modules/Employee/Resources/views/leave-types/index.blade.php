@@ -48,7 +48,9 @@
                       <th class="text-center">S.N</th>
                       <th class="text-center">Title</th>
                       <th class="text-center">Branch</th>
-                      <th class="text-center">Icon</th>
+                      <th class="text-center">Leaves</th>
+                      <th class="text-center">Duration</th>
+                      <th class="text-center">Description</th>
                       <th class="text-center">Status</th>
                       <th class="text-center">Action</th>
                     </tr>
@@ -60,21 +62,27 @@
                         <td class="text-center">{{ $exp->title }}</td>
                         <td class="text-center">{{ $exp->branch->name }}</td>
                         <td class="text-center">
-                          <img src="{{ asset('upload/images/expenses-category/'.$exp->image) }}" alt="" height="100px">
+                          {{ $exp->leaves }}
+                        </td>
+                        <td class="text-center">
+                          {{ $exp->duration_type }}
+                        </td>
+                        <td class="text-center">
+                          <textarea name="" class="form-control" readonly id="" >{{ $exp->description }}</textarea>
                         </td>
                         <td class="text-center">
                           @if ($exp->status == 'on')
-                          <a href="{{ route('expenseCategory.status', $exp->id) }}"
+                          <a href="{{ route('employee.leaveTypes.status', $exp->id) }}"
                               class="btn btn-success">On</a>
                       @else
-                          <a href="{{ route('expenseCategory.status', $exp->id) }}"
+                          <a href="{{ route('employee.leaveTypes.status', $exp->id) }}"
                               class="btn btn-danger">Off</a>
                       @endif
                         </td>
                         <td>
                           <a data-toggle="modal" data-target="#editCategory{{ $exp->id }}"
                             class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
-                            @include('expenses::category.edit')
+                            @include('employee::leave-types.edit')
                         <button id="delete" class="btn btn-danger btn-sm"
                             onclick="
         event.preventDefault();
@@ -84,7 +92,7 @@
         ">
                             <i class="fa fa-trash"></i>
                             <form id="destroy{{ $exp->id }}" class="d-none"
-                                action="{{ route('expenses-categories.destroy', $exp->id) }}"
+                                action="{{ route('leave-types.destroy', $exp->id) }}"
                                 method="POST">
                                 @csrf
                                 @method('delete')
@@ -100,9 +108,11 @@
                       <th class="text-center">S.N</th>
                       <th class="text-center">Title</th>
                       <th class="text-center">Branch</th>
-                      <th class="text-center">Icon</th>
+                      <th class="text-center">Leaves</th>
+                      <th class="text-center">Duration</th>
+                      <th class="text-center">Description</th>
                       <th class="text-center">Status</th>
-                      <th class="text-center">Status</th>
+                      <th class="text-center">Action</th>
                     </tr>
                     </tfoot>
                   </table>

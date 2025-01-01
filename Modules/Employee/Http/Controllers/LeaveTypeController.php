@@ -37,23 +37,17 @@ class LeaveTypeController extends Controller
      */
     public function store(Request $request)
     {
-        $image = '';
-        if($request->image)
-        {
-            $image = time().'.'.$request->image->extension();
-            $request->image->move(public_path('upload/images/expenses-category'), $image);
-        }
-        $slug = Str::slug($request->title);
+        
         LeaveType::create([
             'title' => $request->title,
-            'slug' => $slug,
-            'image' => $image,
             'branch_id' => $request->branch_id,
+            'duration_type' => $request->duration_type,
+            'leaves' => $request->leaves,
             'created_by' => auth()->user()->id,
             'description' => $request->description,
             'status' => $request->status
         ]);
-        return back()->with('success','Expense Category Added Successfully');
+        return back()->with('success','Leave Type Added Successfully');
     }
 
     /**
@@ -85,22 +79,16 @@ class LeaveTypeController extends Controller
     public function update(Request $request, $id)
     {
         $cat = LeaveType::findOrfail($id);
-        $image = $cat->image;
-        if($request->image)
-        {
-            $image = time().'.'.$request->image->extension();
-            $request->image->move(public_path('upload/images/expenses-category'), $image);
-        }
-        $slug = Str::slug($request->title);
+        
         $cat->update([
             'title' => $request->title,
-            'slug' => $slug,
-            'image' => $image,
             'branch_id' => $request->branch_id,
+            'duration_type' => $request->duration_type,
+            'leaves' => $request->leaves,
             'description' => $request->description,
             'status' => $request->status
         ]);
-        return back()->with('success','Expense Category Updated Successfully');
+        return back()->with('success','Leave Types Updated Successfully');
     }
 
     /**
@@ -110,23 +98,23 @@ class LeaveTypeController extends Controller
      */
     public function destroy($id)
     {
-        $categorys= LeaveType::findOrfail($id);
-        $categorys->delete();
-        return redirect()->back()->with('success','Category Deleted!');
+        $leaveType= LeaveType::findOrfail($id);
+        $leaveType->delete();
+        return redirect()->back()->with('success','Leave Type Deleted!');
     }
     public function Status($id)
     {
-        $categorys= LeaveType::findOrfail($id);
-        if($categorys->status == 'on')
+        $leaveType= LeaveType::findOrfail($id);
+        if($leaveType->status == 'on')
         {
             $status ='off';
         }else{
             $status ='on';
         }
-        $categorys->update([
+        $leaveType->update([
             'status' => $status
         ]);
-        return redirect()->back()->with('success','Categgory Updated!');
+        return redirect()->back()->with('success','Leave Type Updated!');
     }
    
 }

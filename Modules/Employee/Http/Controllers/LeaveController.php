@@ -5,6 +5,10 @@ namespace Modules\Employee\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\Branch\Entities\Branch;
+use Modules\Employee\Entities\Employee;
+use Modules\Employee\Entities\Leave;
+use Modules\Employee\Entities\LeaveType;
 
 class LeaveController extends Controller
 {
@@ -14,19 +18,19 @@ class LeaveController extends Controller
      */
     public function index()
     {
-        $expenses = Expenses::with('category')->orderBy('created_at','DESC')->get();
-        $categories = ExpenseCategory::where('status','on')->get();
-        $branches = Branch::where('status','on')->get();
-        return view('expenses::expenses.index', compact('expenses','categories','branches'));
+        $leaves = Leave::orderBy('created_at', 'DESC')->get();
+        $categories = LeaveType::where('status', 'on')->get();
+        $branches = Branch::where('status', 'on')->get();
+        return view('employee::leaves.index', compact('leaves', 'categories', 'branches'));
     }
-  
+
     /**
      * Show the form for creating a new resource.
      * @return Renderable
      */
     public function create()
     {
-        return view('expenses::create');
+        return view('Leave::create');
     }
 
     /**
@@ -36,26 +40,19 @@ class LeaveController extends Controller
      */
     public function store(Request $request)
     {
-        $image = '';
-        if($request->receipt)
-        {
-            $image = time().'.'.$request->receipt->extension();
-            $request->receipt->move(public_path('upload/images/expenses-receipt'), $image);
-        }
         
-        $expense = new Expenses;
-        $expense->expense_category_id = $request->categoryId;
+        $employee = Employee::where('user_id', auth()->user->id)->first();
+        $expense = new Leave();
         $expense->title = $request->title;
-        $expense->amount = $request->amount;
-        $expense->branch_id = $request->branchId;
-        $expense->created_by = auth()->user()->id;
-        $expense->date = $request->date;
-        $expense->mode = $request->mode;
-        $expense->description = $request->description;
-        $expense->status = 'on';
-        $expense->receipt = $image;
+        $expense->employee_id = $employee->id ?? 1;
+        $expense->leave_type_id = $request->leave_type_id;
+        $expense->branch_id = $employee->branch_id ?? 1;
+        $expense->start_date = $request->start_date;
+        $expense->end_date = $request->end_date;
+        $expense->message = $request->message;
+        $expense->status = 'pending';
         $expense->save();
-        return back()->with('success','Expenses Added Successfully');
+        return back()->with('success', 'leaves Added Successfully');
     }
 
     /**
@@ -65,7 +62,7 @@ class LeaveController extends Controller
      */
     public function show($id)
     {
-        return view('expenses::show');
+        return view('Leave::show');
     }
 
     /**
@@ -75,7 +72,7 @@ class LeaveController extends Controller
      */
     public function edit($id)
     {
-        return view('expenses::edit');
+        return view('Leave::edit');
     }
 
     /**
@@ -86,25 +83,16 @@ class LeaveController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $expense = Expenses::findOrfail($id);
-        $image = $expense->receipt;
-        if($request->receipt)
-        {
-            $image = time().'.'.$request->receipt->extension();
-            $request->receipt->move(public_path('upload/images/expenses-receipt'), $image);
-        }
-        $expense->expense_category_id = $request->categoryId;
+        $expense = Leave::findOrfail($id);
+        
         $expense->title = $request->title;
-        $expense->amount = $request->amount;
-        $expense->branch_id = $request->branchId;
-        $expense->created_by = auth()->user()->id;
-        $expense->date = $request->date;
-        $expense->mode = $request->mode;
-        $expense->description = $request->description;
-        $expense->status = 'on';
-        $expense->receipt = $image;
+        $expense->leave_type_id = $request->leave_type_id;
+        $expense->start_date = $request->start_date;
+        $expense->end_date = $request->end_date;
+        $expense->message = $request->message;
+        $expense->status = 'pending';
         $expense->save();
-        return back()->with('success','Expenses Updated Successfully');
+        return back()->with('success', 'leaves Updated Successfully');
     }
 
     /**
@@ -114,27 +102,18 @@ class LeaveController extends Controller
      */
     public function destroy($id)
     {
-        $categorys= Expenses::findOrfail($id);
+        $categorys = Leave::findOrfail($id);
         $categorys->delete();
-        return redirect()->back()->with('success','Expense Deleted!');
+        return redirect()->back()->with('success', 'Expense Deleted!');
     }
-    public function Status($id)
+    public function Status(Request $request, $id)
     {
-        $categorys= Expenses::findOrfail($id);
-        if($categorys->status == 'on')
-        {
-            $status ='off';
-        }else{
-            $status ='on';
-        }
+        $status = $request['status'];
+        $categorys = Leave::findOrfail($id);
         $categorys->update([
             'status' => $status
         ]);
-        return redirect()->back()->with('success','Expense Status Updated!');
+        return redirect()->back()->with('success', 'Expense Status Updated!');
     }
-    public function getExpense(Request $request)
-    {
-        $expenses = Expenses::all(); // Replace this with your logic to fetch data (you can apply filters, sorting, etc. here)
-
-        return response()->json($expenses);
-    }}
+   
+}

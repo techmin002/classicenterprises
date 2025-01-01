@@ -5,7 +5,7 @@
             <div class="modal-header justify-content-center" style="background-color: #0837a4; color: #ffff;">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Category </h1>
             </div>
-            <form action="{{ route('expenses-categories.update',$exp->id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('leave-types.update',$exp->id) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
@@ -15,27 +15,36 @@
                             <div class="col-lg-6">
                                 <div class="form-group">
                                 <label class="form-label12">Title</label>
-                                <input class="form-control" placeholder="Enter Vendor Name" value="{{ $exp->title }}" type="text"
+                                <input class="form-control" value="{{ $exp->title }}" placeholder="Enter Vendor Name" type="text"
                                     name="title" id="vendor">
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
-                                <label class="form-label12">image</label>
-                                <input class="form-control" placeholder="Enter Title" type="file" name="image"
+                                <label class="form-label12">Leaves</label>
+                                <input class="form-control" min="1" value="{{ $exp->leaves }}" placeholder="No. of leaves in a Year" type="number" name="leaves"
                                     id="image">
-                                    <img src="{{  asset('upload/images/expenses-category/'.$exp->image)  }}" height="100px" alt="">
                                 </div>
                             </div>
                             
-                            <div class="col-lg-12" data-select2-id="select2-data-5-a5wr">
+                            <div class="col-lg-6" data-select2-id="select2-data-5-a5wr">
                                 <div class="form-group">
                                 <label class="form-label12">Branch </label>
                                 <select class="form-control" name="branch_id">
                                     <option value="" selected disabled>Select Branch</option>
                                     @foreach ($branches as $branch)
-                                        <option value="{{ $branch->id }}" @if($branch->id == $exp->branch_id) selected @endif>{{ $branch->name }}</option>
+                                        <option value="{{ $branch->id }}" {{ old('branchId', $exp->branch_id) == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
                                     @endforeach
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-6" data-select2-id="select2-data-5-a5wr">
+                                <div class="form-group">
+                                <label class="form-label12" for="duration_type">Duration Type</label>
+                                <select class="form-control" name="duration_type" id="duration_type">
+                                    <option value="" selected disabled>Select Leave Duration</option>
+                                        <option value="monthly"{{ old('duration_type', $exp->duration_type) == 'monthly' ? 'selected' : '' }}>Monthly</option>
+                                        <option value="yearly"{{ old('duration_type', $exp->duration_type) == 'yearly' ? 'selected' : '' }}>Yearly</option>
                                 </select>
                                 </div>
                             </div>
@@ -52,7 +61,7 @@
                                         <h3 class="card-title">Publish</h3>
                                     </div>
                                     <div class="card-body">
-                                        <input type="checkbox" name="status" @if($branch->id == $exp->branch_id) checked @endif data-bootstrap-switch
+                                        <input type="checkbox" name="status" checked data-bootstrap-switch
                                             data-off-color="danger" data-on-color="success">
                                     </div>
                                 </div>

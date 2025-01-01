@@ -451,7 +451,7 @@
                 <li class="nav-item">
                   <a href="{{ route('leaves.index') }}" class="nav-link {{ request()->routeIs('leaves.index') ? 'active' : '' }}">
                     {{-- <i class="far fa-circle nav-icon"></i> --}}
-                    <p>Expenses</p>
+                    <p>Leaves</p>
                   </a>
                 </li>
                 

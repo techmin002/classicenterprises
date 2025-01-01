@@ -5,7 +5,7 @@
             <div class="modal-header justify-content-center" style="background-color: #0837a4; color: #ffff;">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Leave Types </h1>
             </div>
-            <form action="{{ route('expenses-categories.store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('leave-types.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="container">
@@ -39,8 +39,8 @@
                             </div>
                             <div class="col-lg-6" data-select2-id="select2-data-5-a5wr">
                                 <div class="form-group">
-                                <label class="form-label12">Type Duration </label>
-                                <select class="form-control" name="branch_id">
+                                <label class="form-label12" for="duration_type">Duration Type</label>
+                                <select class="form-control" name="duration_type" id="duration_type">
                                     <option value="" selected disabled>Select Leave Duration</option>
                                         <option value="monthly">Monthly</option>
                                         <option value="yearly">Yearly</option>

@@ -19,6 +19,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/employee', 'EmployeeController@index');
     Route::resource('leaves', 'LeaveController');
     Route::resource('leave-types', 'LeaveTypeController');
+    route::get('/employee/leaveTypes/status/{id}', [LeaveTypeController::class,'status'])->name('employee.leaveTypes.status');
+    route::get('/employee/leaves/status/{id}', [LeaveController::class,'status'])->name('employee.leaves.status');
     route::get('/employee/checkin/status/{id}', [AttendanceController::class,'checkinStatus'])->name('employee.checkin.status');
     Route::get('employee/checkin/{id}',[AttendanceController::class,'checkin'])->name('employee.checkin');
     Route::get('/employee/checkout/{id}', [AttendanceController::class,'checkout'])->name('employee.checkout');
