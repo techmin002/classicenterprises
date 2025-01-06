@@ -82,6 +82,37 @@
             </ul>
           </li>
           @endcan
+          @can('access_user_management')
+          <li class="nav-item {{ request()->routeIs('users.*','roles.*') ? 'menu-is-opening menu-open' : '' }}">
+            <a href="#" class="nav-link" {{ request()->routeIs('users.*','roles.*') ? 'active' : '' }}>
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Leads 
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ route('hot-leads') }}" class="nav-link {{ request()->routeIs('hot-leads') ? 'active' : '' }}">
+                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                  <p>Hot Leads</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('warm-leads') }}" class="nav-link {{ request()->routeIs('warm-leads') ? 'active' : '' }}">
+                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                  <p>Warm Leads</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('cold-leads') }}" class="nav-link {{ request()->routeIs('cold-leads') ? 'active' : '' }}">
+                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                  <p>Cold Leads</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          @endcan
           @if(auth()->user()->access_type === 'Admin')
           @else
           @can('access_branch')

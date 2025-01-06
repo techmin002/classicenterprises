@@ -13,5 +13,6 @@
     "Expenses": true,
     "Branch": true,
     "Employee": true,
-    "Product": true
+    "Product": true,
+    "Lead": true
 }
