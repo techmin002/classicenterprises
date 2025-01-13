@@ -159,4 +159,3 @@
     myDropzone.removeAllFiles(true);
   };
 </script>
-@yield('script')

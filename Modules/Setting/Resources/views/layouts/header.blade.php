@@ -57,8 +57,7 @@
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
-    @yield('style')
+   
     <style>
         [class*=sidebar-dark-] .nav-sidebar>.nav-item.menu-open>.nav-link,
         [class*=sidebar-dark-] .nav-sidebar>.nav-item:hover>.nav-link,
