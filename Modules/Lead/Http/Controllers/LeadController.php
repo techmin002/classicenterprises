@@ -2,10 +2,13 @@
 
 namespace Modules\Lead\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\Employee\Entities\Employee;
 use Modules\Lead\Entities\Lead;
+use Modules\Lead\Entities\LeadResponse;
 
 class LeadController extends Controller
 {
@@ -34,7 +37,26 @@ class LeadController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $emp = Employee::where('user_id',auth()->user()->id)->select('id','branch_id')->first();
+        // dd($request->all());
+        $lead = new Lead();
+        $lead->name = $request->input('name');
+        $lead->email = $request->input('email');
+        $lead->address = $request->input('address');
+        $lead->mobile = $request->input('mobile');
+        $lead->lead_type = $request->input('type');
+        $lead->branch_id = $emp->branch_id;
+        $lead->created_by = $emp->id;
+        $lead->message = $request->input('message');
+        $lead->save();
+        $res = LeadResponse::create([
+            'lead_id' => $lead->id,
+            'branch_id' => $lead->branch_id,
+            'created_by' => $lead->created_by,
+            'message' => $request->input('message'),
+            'date_time' => $request['date_time']
+        ]);
+        return back()->with('success','Lead added successfully');
     }
 
     /**
@@ -44,7 +66,9 @@ class LeadController extends Controller
      */
     public function show($id)
     {
-        return view('lead::show');
+        $lead = Lead::with('responses','employee')->where('id', $id)->first();
+        // dd($lead);
+        return view('lead::response.index', compact('lead'));
     }
 
     /**
@@ -65,7 +89,15 @@ class LeadController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $lead = Lead::findOrfail($id);
+        $lead->name = $request->input('name');
+        $lead->email = $request->input('email');
+        $lead->address = $request->input('address');
+        $lead->mobile = $request->input('mobile');
+        $lead->message = $request->input('message');
+        $lead->save();
+        
+        return back()->with('success','Lead Updated successfully');
     }
 
     /**
@@ -75,11 +107,61 @@ class LeadController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $lead = Lead::findOrfail($id);
+        if($lead)
+        {
+            $lead->update([
+                'deleted_at' => Carbon::now(),
+            ]);
+            return back()->with('success','Lead Updated successfully');
+        }else{
+            return back()->with('error','Lead Not Found');
+        }
     }
     public function hotLeads()
     {
-        $leads = Lead::where('lead_type', 'hot')->get();
-        return view('lead::leads.index', $leads); 
+        $leads = Lead::with('responses')->where('lead_type', 'hot')->get();
+        $type = 'hot';
+        return view('lead::leads.index', compact('leads','type')); 
+    }
+    public function warmLeads()
+    {
+        $type = 'warm';
+        $leads = Lead::with('responses')->where('lead_type', 'warm')->get();
+        return view('lead::leads.index', compact('leads','type')); 
+    }
+    public function coldLeads()
+    {
+        $type = 'cold';
+        $leads = Lead::with('responses')->where('lead_type', 'cold')->get();
+        return view('lead::leads.index', compact('leads','type')); 
+    }
+    public function esponseStore(Request $request)
+    {
+        $emp = Employee::where('user_id',auth()->user()->id)->select('id','branch_id')->first();
+        $lead = Lead::where('id', $request['lead_id'])->first();
+        $res = LeadResponse::create([
+            'lead_id' => $lead->id,
+            'branch_id' => $emp->branch_id,
+            'created_by' => $emp->id,
+            'message' => $request->input('message'),
+            'date_time' => $request['date_time']
+        ]);
+        return back()->with('success','Response added successfully');
+    }
+    public function esponseUpdate(Request $request, $id)
+    {
+        $res = LeadResponse::findOrfail($id)->update([
+            'message' => $request->input('message'),
+            'date_time' => $request['date_time']
+        ]);
+        return back()->with('success','Response added successfully');
+    }
+    public function esponseDelete($id)
+    {
+        $res = LeadResponse::findOrfail($id)->update([
+            'deleted_at' => Carbon::now(),
+        ]);
+        return back()->with('success','Response added successfully');
     }
 }

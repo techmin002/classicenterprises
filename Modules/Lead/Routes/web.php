@@ -20,4 +20,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('hot-leads',[LeadController::class,'hotLeads'])->name('hot-leads');
     Route::get('warm-leads',[LeadController::class,'warmLeads'])->name('warm-leads');
     Route::get('cold-leads',[LeadController::class,'coldLeads'])->name('cold-leads');
+    Route::post('response-store',[LeadController::class,'esponseStore'])->name('response.store');
+    Route::post('response-update/{id}',[LeadController::class,'esponseUpdate'])->name('response.update');
+    Route::delete('response-delete/{id}',[LeadController::class,'esponseDelete'])->name('response.destroy');
 });

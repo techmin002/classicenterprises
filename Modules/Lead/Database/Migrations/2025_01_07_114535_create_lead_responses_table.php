@@ -13,18 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('leads', function (Blueprint $table) {
+        Schema::create('lead_responses', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('mobile');
-            $table->string('landline')->nullable();
-            $table->string('email')->nullable();
-            $table->longText('address');
-            $table->longText('message')->nullable();
+            $table->string('lead_id');
+            $table->string('date_time');
             $table->string('branch_id')->nullable();
             $table->string('created_by')->nullable();
-            $table->string('lead_type')->default('cold');
-            $table->string('status')->default('non_convert');
+            $table->text('message')->nullable();
+            $table->string('status')->default('on');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -37,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('leads');
+        Schema::dropIfExists('lead_responses');
     }
 };
