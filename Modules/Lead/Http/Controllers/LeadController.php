@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Employee\Entities\Employee;
 use Modules\Lead\Entities\Lead;
+use Modules\Branch\Entities\Branch;
 use Modules\Lead\Entities\LeadResponse;
 
 class LeadController extends Controller
@@ -38,6 +39,13 @@ class LeadController extends Controller
     public function store(Request $request)
     {
         $emp = Employee::where('user_id',auth()->user()->id)->select('id','branch_id')->first();
+
+        if($request->branch_id)
+        {
+            $branch_id = $request->branch_id;
+        }else{
+            $branch_id = $emp->branch_id;
+        }
         // dd($request->all());
         $lead = new Lead();
         $lead->name = $request->input('name');
@@ -45,8 +53,8 @@ class LeadController extends Controller
         $lead->address = $request->input('address');
         $lead->mobile = $request->input('mobile');
         $lead->lead_type = $request->input('type');
-        $lead->branch_id = $emp->branch_id;
-        $lead->created_by = $emp->id;
+        $lead->branch_id = $branch_id;
+        $lead->created_by = auth()->user()->id;
         $lead->message = $request->input('message');
         $lead->save();
         $res = LeadResponse::create([
@@ -96,7 +104,7 @@ class LeadController extends Controller
         $lead->mobile = $request->input('mobile');
         $lead->message = $request->input('message');
         $lead->save();
-        
+
         return back()->with('success','Lead Updated successfully');
     }
 
@@ -120,23 +128,32 @@ class LeadController extends Controller
     }
     public function hotLeads()
     {
+
+        $branches = Branch::all();
+
         $leads = Lead::with('responses')->where('lead_type', 'hot')->get();
         $type = 'hot';
-        return view('lead::leads.index', compact('leads','type')); 
+        return view('lead::leads.index', compact('leads','type','branches'));
     }
     public function warmLeads()
     {
+
+        $branches = Branch::all();
+
         $type = 'warm';
         $leads = Lead::with('responses')->where('lead_type', 'warm')->get();
-        return view('lead::leads.index', compact('leads','type')); 
+        return view('lead::leads.index', compact('leads','type','branches'));
     }
     public function coldLeads()
     {
+
+        $branches = Branch::all();
+
         $type = 'cold';
         $leads = Lead::with('responses')->where('lead_type', 'cold')->get();
-        return view('lead::leads.index', compact('leads','type')); 
+        return view('lead::leads.index', compact('leads','type','branches'));
     }
-    public function esponseStore(Request $request)
+    public function responseStore(Request $request)
     {
         $emp = Employee::where('user_id',auth()->user()->id)->select('id','branch_id')->first();
         $lead = Lead::where('id', $request['lead_id'])->first();
@@ -149,7 +166,7 @@ class LeadController extends Controller
         ]);
         return back()->with('success','Response added successfully');
     }
-    public function esponseUpdate(Request $request, $id)
+    public function responseUpdate(Request $request, $id)
     {
         $res = LeadResponse::findOrfail($id)->update([
             'message' => $request->input('message'),
@@ -157,7 +174,7 @@ class LeadController extends Controller
         ]);
         return back()->with('success','Response added successfully');
     }
-    public function esponseDelete($id)
+    public function responseDelete($id)
     {
         $res = LeadResponse::findOrfail($id)->update([
             'deleted_at' => Carbon::now(),
