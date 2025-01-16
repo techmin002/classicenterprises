@@ -13,10 +13,10 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-      <!-- Sidebar user panel (optional) -->  
+      <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex bg-dark">
         <div class="image">
-         
+
           <img src="{{ asset('upload/images/settings/'.$profile->logo) }}" class="w-100 img-fluid" alt="User Image">
         </div>
         {{-- <div class="info">
@@ -46,7 +46,7 @@
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Dashboard
-                
+
               </p>
             </a>
           </li>
@@ -87,7 +87,7 @@
             <a href="#" class="nav-link" {{ request()->routeIs('users.*','roles.*') ? 'active' : '' }}>
               <i class="nav-icon fas fa-users"></i>
               <p>
-                Leads 
+                Leads
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -108,6 +108,12 @@
                 <a href="{{ route('cold-leads') }}" class="nav-link {{ request()->routeIs('cold-leads') ? 'active' : '' }}">
                   {{-- <i class="far fa-circle nav-icon"></i> --}}
                   <p>Cold Leads</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('followups') }}" class="nav-link {{ request()->routeIs('followups') ? 'active' : '' }}">
+                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                  <p>Followups</p>
                 </a>
               </li>
             </ul>
@@ -131,7 +137,7 @@
                   <p>Branch</p>
                 </a>
               </li>
-              
+
             </ul>
           </li>
           @endcan
@@ -162,13 +168,13 @@
                 @endif
                 <li class="nav-item">
                   <a href="{{ route('attendance.checkin') }}" class="nav-link @if (request()->routeIs('attendance.checkin')) active @endif">
-                    
+
                     <p>Check-In Request</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="{{ route('attendance.checkout') }}" class="nav-link @if (request()->routeIs('attendance.checkout')) active @endif">
-                    
+
                     <p>Check-Out Request</p>
                   </a>
                 </li>
@@ -191,13 +197,13 @@
                 </li>
                 <li class="nav-item">
                   <a href="{{ route('setsalary.payslip.index') }}" class="nav-link @if (request()->routeIs('setsalary.payslip.index')) active @endif">
-                    
+
                     <p>Payslip</p>
                   </a>
                 </li>
             </ul>
         </li>
-        
+
           @can('access_sliders')
           <li class="nav-item {{ request()->routeIs('sliders.*') ? 'menu-is-opening menu-open' : '' }}">
             <a href="#" class="nav-link" {{ request()->routeIs('sliders.*') ? 'active' : '' }}>
@@ -255,7 +261,7 @@
               </li>
             </ul>
         </li>
-        
+
           @endcan
           @can('access_sliders')
           <li class="nav-item @if(request()->routeIs('services.*')) menu-is-opening menu-open @endif">
@@ -279,7 +285,7 @@
                 </li>
             </ul>
         </li>
-        
+
           @endcan
           @can('access_blogs')
           <li class="nav-item {{ request()->routeIs('blogs.*') ? 'menu-is-opening menu-open' : '' }}">
@@ -328,7 +334,7 @@
                   <p>Expenses</p>
                 </a>
               </li>
-              
+
             </ul>
           </li>
           @endcan
@@ -485,7 +491,7 @@
                     <p>Leaves</p>
                   </a>
                 </li>
-                
+
               </ul>
             </li>
             <li class="nav-item">
@@ -521,7 +527,7 @@
             </ul>
           </li>
           @endcan
-          
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

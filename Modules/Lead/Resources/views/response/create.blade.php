@@ -13,6 +13,7 @@
                                 <label class="form-label12">Message </label>
                                 <textarea name="message" class="form-control" required id=""></textarea>
                             </div>
+
                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                             <div class="mt-3 col-lg-12">
                                 <div class="form-group">
@@ -25,13 +26,13 @@
                                       </div>
                                   </div>
                             </div>
-                           
-                            
+
+
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-start">
-    
+
                     <button type="submit" name="submit" id="btnSubmit" class="btn btn-success">Save Item</button>
 
                     <button type="cancel" data-dismiss="modal" class="btn btn-danger">Cancel</button>

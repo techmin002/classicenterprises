@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('branch_id')->nullable();
             $table->string('created_by')->nullable();
             $table->string('lead_type')->default('cold');
+            $table->dateTime('followups')->nullable();
             $table->string('status')->default('non_convert');
             $table->softDeletes();
             $table->timestamps();

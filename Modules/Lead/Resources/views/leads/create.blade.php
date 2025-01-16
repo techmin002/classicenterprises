@@ -18,18 +18,25 @@
                                     id="name">
                             </div>
                             <div class="mt-3 col-lg-6">
-                                <label class="form-label12">Contact Number </label>
-                                <input class="form-control" placeholder="Enter mobile number" type="text"
-                                    name="mobile" id="mobile">
-                            </div>
-                            <input type="hidden" name="type" value="{{ $type }}">
-                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Email</label>
                                 <input class="form-control" placeholder="" type="email" name="email">
                             </div>
                             <div class="mt-3 col-lg-6">
+                                <label class="form-label12">Contact Number </label>
+                                <input class="form-control" placeholder="Enter mobile number" type="tel"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" pattern="\d{10}"maxlength="10" name="mobile" id="mobile" required
+                                title="Please enter exactly 10 digits">
+                            </div>
+
+                            <div class="mt-3 col-lg-6">
+                                <label class="form-label12">Alternate Contact Number </label>
+                                <input class="form-control" placeholder="Enter alternate mobile number" type="tel"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" pattern="\d{10}"maxlength="10" name="landline" id="landline"
+                                title="Please enter exactly 10 digits">
+                            </div>
+                            <input type="hidden" name="type" value="{{ $type }}">
+
+                            <div class="mt-3 col-lg-6">
                                 <div class="form-group">
-                                    <label>Date and time:</label>
+                                    <label>Next Followup Date:</label>
                                     <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
                                         <input type="text" class="form-control datetimepicker-input" name="date_time"
                                             data-target="#reservationdatetime" />
@@ -41,7 +48,7 @@
                                 </div>
                             </div>
                             @if(auth()->user()->role['name'] === 'Super Admin')
-                            <div class="mt-3 col-lg-12">
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Branch</label>
                                 <select name="branch_id" id="" class="form-control">
                                     <option value="" selected disabled>Select Branch</option>

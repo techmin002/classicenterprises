@@ -5,6 +5,7 @@ namespace Modules\Lead\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Branch\Entities\Branch;
 use Modules\Employee\Entities\Employee;
 
 class Lead extends Model
@@ -21,6 +22,7 @@ class Lead extends Model
         'branch_id',
         'created_by',
         'lead_type',
+        'followups',
         'status',
         'deleted_at'
     ];
@@ -37,5 +39,9 @@ class Lead extends Model
     public function employee()
     {
         return $this->belongsTo(Employee::class,'created_by','id');
+    }
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class,'branch_id','id');
     }
 }

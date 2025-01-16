@@ -37,7 +37,7 @@
 
                         <div class="card">
                             <div class="card-header">
-
+                                <h3 class="float-left">Name: {{ $lead['name'] }}</h3>
                                 <h3 class="card-title float-right"><a class="btn btn-info text-white" data-toggle="modal"
                                         data-target="#exampleModalCenter"><i class="fa fa-plus"></i> Create</a> </h3>
                                 @include('lead::response.create')
@@ -61,11 +61,11 @@
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
                                                 <td class="text-center">{{ $lead->name }}</td>
-                                                <td class="text-center">{{ $exp->date_time }}</td>
+                                                <td class="text-center">{{ $exp->followups }}</td>
                                                 <td class="text-center">
                                                     @php
                                                         $id = $exp->created_by;
-                                                        $emp = Modules\Employee\Entities\Employee::where('id', $id)
+                                                        $emp = App\Models\User::where('id', $id)
                                                             ->select('name')
                                                             ->first();
                                                     @endphp

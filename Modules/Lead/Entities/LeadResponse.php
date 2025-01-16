@@ -14,11 +14,13 @@ class LeadResponse extends Model
         'lead_id',
         'branch_id',
         'created_by',
-        'date_time',
+        'followups',
         'message',
         'deleted_at'
     ];
-    
+    public function lead(){
+        return $this->belongsTo(Lead::class,'lead_id','id');
+    }
     protected static function newFactory()
     {
         return \Modules\Lead\Database\factories\LeadResponseFactory::new();

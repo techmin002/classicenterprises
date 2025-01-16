@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('lead_responses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('lead_id');
-            $table->string('date_time');
+            $table->dateTime('followups')->nullable();
             $table->string('branch_id')->nullable();
             $table->string('created_by')->nullable();
             $table->text('message')->nullable();

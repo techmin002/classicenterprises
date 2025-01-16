@@ -18,20 +18,20 @@
                                 <div class="form-group">
                                     <label>Date and time:</label>
                                       <div class="input-group date" id="reservationdatetime" data-target-input="nearest">
-                                          <input type="text" class="form-control datetimepicker-input" value="{{ $exp->date_time }}" name="date_time" data-target="#reservationdatetime"/>
+                                          <input type="text" class="form-control datetimepicker-input" value="{{ $exp->followups }}" name="date_time" data-target="#reservationdatetime"/>
                                           <div class="input-group-append" data-target="#reservationdatetime" data-toggle="datetimepicker">
                                               <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                           </div>
                                       </div>
                                   </div>
                             </div>
-                           
-                            
+
+
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-start">
-    
+
                     <button type="submit" name="submit" id="btnSubmit" class="btn btn-success">Save Item</button>
 
                     <button type="cancel" data-dismiss="modal" class="btn btn-danger">Cancel</button>

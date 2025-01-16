@@ -23,4 +23,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('response-store',[LeadController::class,'responseStore'])->name('response.store');
     Route::post('response-update/{id}',[LeadController::class,'responseUpdate'])->name('response.update');
     Route::delete('response-delete/{id}',[LeadController::class,'responseDelete'])->name('response.destroy');
+    Route::get('followups',[LeadController::class,'followups'])->name('followups');
 });
