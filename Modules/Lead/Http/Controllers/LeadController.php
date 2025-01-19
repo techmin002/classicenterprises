@@ -10,6 +10,9 @@ use Modules\Employee\Entities\Employee;
 use Modules\Lead\Entities\Lead;
 use Modules\Branch\Entities\Branch;
 use Modules\Lead\Entities\LeadResponse;
+use Modules\Product\Entities\Accessory;
+use Modules\Product\Entities\Machinery;
+use Modules\Product\Entities\Product;
 
 class LeadController extends Controller
 {
@@ -137,8 +140,13 @@ class LeadController extends Controller
     {
 
         $branches = Branch::all();
+        if(auth()->user()->role['name'] === 'Super Admin'){
+            $leads = Lead::with('responses', 'branch')->where('lead_type', 'hot')->get();
 
-        $leads = Lead::with('responses', 'branch')->where('lead_type', 'hot')->get();
+        }else{
+            $branch_id = auth()->user()->branch_id;
+            $leads = Lead::with('responses', 'branch')->where('branch_id',$branch_id)->where('lead_type', 'hot')->get();
+        }
         $type = 'hot';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
     }
@@ -146,18 +154,28 @@ class LeadController extends Controller
     {
 
         $branches = Branch::all();
+        if(auth()->user()->role['name'] === 'Super Admin'){
+            $leads = Lead::with('responses', 'branch')->where('lead_type', 'warm')->get();
 
+        }else{
+            $branch_id = auth()->user()->branch_id;
+            $leads = Lead::with('responses', 'branch')->where('branch_id',$branch_id)->where('lead_type', 'warm')->get();
+        }
         $type = 'warm';
-        $leads = Lead::with('responses', 'branch')->where('lead_type', 'warm')->get();
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
     }
     public function coldLeads()
     {
 
         $branches = Branch::all();
+        if(auth()->user()->role['name'] === 'Super Admin'){
+            $leads = Lead::with('responses', 'branch')->where('lead_type', 'cold')->get();
 
+        }else{
+            $branch_id = auth()->user()->branch_id;
+            $leads = Lead::with('responses', 'branch')->where('branch_id',$branch_id)->where('lead_type', 'cold')->get();
+        }
         $type = 'cold';
-        $leads = Lead::with('responses', 'branch')->where('lead_type', 'cold')->get();
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
     }
     public function responseStore(Request $request)
@@ -213,5 +231,13 @@ class LeadController extends Controller
                     ->where('status','non_convert')
                     ->get();
         return view('lead::response.followups', compact('leads'));
+    }
+    public function leadToClient($id)
+    {
+        $lead = Lead::findOrfail($id);
+        $branches = Branch::where('status','on')->get();
+        $machineries = Machinery::all();
+        $accessories = Accessory::all();
+        return view('lead::client.create', compact('branches','lead','machineries','accessories'));
     }
 }

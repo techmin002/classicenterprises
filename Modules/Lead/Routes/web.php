@@ -24,4 +24,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('response-update/{id}',[LeadController::class,'responseUpdate'])->name('response.update');
     Route::delete('response-delete/{id}',[LeadController::class,'responseDelete'])->name('response.destroy');
     Route::get('followups',[LeadController::class,'followups'])->name('followups');
+    Route::get('lead-convert/{id}',[LeadController::class,'leadToClient'])->name('lead.clients');
+
 });

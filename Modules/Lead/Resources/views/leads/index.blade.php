@@ -54,7 +54,6 @@
                                             <th class="text-center">Address</th>
                                             <th class="text-center">Response</th>
                                             <th class="text-center">Action</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -85,7 +84,9 @@
                                                                 @method('delete')
                                                             </form>
                                                         </button>
-
+                                                        <a type="button" href="{{ route('lead.clients',$exp->id) }}" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
+                                                            <i class="fa fa-shopping-cart"></i>
+                                                        </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -116,5 +117,10 @@
         </section>
         <!-- /.content -->
     </div>
-
+    <script>
+       $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+    </script>
 @endsection
+

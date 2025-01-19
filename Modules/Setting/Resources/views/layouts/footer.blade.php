@@ -51,111 +51,129 @@
 
 <!-- Custom Scripts -->
 <script>
-  $(function () {
-    // Initialize Select2 Elements
-    $('.select2').select2();
-    $('.select2bs4').select2({ theme: 'bootstrap4' });
+    $(function() {
+        // Initialize Select2 Elements
+        $('.select2').select2();
+        $('.select2bs4').select2({
+            theme: 'bootstrap4'
+        });
 
-    // Initialize Input Masks
-    $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-    $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' });
-    $('[data-mask]').inputmask();
+        // Initialize Input Masks
+        $('#datemask').inputmask('dd/mm/yyyy', {
+            'placeholder': 'dd/mm/yyyy'
+        });
+        $('#datemask2').inputmask('mm/dd/yyyy', {
+            'placeholder': 'mm/dd/yyyy'
+        });
+        $('[data-mask]').inputmask();
 
-    // Date Pickers
-    $('#reservationdate').datetimepicker({ format: 'L' });
-    $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
-    $('#reservation').daterangepicker();
-    $('#reservationtime').daterangepicker({
-      timePicker: true,
-      timePickerIncrement: 30,
-      locale: { format: 'MM/DD/YYYY hh:mm A' }
+        // Date Pickers
+        $('#reservationdate').datetimepicker({
+            format: 'L'
+        });
+        $('#reservationdatetime').datetimepicker({
+            icons: {
+                time: 'far fa-clock'
+            }
+        });
+        $('#reservation').daterangepicker();
+        $('#reservationtime').daterangepicker({
+            timePicker: true,
+            timePickerIncrement: 30,
+            locale: {
+                format: 'MM/DD/YYYY hh:mm A'
+            }
+        });
+
+        // Time Picker
+        $('#timepicker').datetimepicker({
+            format: 'LT'
+        });
+
+        // Bootstrap Duallistbox
+        $('.duallistbox').bootstrapDualListbox();
+        $(document).ready(function() {
+            $('.summernote').summernote();
+        });
+        // Color Picker
+        $('.my-colorpicker1').colorpicker();
+        $('.my-colorpicker2').colorpicker().on('colorpickerChange', function(event) {
+            $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+        });
+
+        // Bootstrap Switch
+        $("input[data-bootstrap-switch]").each(function() {
+            $(this).bootstrapSwitch('state', $(this).prop('checked'));
+        });
     });
 
-    // Time Picker
-    $('#timepicker').datetimepicker({ format: 'LT' });
+    // Initialize DataTables
+    $(function() {
+        $("#example1").DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
-    // Bootstrap Duallistbox
-    $('.duallistbox').bootstrapDualListbox();
-
-    // Color Picker
-    $('.my-colorpicker1').colorpicker();
-    $('.my-colorpicker2').colorpicker().on('colorpickerChange', function(event) {
-      $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+        $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
     });
 
-    // Bootstrap Switch
-    $("input[data-bootstrap-switch]").each(function() {
-      $(this).bootstrapSwitch('state', $(this).prop('checked'));
+    // Initialize BS-Stepper
+    document.addEventListener('DOMContentLoaded', function() {
+        window.stepper = new Stepper(document.querySelector('.bs-stepper'));
     });
-  });
 
-  // Initialize DataTables
-  $(function() {
-    $("#example1").DataTable({
-      "responsive": true,
-      "lengthChange": false,
-      "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    // DropzoneJS Demo Code
+    Dropzone.autoDiscover = false;
+    var previewNode = document.querySelector("#template");
+    previewNode.id = "";
+    var previewTemplate = previewNode.parentNode.innerHTML;
+    previewNode.parentNode.removeChild(previewNode);
 
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
+    var myDropzone = new Dropzone(document.body, {
+        url: "/target-url",
+        thumbnailWidth: 80,
+        thumbnailHeight: 80,
+        parallelUploads: 20,
+        previewTemplate: previewTemplate,
+        autoQueue: false,
+        previewsContainer: "#previews",
+        clickable: ".fileinput-button"
     });
-  });
 
-  // Initialize BS-Stepper
-  document.addEventListener('DOMContentLoaded', function () {
-    window.stepper = new Stepper(document.querySelector('.bs-stepper'));
-  });
+    myDropzone.on("addedfile", function(file) {
+        file.previewElement.querySelector(".start").onclick = function() {
+            myDropzone.enqueueFile(file);
+        };
+    });
 
-  // DropzoneJS Demo Code
-  Dropzone.autoDiscover = false;
-  var previewNode = document.querySelector("#template");
-  previewNode.id = "";
-  var previewTemplate = previewNode.parentNode.innerHTML;
-  previewNode.parentNode.removeChild(previewNode);
+    myDropzone.on("totaluploadprogress", function(progress) {
+        document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
+    });
 
-  var myDropzone = new Dropzone(document.body, {
-    url: "/target-url",
-    thumbnailWidth: 80,
-    thumbnailHeight: 80,
-    parallelUploads: 20,
-    previewTemplate: previewTemplate,
-    autoQueue: false,
-    previewsContainer: "#previews",
-    clickable: ".fileinput-button"
-  });
+    myDropzone.on("sending", function(file) {
+        document.querySelector("#total-progress").style.opacity = "1";
+        file.previewElement.querySelector(".start").setAttribute("disabled", "disabled");
+    });
 
-  myDropzone.on("addedfile", function(file) {
-    file.previewElement.querySelector(".start").onclick = function() {
-      myDropzone.enqueueFile(file);
+    myDropzone.on("queuecomplete", function() {
+        document.querySelector("#total-progress").style.opacity = "0";
+    });
+
+    document.querySelector("#actions .start").onclick = function() {
+        myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED));
     };
-  });
 
-  myDropzone.on("totaluploadprogress", function(progress) {
-    document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
-  });
-
-  myDropzone.on("sending", function(file) {
-    document.querySelector("#total-progress").style.opacity = "1";
-    file.previewElement.querySelector(".start").setAttribute("disabled", "disabled");
-  });
-
-  myDropzone.on("queuecomplete", function() {
-    document.querySelector("#total-progress").style.opacity = "0";
-  });
-
-  document.querySelector("#actions .start").onclick = function() {
-    myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED));
-  };
-
-  document.querySelector("#actions .cancel").onclick = function() {
-    myDropzone.removeAllFiles(true);
-  };
+    document.querySelector("#actions .cancel").onclick = function() {
+        myDropzone.removeAllFiles(true);
+    };
 </script>
