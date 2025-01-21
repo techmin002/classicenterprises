@@ -5,29 +5,29 @@ namespace Modules\Lead\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Modules\Lead\Database\factories\CustomerFactory;
+use Modules\Lead\Database\factories\CustomerPaymentFactory;
 
-class Customer extends Model
+class CustomerPayment extends Model
 {
     use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $table='customers';
+    protected $table='customer_payments';
     protected $fillable = [
         'lead_id',
         'branch_id',
         'created_by',
-        'total_amount',
+        'product_id',
+        'cutsomer_id',
         'paid_amount',
-        'due_amount',
+        'receipt',
         'status',
-        'customer_type'
     ];
 
-    protected static function newFactory(): CustomerFactory
+    protected static function newFactory(): CustomerPaymentFactory
     {
-        //return CustomerFactory::new();
+        //return CustomerPaymentFactory::new();
     }
 }

@@ -1,6 +1,8 @@
 @extends('setting::layouts.master')
 
 @section('title', 'Create Customer')
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -50,18 +52,21 @@
 
 
                                             <div class="mt-3 col-lg-6">
-                                                <label class="form-label12">Name <strong class="text-danger">*</strong></label>
+                                                <label class="form-label12">Name <strong
+                                                        class="text-danger">*</strong></label>
                                                 <input class="form-control" placeholder="Enter name" type="text"
                                                     value="{{ $lead->name }}" name="name" id="name">
                                             </div>
                                             <div class="mt-3 col-lg-6">
-                                                <label class="form-label12">Email <strong class="text-danger">*</strong></label>
+                                                <label class="form-label12">Email <strong
+                                                        class="text-danger">*</strong></label>
                                                 <input class="form-control" placeholder="" type="email"
                                                     value="{{ $lead->email }}" name="email">
                                             </div>
                                             <input type="hidden" value="{{ $lead->id }}" name="lead_id">
                                             <div class="mt-3 col-lg-6">
-                                                <label class="form-label12">Contact Number  <strong class="text-danger">*</strong></label>
+                                                <label class="form-label12">Contact Number <strong
+                                                        class="text-danger">*</strong></label>
                                                 <input class="form-control" placeholder="Enter mobile number" type="tel"
                                                     value="{{ $lead->mobile }}"
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
@@ -70,7 +75,8 @@
                                             </div>
 
                                             <div class="mt-3 col-lg-6">
-                                                <label class="form-label12">Alternate Contact Number  <small class="text-success">(Optional)</small></label>
+                                                <label class="form-label12">Alternate Contact Number <small
+                                                        class="text-success">(Optional)</small></label>
                                                 <input class="form-control" placeholder="Enter alternate mobile number"
                                                     type="tel" value="{{ $lead->landline }}"
                                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
@@ -79,7 +85,8 @@
                                             </div>
 
                                             <div class="mt-3 col-lg-12">
-                                                <label class="form-label12">Address <strong class="text-danger">*</strong></label>
+                                                <label class="form-label12">Address <strong
+                                                        class="text-danger">*</strong></label>
                                                 <input class="form-control" placeholder="" type="text"
                                                     value="{{ $lead->address }}" name="address" id="address">
                                             </div>
@@ -97,7 +104,8 @@
                                         <div class="row gy-3">
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="product_name">Product <strong class="text-danger">*</strong></label>
+                                                    <label for="product_name">Product <strong
+                                                            class="text-danger">*</strong></label>
                                                     <select name="product_id" id="product_id" required
                                                         class="form-control select2bs4">
                                                         <option value="" selected disabled>Select Product</option>
@@ -112,66 +120,44 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="backend_price">Price <strong class="text-danger">*</strong></label>
+                                                    <label for="backend_price">Price <strong
+                                                            class="text-danger">*</strong></label>
                                                     <input type="number" name="backend_price" id="backend_price"
                                                         class="form-control" required placeholder="Enter Product Price">
                                                 </div>
                                             </div>
                                         </div>
-                                            <!--accessories start here-->
-                                            <div class="customer_records">
-                                                <div class="row gy-3">
-                                                    <div class="col-md-4">
-                                                        <label>Accessories</label>
-                                                        <select name="accessories_id[]" class="form-control select2bs4">
-                                                            <option value="">Select Accessories</option>
-                                                            @foreach ($accessories as $product)
-                                                                <option value="{{ $product->id }}">{{ $product->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('product_id')
-                                                            <p style="color: red">{{ $message }}</p>
-                                                        @enderror
+                                        <!--accessories start here-->
+                                        <hr>
+                                        <label for="">Accessories </label>
 
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label>Price</label>
-                                                        <input type="number" class="form-control" id="amount"
-                                                            value="{{ old('amount') }}" name="a_amount[]"
-                                                            placeholder="Enter Price">
-                                                        @error('pricce')
-                                                            <p style="color: red">{{ $message }}</p>
-                                                        @enderror
+                                        <div id="accessoryContainer">
+                                            <!-- Accessory rows will be appended here -->
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-3">
+                                            <button type="button" id="addAccessory" class="badge badge-primary">Add
+                                                Accessory</button>
+                                        </div>
+                                        <div class="mt-3">
+                                            <label for="overallTotal">Overall Total: </label>
+                                            <input type="text" name="grand_total" id="overallTotal" class="form-control" readonly />
+                                        </div>
 
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label>Quantity</label>
-                                                        <input name="a_qty[]" class="form-control" type="number"
-                                                            placeholder="Quantity">
-                                                    </div>
+                                        <!--accessories end here-->
+                                        <div class="form-group">
+                                            <label for="remark">Remark <small>(optional)</small></label>
+                                            <textarea name="remark" class="form-control" required></textarea>
 
-                                                </div>
-                                                <a class="extra-fields-customer badge badge-success" style="cursor: pointer"><i
-                                                        class="fa fa-plus" ></i> Accessories</a>
-                                            </div>
-                                            <div class="customer_records_dynamic"></div>
-                                            <!--accessories end here-->
-                                            <div class="form-group">
-                                                <label for="remark">Remark <small>(optional)</small></label>
-                                                <textarea name="remark" class="summernote" required></textarea>
-
-                                            </div>
                                         </div>
                                     </div>
-                                    <div class="modal-footer justify-content-start">
+                                </div>
+                                <div class="modal-footer justify-content-start">
 
-                                        <button type="submit" name="submit" id="btnSubmit"
-                                            class="btn btn-success">Save Lead</button>
+                                    <button type="submit" name="submit" id="btnSubmit" class="btn btn-success">Save
+                                        Lead</button>
 
-                                        <button type="cancel" data-dismiss="modal"
-                                            class="btn btn-danger">Cancel</button>
-                                    </div>
+                                    <button type="cancel" data-dismiss="modal" class="btn btn-danger">Cancel</button>
+                                </div>
                             </form>
                             <!-- /.card-body -->
                         </div>
@@ -185,33 +171,246 @@
         </section>
         <!-- /.content -->
     </div>
+
+
+    <script>
+        $(document).ready(function() {
+            let accessoryIndex = 1; // Start with the first row
+            let overallTotal = 0; // Variable to store the overall total
+
+            // Function to initialize Select2 with AJAX for dynamic accessory dropdowns
+            function initializeSelect(selector) {
+                $(selector).select2({
+                    theme: 'bootstrap4',
+                    placeholder: 'Search for an accessory',
+                    ajax: {
+                        url: '/accessories', // Replace with your actual endpoint
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term // Pass the search term to the server
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: data.map(item => ({
+                                    id: item.id,
+                                    text: item.name,
+                                    price: item.sales_price
+                                }))
+                            };
+                        },
+                        cache: true
+                    }
+                }).on('select2:select', function(e) {
+                    const selectedData = e.params.data;
+                    const rowId = $(this).closest('.accessory-row').attr('id');
+                    $(`#${rowId} .price`).val(selectedData.price);
+                    calculate(rowId); // Recalculate total when accessory is selected
+                });
+            }
+
+            // Initialize Select2 for the default row
+            initializeSelect(`#accessory-${accessoryIndex}`);
+
+            // Function to append a new accessory row
+            function appendAccessoryRow() {
+                accessoryIndex++;
+                const row = `
+                    <div class="row g-3 align-items-center mb-3 accessory-row" id="row-${accessoryIndex}">
+                        <div class="col-md-3">
+                            <select class="form-control accessory-select" name="accessories_id[]" id="accessory-${accessoryIndex}">
+                                <option value="">Search and select an accessory</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" name="accessories_qty[]"  class="form-control qty" placeholder="Quantity" id="qty-${accessoryIndex}" />
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" name="accessories_price[]" class="form-control price" placeholder="Price" id="price-${accessoryIndex}" />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" name="accessories_total[]" class="form-control row-total" id="row-total-${accessoryIndex}" readonly />
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-danger removeAccessory" data-row="${accessoryIndex}">X</button>
+                        </div>
+                    </div>`;
+                $('#accessoryContainer').append(row);
+                initializeSelect(`#accessory-${accessoryIndex}`);
+            }
+
+            // Add Accessory Button Click
+            $('#addAccessory').on('click', function() {
+                appendAccessoryRow(); // Append a new row
+            });
+
+            // Remove Accessory Button Click
+            $(document).on('click', '.removeAccessory', function() {
+                const rowId = $(this).data('row');
+                $(`#row-${rowId}`).remove();
+                calculateOverallTotal(); // Recalculate overall total after removal
+            });
+
+            // Calculate total for the row
+            function calculate(rowId) {
+                const qty = $(`#row-${rowId} .qty`).val();
+                const price = $(`#row-${rowId} .price`).val();
+                const rowTotal = qty * price;
+
+                $(`#row-${rowId} .row-total`).val(rowTotal.toFixed(2)); // Update row total
+
+                calculateOverallTotal(); // Recalculate overall total
+            }
+
+            // Calculate the overall total
+            function calculateOverallTotal() {
+                overallTotal = 0;
+                $('.row-total').each(function() {
+                    const rowTotal = parseFloat($(this).val()) || 0;
+                    overallTotal += rowTotal;
+                });
+
+                // Add the backend price to the overall total
+                const backendPrice = parseFloat($('#backend_price').val()) || 0;
+                overallTotal += backendPrice;
+
+                $('#overallTotal').val(overallTotal.toFixed(2)); // Update overall total
+            }
+
+            // Watch for changes in quantity or price to trigger calculation
+            $(document).on('input', '.qty, .price', function() {
+                const rowId = $(this).closest('.accessory-row').attr('id').replace('row-', '');
+                calculate(rowId); // Call calculate for each changed row
+            });
+
+            // Watch for changes in backend price to trigger overall total calculation
+            $('#backend_price').on('input', function() {
+                calculateOverallTotal(); // Recalculate overall total when backend price changes
+            });
+
+            // Get Accessory Data Button Click (if needed)
+            $('#getAccessoryData').on('click', function() {
+                const accessoryData = [];
+                $('.accessory-row').each(function() {
+                    const rowId = $(this).attr('id');
+                    const accessoryId = $(this).find('.accessory-select').val();
+                    const qty = $(this).find('.qty').val();
+                    const price = $(this).find('.price').val();
+                    if (accessoryId && qty && price) {
+                        accessoryData.push({
+                            accessory_id: accessoryId,
+                            qty: qty,
+                            price: price
+                        });
+                    }
+                });
+                console.log(accessoryData); // Log the collected data
+                // Optional: Send the accessoryData via AJAX to the server
+            });
+        });
+    </script>
+
+
     <script>
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
-
     </script>
-    <script>
-        $('.extra-fields-customer').click(function() {
-            $('.customer_records').clone().appendTo('.customer_records_dynamic');
-            $('.customer_records_dynamic .customer_records').addClass('single remove');
-            $('.single .extra-fields-customer').remove();
+    {{-- <script>
+        $(document).ready(function() {
+            let accessoryIndex = 1; // Start with the first row
 
-            $('.single').append('<a href="#" class="remove-field badge badge-danger"><i class="fa fa-minus"></i> Accessories</a>');
-            $('.customer_records_dynamic > .single').attr("class", "remove");
+            // Function to initialize Select2 with AJAX for dynamic accessory dropdowns
+            function initializeSelect(selector) {
+                $(selector).select2({
+                    theme: 'bootstrap4',
+                    placeholder: 'Search for an accessory',
+                    ajax: {
+                        url: '/accessories', // Replace with your actual endpoint
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term // Pass the search term to the server
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: data.map(item => ({
+                                    id: item.id,
+                                    text: item.name,
+                                    price: item.sales_price
+                                }))
+                            };
+                        },
+                        cache: true
+                    }
+                }).on('select2:select', function(e) {
+                    const selectedData = e.params.data;
+                    const rowId = $(this).closest('.accessory-row').attr('id');
+                    $(`#${rowId} .price`).val(selectedData.price);
+                });
+            }
 
-            $('.customer_records_dynamic input').each(function() {
-                var count = 0;
-                var fieldname = $(this).attr("name");
-                $(this).attr('name', fieldname + count);
-                count++;
+            // Initialize Select2 for the default row
+            initializeSelect(`#accessory-${accessoryIndex}`);
+
+            // Function to append a new accessory row
+            function appendAccessoryRow() {
+                accessoryIndex++;
+                const row = `
+            <div class="row g-3 align-items-center mb-3 accessory-row" id="row-${accessoryIndex}">
+                <div class="col-md-5">
+                    <select class="form-control accessory-select" id="accessory-${accessoryIndex}">
+                        <option value="">Search and select an accessory</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" class="form-control qty" placeholder="Quantity" id="qty-${accessoryIndex}" />
+                </div>
+                <div class="col-md-3">
+                    <input type="number" class="form-control price" placeholder="Price" id="price-${accessoryIndex}"  />
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger removeAccessory" data-row="${accessoryIndex}">X</button>
+                </div>
+            </div>`;
+                $('#accessoryContainer').append(row);
+                initializeSelect(`#accessory-${accessoryIndex}`);
+            }
+
+            // Add Accessory Button Click
+            $('#addAccessory').on('click', function() {
+                appendAccessoryRow(); // Append a new row
             });
 
-        });
+            // Remove Accessory Button Click
+            $(document).on('click', '.removeAccessory', function() {
+                const rowId = $(this).data('row');
+                $(`#row-${rowId}`).remove();
+            });
 
-        $(document).on('click', '.remove-field', function(e) {
-            $(this).parent('.remove').remove();
-            e.preventDefault();
+            // Get Accessory Data Button Click
+            $('#getAccessoryData').on('click', function() {
+                const accessoryData = [];
+                $('.accessory-row').each(function() {
+                    const rowId = $(this).attr('id');
+                    const accessoryId = $(this).find('.accessory-select').val();
+                    const qty = $(this).find('.qty').val();
+                    const price = $(this).find('.price').val();
+                    if (accessoryId && qty && price) {
+                        accessoryData.push({
+                            accessory_id: accessoryId,
+                            qty: qty,
+                            price: sales_price
+                        });
+                    }
+                });
+                console.log(accessoryData); // Log the collected data
+                // Optional: Send the accessoryData via AJAX to the server
+            });
         });
-    </script>
+    </script> --}}
 @endsection

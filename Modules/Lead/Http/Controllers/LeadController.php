@@ -9,6 +9,9 @@ use Illuminate\Routing\Controller;
 use Modules\Employee\Entities\Employee;
 use Modules\Lead\Entities\Lead;
 use Modules\Branch\Entities\Branch;
+use Modules\Lead\Entities\Customer;
+use Modules\Lead\Entities\CustomerAccessory;
+use Modules\Lead\Entities\CustomerProduct;
 use Modules\Lead\Entities\LeadResponse;
 use Modules\Product\Entities\Accessory;
 use Modules\Product\Entities\Machinery;
@@ -240,4 +243,76 @@ class LeadController extends Controller
         $accessories = Accessory::all();
         return view('lead::client.create', compact('branches','lead','machineries','accessories'));
     }
+    // AccessoryController.php
+public function getAccessories(Request $request)
+{
+    $search = $request->get('search', '');
+    $accessories = Accessory::where('name', 'LIKE', "%{$search}%")
+        ->select('id', 'name', 'sales_price')
+        ->get();
+
+    return response()->json($accessories);
+}
+public function leadToClientStore(Request $request)
+{
+    // dd($request->all());
+    $request->validate([
+        'lead_id' => 'required',
+        'name' => 'required|string',
+        'email' => 'nullable|email',
+        'mobile' => 'required|string',
+        'address' => 'required|string',
+        'product_id' => 'required',
+
+    ]);
+
+    $customer = Customer::where('lead_id', $request->lead_id)->first();
+    $lead = Lead::findOrFail($request->lead_id);
+    if ($customer) {
+        return back()->with('error', 'Customer Already Exist on Installation Queue');
+    }else{
+        $customer = Customer::create([
+            'lead_id' => $request->lead_id,
+            'branch_id' => $lead->branch_id,
+            'created_by' => auth()->user()->id,
+            'total_amount' => $request->grand_total,
+            'customer_type' => 'indor',
+            'status' => 'installation_queue',
+        ]);
+    }
+    $customerProduct = CustomerProduct::create([
+        'lead_id' => $request->lead_id,
+        'branch_id' => $lead->branch_id,
+        'customer_id' => $customer->id,
+        'created_by' => auth()->user()->id,
+        'product_id' => $request->product_id,
+        'remarks' => $request->remark,
+        'product_price' => $request->backend_price,
+        'status' => 'installation_queue',
+    ]);
+    $lead->update($request->only(['name', 'mobile', 'email', 'address']) + ['status' => 'convert']);
+
+     if ($request->has('accessories_id') && is_array($request->accessories_id)) {
+        foreach ($request->accessories_id as $index => $accessoryId) {
+
+            if ($accessoryId) {
+                CustomerAccessory::create([
+                    'customer_id' => $customer->id,
+                    'lead_id' => $lead->id,
+                    'created_by' => auth()->user()->id,
+                    'branch_id' => $lead->branch_id,
+                    'accessory_id' => $accessoryId,
+                    'accessory_qty' => $request->accessories_qty[$index] ?? 0,
+                    'accessory_price' => $request->accessories_price[$index] ?? 0,
+                    'accessory_total' => $request->accessories_total[$index] ?? 0,
+                ]);
+            }
+        }
+    }
+    dd('success');
+    return redirect(route('customer.index'))->with('success', 'Customer added successfully');
+}
+
+
+
 }

@@ -25,5 +25,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('response-delete/{id}',[LeadController::class,'responseDelete'])->name('response.destroy');
     Route::get('followups',[LeadController::class,'followups'])->name('followups');
     Route::get('lead-convert/{id}',[LeadController::class,'leadToClient'])->name('lead.clients');
+    Route::post('lead-convert/store/',[LeadController::class,'leadToClientStore'])->name('leads.convert.store');
+    // web.php
+    Route::get('/accessories', [LeadController::class, 'getAccessories'])->name('accessories.list');
+    Route::get('/products', [LeadController::class, 'getProducts'])->name('products.get');
 
 });

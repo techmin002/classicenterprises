@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('customer_accessories', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('lead_id');
             $table->integer('branch_id');
+            $table->integer('accessory_id');
+            $table->integer('customer_id');
             $table->integer('created_by');
-            $table->integer('total_amount')->nullable();
-            $table->integer('paid_amount')->nullable();
-            $table->integer('due_amount')->nullable();
-            $table->string('customer_type')->nullable();
+            $table->integer('accessory_qty');
+            $table->integer('accessory_price');
+            $table->integer('accessory_total');
             $table->string('status')->nullable();
             $table->softDeletes();
             $table->timestamps();
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('customer_accessories');
     }
 };
