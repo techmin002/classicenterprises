@@ -22,6 +22,8 @@ class CustomerProduct extends Model
         'product_id',
         'customer_id',
         'product_price',
+        'product_qty',
+        'product_total',
         'status',
         'remarks'
     ];

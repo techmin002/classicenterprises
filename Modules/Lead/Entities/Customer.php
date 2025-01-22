@@ -25,7 +25,9 @@ class Customer extends Model
         'status',
         'customer_type'
     ];
-
+    public function lead(){
+        return $this->belongsTo(Lead::class);
+    }
     protected static function newFactory(): CustomerFactory
     {
         //return CustomerFactory::new();

@@ -13,7 +13,7 @@
 
 use Modules\Lead\Http\Controllers\LeadController;
 use Illuminate\Support\Facades\Route;
-
+use Modules\Lead\Http\Controllers\CustomerInstallationController;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('leads', 'LeadController');
@@ -27,7 +27,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('lead-convert/{id}',[LeadController::class,'leadToClient'])->name('lead.clients');
     Route::post('lead-convert/store/',[LeadController::class,'leadToClientStore'])->name('leads.convert.store');
     // web.php
-    Route::get('/accessories', [LeadController::class, 'getAccessories'])->name('accessories.list');
-    Route::get('/products', [LeadController::class, 'getProducts'])->name('products.get');
-
+    Route::get('/getproducts', [LeadController::class, 'getProducts'])->name('products');
+    Route::get('/accessories', [LeadController::class, 'getAccessories'])->name('accessories');
+    Route::get('/installation-queue',[CustomerInstallationController::class,'index'])->name('installation-queue.index');
 });

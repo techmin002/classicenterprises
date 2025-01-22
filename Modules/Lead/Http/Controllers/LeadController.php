@@ -143,12 +143,11 @@ class LeadController extends Controller
     {
 
         $branches = Branch::all();
-        if(auth()->user()->role['name'] === 'Super Admin'){
-            $leads = Lead::with('responses', 'branch')->where('lead_type', 'hot')->get();
-
-        }else{
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('lead_type', 'hot')->get();
+        } else {
             $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('branch_id',$branch_id)->where('lead_type', 'hot')->get();
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('lead_type', 'hot')->get();
         }
         $type = 'hot';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
@@ -157,12 +156,11 @@ class LeadController extends Controller
     {
 
         $branches = Branch::all();
-        if(auth()->user()->role['name'] === 'Super Admin'){
-            $leads = Lead::with('responses', 'branch')->where('lead_type', 'warm')->get();
-
-        }else{
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('lead_type', 'warm')->get();
+        } else {
             $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('branch_id',$branch_id)->where('lead_type', 'warm')->get();
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('lead_type', 'warm')->get();
         }
         $type = 'warm';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
@@ -171,12 +169,11 @@ class LeadController extends Controller
     {
 
         $branches = Branch::all();
-        if(auth()->user()->role['name'] === 'Super Admin'){
-            $leads = Lead::with('responses', 'branch')->where('lead_type', 'cold')->get();
-
-        }else{
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('lead_type', 'cold')->get();
+        } else {
             $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('branch_id',$branch_id)->where('lead_type', 'cold')->get();
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('lead_type', 'cold')->get();
         }
         $type = 'cold';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
@@ -231,88 +228,106 @@ class LeadController extends Controller
         $futureOneDay = Carbon::now()->addDay();
         // Fetch records where followups are in the past or within the next one day
         $leads = Lead::where('followups', '<=', $futureOneDay)
-                    ->where('status','non_convert')
-                    ->get();
+            ->where('status', 'non_convert')
+            ->get();
         return view('lead::response.followups', compact('leads'));
     }
     public function leadToClient($id)
     {
         $lead = Lead::findOrfail($id);
-        $branches = Branch::where('status','on')->get();
+        $branches = Branch::where('status', 'on')->get();
         $machineries = Machinery::all();
         $accessories = Accessory::all();
-        return view('lead::client.create', compact('branches','lead','machineries','accessories'));
+        return view('lead::client.create', compact('branches', 'lead', 'machineries', 'accessories'));
     }
     // AccessoryController.php
-public function getAccessories(Request $request)
-{
-    $search = $request->get('search', '');
-    $accessories = Accessory::where('name', 'LIKE', "%{$search}%")
-        ->select('id', 'name', 'sales_price')
-        ->get();
+    public function getAccessories(Request $request)
+    {
+        $search = $request->get('search', '');
+        $accessories = Accessory::where('name', 'LIKE', "%{$search}%")
+            ->select('id', 'name', 'sales_price')
+            ->get();
 
-    return response()->json($accessories);
-}
-public function leadToClientStore(Request $request)
-{
-    // dd($request->all());
-    $request->validate([
-        'lead_id' => 'required',
-        'name' => 'required|string',
-        'email' => 'nullable|email',
-        'mobile' => 'required|string',
-        'address' => 'required|string',
-        'product_id' => 'required',
-
-    ]);
-
-    $customer = Customer::where('lead_id', $request->lead_id)->first();
-    $lead = Lead::findOrFail($request->lead_id);
-    if ($customer) {
-        return back()->with('error', 'Customer Already Exist on Installation Queue');
-    }else{
-        $customer = Customer::create([
-            'lead_id' => $request->lead_id,
-            'branch_id' => $lead->branch_id,
-            'created_by' => auth()->user()->id,
-            'total_amount' => $request->grand_total,
-            'customer_type' => 'indor',
-            'status' => 'installation_queue',
-        ]);
+        return response()->json($accessories);
     }
-    $customerProduct = CustomerProduct::create([
-        'lead_id' => $request->lead_id,
-        'branch_id' => $lead->branch_id,
-        'customer_id' => $customer->id,
-        'created_by' => auth()->user()->id,
-        'product_id' => $request->product_id,
-        'remarks' => $request->remark,
-        'product_price' => $request->backend_price,
-        'status' => 'installation_queue',
-    ]);
-    $lead->update($request->only(['name', 'mobile', 'email', 'address']) + ['status' => 'convert']);
+    public function getProducts(Request $request)
+    {
+        $search = $request->get('search', '');
 
-     if ($request->has('accessories_id') && is_array($request->accessories_id)) {
-        foreach ($request->accessories_id as $index => $accessoryId) {
+        // Fetch products based on the search query
+        $products = Machinery::where('name', 'like', "%{$search}%")
+            ->select('id', 'name', 'sales_price') // Include fields needed for the dropdown
+            ->limit(10) // Limit results for performance
+            ->get();
 
-            if ($accessoryId) {
-                CustomerAccessory::create([
-                    'customer_id' => $customer->id,
-                    'lead_id' => $lead->id,
-                    'created_by' => auth()->user()->id,
-                    'branch_id' => $lead->branch_id,
-                    'accessory_id' => $accessoryId,
-                    'accessory_qty' => $request->accessories_qty[$index] ?? 0,
-                    'accessory_price' => $request->accessories_price[$index] ?? 0,
-                    'accessory_total' => $request->accessories_total[$index] ?? 0,
-                ]);
+        // Return JSON response
+        return response()->json($products);
+    }
+    public function leadToClientStore(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'lead_id' => 'required',
+            'name' => 'required|string',
+            'email' => 'nullable|email',
+            'mobile' => 'required|string',
+            'address' => 'required|string',
+        ]);
+
+        $customer = Customer::where('lead_id', $request->lead_id)->first();
+        $lead = Lead::findOrFail($request->lead_id);
+        if ($customer) {
+            return back()->with('error', 'Customer Already Exist on Installation Queue');
+        } else {
+            $customer = Customer::create([
+                'lead_id' => $request->lead_id,
+                'branch_id' => $lead->branch_id,
+                'created_by' => auth()->user()->id,
+                'total_amount' => $request->grand_total,
+                'due_amount' => $request->grand_total,
+                'customer_type' => 'indor',
+                'status' => 'installation_queue',
+            ]);
+        }
+        if ($request->has('products_id') && is_array($request->products_id)) {
+            foreach ($request->products_id as $index => $productId) {
+
+                if ($productId) {
+                    $customerProduct = CustomerProduct::create([
+                        'lead_id' => $request->lead_id,
+                        'branch_id' => $lead->branch_id,
+                        'customer_id' => $customer->id,
+                        'created_by' => auth()->user()->id,
+                        'product_id' => $productId,
+                        'remarks' => $request->remark,
+                        'product_price' =>$request->products_price[$index] ?? 0,
+                        'product_qty' =>$request->products_qty[$index] ?? 0,
+                        'product_total' =>$request->products_total[$index] ?? 0,
+                        'status' => 'installation_queue',
+                    ]);
+                }
             }
         }
+        $lead->update($request->only(['name', 'mobile', 'email', 'address']) + ['status' => 'convert']);
+
+        if ($request->has('accessories_id') && is_array($request->accessories_id)) {
+            foreach ($request->accessories_id as $index => $accessoryId) {
+
+                if ($accessoryId) {
+                    CustomerAccessory::create([
+                        'customer_id' => $customer->id,
+                        'lead_id' => $lead->id,
+                        'created_by' => auth()->user()->id,
+                        'branch_id' => $lead->branch_id,
+                        'accessory_id' => $accessoryId,
+                        'accessory_qty' => $request->accessories_qty[$index] ?? 0,
+                        'accessory_price' => $request->accessories_price[$index] ?? 0,
+                        'accessory_total' => $request->accessories_total[$index] ?? 0,
+                    ]);
+                }
+            }
+        }
+        dd('success');
+        return redirect(route('customer.index'))->with('success', 'Customer added successfully');
     }
-    dd('success');
-    return redirect(route('customer.index'))->with('success', 'Customer added successfully');
-}
-
-
-
 }

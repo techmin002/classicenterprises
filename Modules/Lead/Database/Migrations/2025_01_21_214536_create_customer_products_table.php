@@ -19,6 +19,8 @@ return new class extends Migration
             $table->integer('customer_id');
             $table->integer('created_by');
             $table->integer('product_price');
+            $table->integer('product_qty');
+            $table->integer('product_total');
             $table->text('remarks')->nullable();
             $table->string('status')->nullable();
             $table->softDeletes();

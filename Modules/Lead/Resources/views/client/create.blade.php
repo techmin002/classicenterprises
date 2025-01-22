@@ -102,30 +102,20 @@
                                 <div class="card-body">
                                     <div class="container">
                                         <div class="row gy-3">
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="product_name">Product <strong
                                                             class="text-danger">*</strong></label>
-                                                    <select name="product_id" id="product_id" required
-                                                        class="form-control select2bs4">
-                                                        <option value="" selected disabled>Select Product</option>
-                                                        @foreach ($machineries as $product)
-                                                            <option value="{{ $product->id }}">{{ $product->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
+                                                            <div id="productContainer">
+                                                                <!-- Product rows will be appended here -->
+                                                            </div>
+                                                            <button type="button" id="addProduct" class="badge badge-primary mt-3">Add
+                                                                Product</button>
                                                 </div>
 
 
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="backend_price">Price <strong
-                                                            class="text-danger">*</strong></label>
-                                                    <input type="number" name="backend_price" id="backend_price"
-                                                        class="form-control" required placeholder="Enter Product Price">
-                                                </div>
-                                            </div>
+
                                         </div>
                                         <!--accessories start here-->
                                         <hr>
@@ -134,13 +124,16 @@
                                         <div id="accessoryContainer">
                                             <!-- Accessory rows will be appended here -->
                                         </div>
-                                        <div class="d-flex justify-content-between mt-3">
-                                            <button type="button" id="addAccessory" class="badge badge-primary">Add
-                                                Accessory</button>
-                                        </div>
+                                        <button type="button" id="addAccessory" class="badge badge-primary mt-3">Add
+                                            Accessory</button>
+
+
+
+
                                         <div class="mt-3">
                                             <label for="overallTotal">Overall Total: </label>
-                                            <input type="text" name="grand_total" id="overallTotal" class="form-control" readonly />
+                                            <input type="text" name="grand_total" id="overallTotal" class="form-control"
+                                                readonly />
                                         </div>
 
                                         <!--accessories end here-->
@@ -172,8 +165,158 @@
         <!-- /.content -->
     </div>
 
-
     <script>
+        $(document).ready(function() {
+            let accessoryIndex = 0;
+            let productIndex = 0;
+
+            // Function to calculate the overall total (Products + Accessories)
+            function calculateOverallTotal() {
+                let overallTotal = 0;
+
+                // Calculate total for all products
+                $('.product-row').each(function() {
+                    const rowTotal = parseFloat($(this).find('.product-row-total').val()) || 0;
+                    overallTotal += rowTotal;
+                });
+
+                // Calculate total for all accessories
+                $('.accessory-row').each(function() {
+                    const rowTotal = parseFloat($(this).find('.accessory-row-total').val()) || 0;
+                    overallTotal += rowTotal;
+                });
+
+                $('#overallTotal').val(overallTotal.toFixed(2)); // Update overall total
+            }
+
+            // Function to calculate totals for a row (either product or accessory)
+            function calculateRowTotal(rowId, type) {
+                const qty = $(`#${type}-${rowId} .${type}-qty`).val();
+                const price = $(`#${type}-${rowId} .${type}-price`).val();
+                const rowTotal = qty * price;
+
+                $(`#${type}-${rowId} .${type}-row-total`).val(rowTotal.toFixed(2));
+                calculateOverallTotal(); // Recalculate overall total
+            }
+
+            // Initialize Select2 for a dynamic dropdown
+            function initializeSelect(selector, type) {
+                // Check and set the correct endpoint based on type
+                const endpoint = type === 'product' ? '/getproducts' : '/accessories';
+
+                $(selector).select2({
+                    theme: 'bootstrap4',
+                    placeholder: `Search for a ${type}`,
+                    ajax: {
+                        url: endpoint, // Use the dynamic endpoint
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            }; // Send the search term to the server
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: data.map(item => ({
+                                    id: item.id,
+                                    text: item.name,
+                                    price: item.sales_price
+                                }))
+                            };
+                        },
+                        cache: true
+                    }
+                }).on('select2:select', function(e) {
+                    const selectedData = e.params.data;
+                    const rowId = $(this).closest(`.${type}-row`).attr('id');
+                    $(`#${rowId} .${type}-price`).val(selectedData.price);
+                    calculateRowTotal(rowId.replace(`${type}-`, ''), type); // Recalculate for the row
+                });
+            }
+
+
+            // Append new product row
+            $('#addProduct').on('click', function() {
+                productIndex++;
+                const row = `
+                    <div class="row g-3 align-items-center mb-3 product-row" id="product-${productIndex}">
+                        <div class="col-md-4">
+                            <select class="form-control product-select" name="products_id[]" id="product-select-${productIndex}">
+                                <option value="">Search and select a product</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" name="products_qty[]" value="1" class="form-control product-qty" placeholder="Quantity">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" name="products_price[]" class="form-control product-price" placeholder="Price">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" name="products_total[]" class="form-control product-row-total" readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="badge badge-danger removeProduct">X</button>
+                        </div>
+                    </div>`;
+                $('#productContainer').append(row);
+                initializeSelect(`#product-select-${productIndex}`, 'product');
+            });
+
+            // Append new accessory row
+            $('#addAccessory').on('click', function() {
+                accessoryIndex++;
+                const row = `
+                    <div class="row g-3 align-items-center mb-3 accessory-row" id="accessory-${accessoryIndex}">
+                        <div class="col-md-4">
+                            <select class="form-control accessory-select" name="accessories_id[]" id="accessory-select-${accessoryIndex}">
+                                <option value="">Search and select an accessory</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" name="accessories_qty[]" value="1" class="form-control accessory-qty" placeholder="Quantity">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" name="accessories_price[]" class="form-control accessory-price" placeholder="Price">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" name="accessories_total[]" class="form-control accessory-row-total" readonly>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="badge badge-danger removeAccessory">X</button>
+                        </div>
+                    </div>`;
+                $('#accessoryContainer').append(row);
+                initializeSelect(`#accessory-select-${accessoryIndex}`, 'accessory');
+            });
+
+            // Remove product row
+            $(document).on('click', '.removeProduct', function() {
+                $(this).closest('.product-row').remove();
+                calculateOverallTotal(); // Recalculate overall total after removal
+            });
+
+            // Remove accessory row
+            $(document).on('click', '.removeAccessory', function() {
+                $(this).closest('.accessory-row').remove();
+                calculateOverallTotal(); // Recalculate overall total after removal
+            });
+
+            // Watch for changes in quantity or price for products
+            $(document).on('input', '.product-qty, .product-price', function() {
+                const rowId = $(this).closest('.product-row').attr('id').replace('product-', '');
+                calculateRowTotal(rowId, 'product');
+            });
+
+            // Watch for changes in quantity or price for accessories
+            $(document).on('input', '.accessory-qty, .accessory-price', function() {
+                const rowId = $(this).closest('.accessory-row').attr('id').replace('accessory-', '');
+                calculateRowTotal(rowId, 'accessory');
+            });
+        });
+    </script>
+
+    {{-- <script>
         $(document).ready(function() {
             let accessoryIndex = 1; // Start with the first row
             let overallTotal = 0; // Variable to store the overall total
@@ -310,7 +453,7 @@
                 // Optional: Send the accessoryData via AJAX to the server
             });
         });
-    </script>
+    </script> --}}
 
 
     <script>
