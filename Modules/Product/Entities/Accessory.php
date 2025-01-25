@@ -22,10 +22,11 @@ class Accessory extends Model
         'feature',
         'image',
         'status',
+        'units',
         'backend_price',
         'images'
     ];
-    
+
     protected static function newFactory()
     {
         return \Modules\Product\Database\factories\AccessoryFactory::new();

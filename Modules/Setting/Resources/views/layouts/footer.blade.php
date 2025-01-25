@@ -51,6 +51,9 @@
 
 <!-- Custom Scripts -->
 <script>
+    $(document).ready(function() {
+            $('.summernote').summernote();
+        });
     $(function() {
         // Initialize Select2 Elements
         $('.select2').select2();
@@ -92,9 +95,8 @@
 
         // Bootstrap Duallistbox
         $('.duallistbox').bootstrapDualListbox();
-        $(document).ready(function() {
-            $('.summernote').summernote();
-        });
+
+
         // Color Picker
         $('.my-colorpicker1').colorpicker();
         $('.my-colorpicker2').colorpicker().on('colorpickerChange', function(event) {

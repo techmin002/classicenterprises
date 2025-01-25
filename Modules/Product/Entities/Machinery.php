@@ -20,12 +20,13 @@ class Machinery extends Model
         'description',
         'feature',
         'image',
+        'units',
         'status',
         'backend_price',
         'images',
         'slug'
     ];
-    
+
     protected static function newFactory()
     {
         return \Modules\Product\Database\factories\MachineryFactory::new();

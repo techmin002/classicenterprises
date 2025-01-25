@@ -89,6 +89,7 @@ class AccessoryController extends Controller
             'category_id' => $request->category_id,
             'feature' => $request->feature,
             'sales_price' => $request->price,
+            'units' => $request->units ?? 'qty',
             'status' => $request->status ?? 'on',
             'images' => $imagesJson, // JSON-encoded string of multiple images
         ]);
@@ -136,7 +137,7 @@ class AccessoryController extends Controller
         ]);
         $accessory = Accessory::findOrfail($id);
         // Handle single image upload
-        
+
         if ($request->hasFile('image')) {
             $image = time() . '.' . $request->image->extension();
             $request->image->move(public_path('upload/images/accessory'), $image);
@@ -177,6 +178,7 @@ class AccessoryController extends Controller
             'category_id' => $request->category_id,
             'feature' => $request->feature,
             'sales_price' => $request->price,
+            'units' => $request->units ?? 'qty',
             'status' => $request->status ?? 'on',
             'images' => $imagesJson, // JSON-encoded string of multiple images
         ]);

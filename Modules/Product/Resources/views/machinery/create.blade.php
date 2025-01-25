@@ -128,7 +128,21 @@
                                                 @error('image')
                                                     <p style="color: red">{{ $message }}</p>
                                                 @enderror
-                                                
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="">Units</label>
+                                                <select name="units" class="form-control" id="">
+                                                    <option value="" selected disabled>Select Unit</option>
+                                                    <option value="qty">Quantity</option>
+                                                    <option value="ltr">Liter</option>
+                                                    <option value="kg">Kilogram</option>
+                                                    <option value="meter">Meter</option>
+                                                    <option value="inch">Inch</option>
+                                                    <option value="other">Other</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -162,10 +176,6 @@
         </section>
         <!-- /.content -->
     </div>
-@endsection
-@section('script')
-
-    <!-- image preview -->
     <script type="text/javascript">
         function showPreview1(event) {
             if (event.target.files.length > 0) {
@@ -176,48 +186,5 @@
             }
         }
     </script>
-    <script>
-        $('textarea.summernote').summernote({
-            placeholder: 'Enter Description',
-            tabsize: 2,
-            height: 250,
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-                ['fontname', ['fontname']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'hr']],
-                ['view', ['fullscreen', 'codeview']],
-                ['help', ['help']]
-            ],
-        });
-    </script>
-    <script>
-        $('.extra-fields-customer').click(function() {
-            $('.customer_records').clone().appendTo('.customer_records_dynamic');
-            $('.customer_records_dynamic .customer_records').addClass('single remove');
-            $('.single .extra-fields-customer').remove();
-            $('.single').append(
-                '<a href="#" class="remove-field btn-remove-customer badge badge-danger">Remove Product</a>');
-            $('.customer_records_dynamic > .single').attr("class", "remove");
 
-            $('.customer_records_dynamic input').each(function() {
-                var count = 0;
-                var fieldname = $(this).attr("name");
-                $(this).attr('name', fieldname + count);
-                count++;
-            });
-
-        });
-
-        $(document).on('click', '.remove-field', function(e) {
-            $(this).parent('.remove').remove();
-            e.preventDefault();
-        });
-    </script>
-   
 @endsection

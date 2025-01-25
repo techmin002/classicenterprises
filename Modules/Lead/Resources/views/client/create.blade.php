@@ -221,7 +221,8 @@
                                 results: data.map(item => ({
                                     id: item.id,
                                     text: item.name,
-                                    price: item.sales_price
+                                    price: item.sales_price,
+                                    units: item.units
                                 }))
                             };
                         },
@@ -231,6 +232,7 @@
                     const selectedData = e.params.data;
                     const rowId = $(this).closest(`.${type}-row`).attr('id');
                     $(`#${rowId} .${type}-price`).val(selectedData.price);
+                    $(`#${rowId} .${type}-units`).val(selectedData.units);
                     calculateRowTotal(rowId.replace(`${type}-`, ''), type); // Recalculate for the row
                 });
             }
@@ -246,8 +248,11 @@
                                 <option value="">Search and select a product</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <input type="number" name="products_qty[]" value="1" class="form-control product-qty" placeholder="Quantity">
+                        </div>
+                        <div class="col-md-1">
+                            <input type="text" name="products_units[]" class="form-control product-units" readonly>
                         </div>
                         <div class="col-md-2">
                             <input type="number" name="products_price[]" class="form-control product-price" placeholder="Price">
@@ -273,8 +278,11 @@
                                 <option value="">Search and select an accessory</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <input type="number" name="accessories_qty[]" value="1" class="form-control accessory-qty" placeholder="Quantity">
+                        </div>
+                         <div class="col-md-1">
+                            <input type="text" name="accessories_units[]" class="form-control accessory-units" readonly>
                         </div>
                         <div class="col-md-2">
                             <input type="number" name="accessories_price[]" class="form-control accessory-price" placeholder="Price">
@@ -316,144 +324,6 @@
         });
     </script>
 
-    {{-- <script>
-        $(document).ready(function() {
-            let accessoryIndex = 1; // Start with the first row
-            let overallTotal = 0; // Variable to store the overall total
-
-            // Function to initialize Select2 with AJAX for dynamic accessory dropdowns
-            function initializeSelect(selector) {
-                $(selector).select2({
-                    theme: 'bootstrap4',
-                    placeholder: 'Search for an accessory',
-                    ajax: {
-                        url: '/accessories', // Replace with your actual endpoint
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                search: params.term // Pass the search term to the server
-                            };
-                        },
-                        processResults: function(data) {
-                            return {
-                                results: data.map(item => ({
-                                    id: item.id,
-                                    text: item.name,
-                                    price: item.sales_price
-                                }))
-                            };
-                        },
-                        cache: true
-                    }
-                }).on('select2:select', function(e) {
-                    const selectedData = e.params.data;
-                    const rowId = $(this).closest('.accessory-row').attr('id');
-                    $(`#${rowId} .price`).val(selectedData.price);
-                    calculate(rowId); // Recalculate total when accessory is selected
-                });
-            }
-
-            // Initialize Select2 for the default row
-            initializeSelect(`#accessory-${accessoryIndex}`);
-
-            // Function to append a new accessory row
-            function appendAccessoryRow() {
-                accessoryIndex++;
-                const row = `
-                    <div class="row g-3 align-items-center mb-3 accessory-row" id="row-${accessoryIndex}">
-                        <div class="col-md-3">
-                            <select class="form-control accessory-select" name="accessories_id[]" id="accessory-${accessoryIndex}">
-                                <option value="">Search and select an accessory</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="number" name="accessories_qty[]"  class="form-control qty" placeholder="Quantity" id="qty-${accessoryIndex}" />
-                        </div>
-                        <div class="col-md-3">
-                            <input type="number" name="accessories_price[]" class="form-control price" placeholder="Price" id="price-${accessoryIndex}" />
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" name="accessories_total[]" class="form-control row-total" id="row-total-${accessoryIndex}" readonly />
-                        </div>
-                        <div class="col-md-1">
-                            <button type="button" class="btn btn-danger removeAccessory" data-row="${accessoryIndex}">X</button>
-                        </div>
-                    </div>`;
-                $('#accessoryContainer').append(row);
-                initializeSelect(`#accessory-${accessoryIndex}`);
-            }
-
-            // Add Accessory Button Click
-            $('#addAccessory').on('click', function() {
-                appendAccessoryRow(); // Append a new row
-            });
-
-            // Remove Accessory Button Click
-            $(document).on('click', '.removeAccessory', function() {
-                const rowId = $(this).data('row');
-                $(`#row-${rowId}`).remove();
-                calculateOverallTotal(); // Recalculate overall total after removal
-            });
-
-            // Calculate total for the row
-            function calculate(rowId) {
-                const qty = $(`#row-${rowId} .qty`).val();
-                const price = $(`#row-${rowId} .price`).val();
-                const rowTotal = qty * price;
-
-                $(`#row-${rowId} .row-total`).val(rowTotal.toFixed(2)); // Update row total
-
-                calculateOverallTotal(); // Recalculate overall total
-            }
-
-            // Calculate the overall total
-            function calculateOverallTotal() {
-                overallTotal = 0;
-                $('.row-total').each(function() {
-                    const rowTotal = parseFloat($(this).val()) || 0;
-                    overallTotal += rowTotal;
-                });
-
-                // Add the backend price to the overall total
-                const backendPrice = parseFloat($('#backend_price').val()) || 0;
-                overallTotal += backendPrice;
-
-                $('#overallTotal').val(overallTotal.toFixed(2)); // Update overall total
-            }
-
-            // Watch for changes in quantity or price to trigger calculation
-            $(document).on('input', '.qty, .price', function() {
-                const rowId = $(this).closest('.accessory-row').attr('id').replace('row-', '');
-                calculate(rowId); // Call calculate for each changed row
-            });
-
-            // Watch for changes in backend price to trigger overall total calculation
-            $('#backend_price').on('input', function() {
-                calculateOverallTotal(); // Recalculate overall total when backend price changes
-            });
-
-            // Get Accessory Data Button Click (if needed)
-            $('#getAccessoryData').on('click', function() {
-                const accessoryData = [];
-                $('.accessory-row').each(function() {
-                    const rowId = $(this).attr('id');
-                    const accessoryId = $(this).find('.accessory-select').val();
-                    const qty = $(this).find('.qty').val();
-                    const price = $(this).find('.price').val();
-                    if (accessoryId && qty && price) {
-                        accessoryData.push({
-                            accessory_id: accessoryId,
-                            qty: qty,
-                            price: price
-                        });
-                    }
-                });
-                console.log(accessoryData); // Log the collected data
-                // Optional: Send the accessoryData via AJAX to the server
-            });
-        });
-    </script> --}}
 
 
     <script>
@@ -461,99 +331,4 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
     </script>
-    {{-- <script>
-        $(document).ready(function() {
-            let accessoryIndex = 1; // Start with the first row
-
-            // Function to initialize Select2 with AJAX for dynamic accessory dropdowns
-            function initializeSelect(selector) {
-                $(selector).select2({
-                    theme: 'bootstrap4',
-                    placeholder: 'Search for an accessory',
-                    ajax: {
-                        url: '/accessories', // Replace with your actual endpoint
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                search: params.term // Pass the search term to the server
-                            };
-                        },
-                        processResults: function(data) {
-                            return {
-                                results: data.map(item => ({
-                                    id: item.id,
-                                    text: item.name,
-                                    price: item.sales_price
-                                }))
-                            };
-                        },
-                        cache: true
-                    }
-                }).on('select2:select', function(e) {
-                    const selectedData = e.params.data;
-                    const rowId = $(this).closest('.accessory-row').attr('id');
-                    $(`#${rowId} .price`).val(selectedData.price);
-                });
-            }
-
-            // Initialize Select2 for the default row
-            initializeSelect(`#accessory-${accessoryIndex}`);
-
-            // Function to append a new accessory row
-            function appendAccessoryRow() {
-                accessoryIndex++;
-                const row = `
-            <div class="row g-3 align-items-center mb-3 accessory-row" id="row-${accessoryIndex}">
-                <div class="col-md-5">
-                    <select class="form-control accessory-select" id="accessory-${accessoryIndex}">
-                        <option value="">Search and select an accessory</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input type="number" class="form-control qty" placeholder="Quantity" id="qty-${accessoryIndex}" />
-                </div>
-                <div class="col-md-3">
-                    <input type="number" class="form-control price" placeholder="Price" id="price-${accessoryIndex}"  />
-                </div>
-                <div class="col-md-1">
-                    <button type="button" class="btn btn-danger removeAccessory" data-row="${accessoryIndex}">X</button>
-                </div>
-            </div>`;
-                $('#accessoryContainer').append(row);
-                initializeSelect(`#accessory-${accessoryIndex}`);
-            }
-
-            // Add Accessory Button Click
-            $('#addAccessory').on('click', function() {
-                appendAccessoryRow(); // Append a new row
-            });
-
-            // Remove Accessory Button Click
-            $(document).on('click', '.removeAccessory', function() {
-                const rowId = $(this).data('row');
-                $(`#row-${rowId}`).remove();
-            });
-
-            // Get Accessory Data Button Click
-            $('#getAccessoryData').on('click', function() {
-                const accessoryData = [];
-                $('.accessory-row').each(function() {
-                    const rowId = $(this).attr('id');
-                    const accessoryId = $(this).find('.accessory-select').val();
-                    const qty = $(this).find('.qty').val();
-                    const price = $(this).find('.price').val();
-                    if (accessoryId && qty && price) {
-                        accessoryData.push({
-                            accessory_id: accessoryId,
-                            qty: qty,
-                            price: sales_price
-                        });
-                    }
-                });
-                console.log(accessoryData); // Log the collected data
-                // Optional: Send the accessoryData via AJAX to the server
-            });
-        });
-    </script> --}}
 @endsection

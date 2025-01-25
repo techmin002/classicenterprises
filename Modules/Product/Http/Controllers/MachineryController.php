@@ -84,6 +84,7 @@ class MachineryController extends Controller
             'category_id' => $request->category_id,
             'feature' => $request->feature,
             'sales_price' => $request->price,
+            'units' => $request->units ?? 'qty',
             'status' => $request->status ?? 'on',
             'images' => $imagesJson, // JSON-encoded string of multiple images
         ]);
@@ -131,7 +132,7 @@ class MachineryController extends Controller
         ]);
         $machiney = Machinery::findOrfail($id);
         // Handle single image upload
-        
+
         if ($request->hasFile('image')) {
             $image = time() . '.' . $request->image->extension();
             $request->image->move(public_path('upload/images/machinery'), $image);
@@ -172,6 +173,7 @@ class MachineryController extends Controller
             'category_id' => $request->category_id,
             'feature' => $request->feature,
             'sales_price' => $request->price,
+            'units' => $request->units ?? 'qty',
             'status' => $request->status ?? 'on',
             'images' => $imagesJson, // JSON-encoded string of multiple images
         ]);

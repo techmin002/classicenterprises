@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('brand_id');
             $table->string('offer_status')->nullable();
             $table->string('category_id');
+            $table->string('units')->nullable();
             $table->longText('description')->nullable();
             $table->longText('feature')->nullable();
             $table->string('image')->nullable();

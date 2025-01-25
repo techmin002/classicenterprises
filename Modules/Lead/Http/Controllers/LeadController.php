@@ -245,7 +245,7 @@ class LeadController extends Controller
     {
         $search = $request->get('search', '');
         $accessories = Accessory::where('name', 'LIKE', "%{$search}%")
-            ->select('id', 'name', 'sales_price')
+            ->select('id', 'name', 'sales_price','units')
             ->get();
 
         return response()->json($accessories);
@@ -256,7 +256,7 @@ class LeadController extends Controller
 
         // Fetch products based on the search query
         $products = Machinery::where('name', 'like', "%{$search}%")
-            ->select('id', 'name', 'sales_price') // Include fields needed for the dropdown
+            ->select('id', 'name', 'sales_price','units') // Include fields needed for the dropdown
             ->limit(10) // Limit results for performance
             ->get();
 
@@ -327,7 +327,6 @@ class LeadController extends Controller
                 }
             }
         }
-        dd('success');
-        return redirect(route('customer.index'))->with('success', 'Customer added successfully');
+        return redirect(route('installation-queue.index'))->with('success', 'Customer added successfully');
     }
 }

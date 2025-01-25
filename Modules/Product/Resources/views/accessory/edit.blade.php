@@ -59,14 +59,14 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        
+
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="brand">Brand</label>
                                                 <select name="brand_id" id="" class="form-control" required>
                                                     <option value="" selected disabled>Select Brand</option>
                                                     @foreach($brands as $brand)
-                                                        <option value="{{ $brand->id }}" 
+                                                        <option value="{{ $brand->id }}"
                                                             {{ $brand->id == $accessory->brand_id ? 'selected' : '' }}>
                                                             {{ $brand->name }}
                                                         </option>
@@ -77,14 +77,14 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        
+
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="category">Category</label>
                                                 <select name="category_id" id="" class="form-control" required>
                                                     <option value="" selected disabled>Select Category</option>
                                                     @foreach($categories as $category)
-                                                        <option value="{{ $category->id }}" 
+                                                        <option value="{{ $category->id }}"
                                                             {{ $category->id == $accessory->category_id ? 'selected' : '' }}>
                                                             {{ $category->name }}
                                                         </option>
@@ -95,7 +95,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        
+
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="description">Description</label>
@@ -149,7 +149,21 @@
                                                     <img src="{{ asset('upload/images/accessories/'.$image) }}" width="100px" style="border:1px solid black"alt="">
                                                     @endforeach
                                                 </div>
-                                                
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="">Units</label>
+                                                <select name="units" class="form-control" id="">
+                                                    <option value="" selected disabled>Select Unit</option>
+                                                    <option value="qty">Quantity</option>
+                                                    <option value="ltr"@if($accessory['units'] == 'ltr')selected @endif>Liter</option>
+                                                    <option value="kg" @if($accessory['units'] == 'kg')selected @endif>Kilogram</option>
+                                                    <option value="meter" @if($accessory['units'] == 'meter')selected @endif>Meter</option>
+                                                    <option value="inch" @if($accessory['units'] == 'inch')selected @endif>Inch</option>
+                                                    <option value="other" @if($accessory['units'] == 'other')selected @endif>Other</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -188,10 +202,7 @@
         </section>
         <!-- /.content -->
     </div>
-@endsection
-@section('script')
 
-    <!-- image preview -->
     <script type="text/javascript">
         function showPreview1(event) {
             if (event.target.files.length > 0) {
@@ -202,48 +213,6 @@
             }
         }
     </script>
-    <script>
-        $('textarea.summernote').summernote({
-            placeholder: 'Enter Description',
-            tabsize: 2,
-            height: 250,
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-                ['fontname', ['fontname']],
-                ['fontsize', ['fontsize']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['height', ['height']],
-                ['table', ['table']],
-                ['insert', ['link', 'picture', 'hr']],
-                ['view', ['fullscreen', 'codeview']],
-                ['help', ['help']]
-            ],
-        });
-    </script>
-    <script>
-        $('.extra-fields-customer').click(function() {
-            $('.customer_records').clone().appendTo('.customer_records_dynamic');
-            $('.customer_records_dynamic .customer_records').addClass('single remove');
-            $('.single .extra-fields-customer').remove();
-            $('.single').append(
-                '<a href="#" class="remove-field btn-remove-customer badge badge-danger">Remove Product</a>');
-            $('.customer_records_dynamic > .single').attr("class", "remove");
 
-            $('.customer_records_dynamic input').each(function() {
-                var count = 0;
-                var fieldname = $(this).attr("name");
-                $(this).attr('name', fieldname + count);
-                count++;
-            });
 
-        });
-
-        $(document).on('click', '.remove-field', function(e) {
-            $(this).parent('.remove').remove();
-            e.preventDefault();
-        });
-    </script>
-   
 @endsection
