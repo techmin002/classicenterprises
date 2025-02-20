@@ -23,7 +23,9 @@ class Customer extends Model
         'paid_amount',
         'due_amount',
         'status',
-        'customer_type'
+        'customer_type',
+        'install_date',
+        'converted_by'
     ];
     public function lead(){
         return $this->belongsTo(Lead::class);

@@ -60,6 +60,7 @@ class LeadController extends Controller
         // dd($request->all());
         $lead = new Lead();
         $lead->name = $request->input('name') ?? 'N/A';
+        $lead->lead_source = $request->input('lead_source') ?? 'N/A';
         $lead->email = $request->input('email') ?? NULL;
         $lead->address = $request->input('address') ?? 'N/A';
         $lead->mobile = $request->input('mobile');
@@ -116,6 +117,7 @@ class LeadController extends Controller
         $lead->email = $request->input('email');
         $lead->address = $request->input('address');
         $lead->mobile = $request->input('mobile');
+        $lead->lead_source = $request->input('lead_source') ?? 'N/A';
         $lead->message = $request->input('message');
         $lead->save();
 

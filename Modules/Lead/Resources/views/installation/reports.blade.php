@@ -1,10 +1,10 @@
 @extends('setting::layouts.master')
 
-@section('title', " Installation Queue")
+@section('title', " Installation Reports")
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active">Installation Queue</li>
+        <li class="breadcrumb-item active">Installation Reports</li>
     </ol>
 @endsection
 
@@ -15,12 +15,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Installation Queue</h1>
+                        <h1>Installation Reports</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Installation Queue</li>
+                            <li class="breadcrumb-item active">Installation Reports</li>
                         </ol>
                     </div>
                 </div>
@@ -36,7 +36,10 @@
                         <!-- /.card -->
 
                         <div class="card">
-                         
+                            <div class="card-header">
+
+                              
+                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">

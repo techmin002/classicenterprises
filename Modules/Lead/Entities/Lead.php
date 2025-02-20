@@ -24,6 +24,7 @@ class Lead extends Model
         'lead_type',
         'followups',
         'status',
+        'lead_source',
         'deleted_at'
     ];
 

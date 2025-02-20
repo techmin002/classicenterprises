@@ -10,8 +10,8 @@
                 <div class="modal-body">
                     <div class="container">
                         <div class="row gy-3">
-                           
-                            
+
+
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Name</label>
                                 <input class="form-control" placeholder="Enter name" type="text" value="{{ $exp->name }}" name="name" id="name">
@@ -21,13 +21,22 @@
                                 <input class="form-control" placeholder="Enter mobile number" value="{{ $exp->mobile }}" type="text" name="mobile" id="mobile">
                             </div>
                             <div class="mt-3 col-lg-6">
+                                <label class="form-label12">Alternate Contact Number </label>
+                                <input class="form-control" placeholder="Enter alternate mobile number" type="tel"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" pattern="\d{10}"maxlength="10" name="landline" id="landline"
+                                title="Please enter exactly 10 digits">
+                            </div>
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Email</label>
                                 <input class="form-control" placeholder="" type="email" value="{{ $exp->email }}" name="email">
                             </div>
-                           
-                            <div class="mt-3 col-lg-6">
+
+                            <div class="mt-3 col-lg-12">
                                 <label class="form-label12">Address</label>
                                 <input class="form-control" placeholder="" type="text" value="{{ $exp->address }}" name="address" id="address">
+                            </div>
+                            <div class="mt-3 col-lg-12">
+                                <label class="form-label12">Lead Source</label>
+                                <input class="form-control" placeholder="Eg. Facebook, wahatsApp Etc." value="{{ $exp->lead_source }}" type="text" name="lead_source" id="lead_source">
                             </div>
                             <div class="mt-3 col-lg-12">
                                 <label class="form-label12">Message </label>
@@ -37,7 +46,7 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-start">
-    
+
                     <button type="submit" name="submit" id="btnSubmit" class="btn btn-success">Save Item</button>
 
                     <button type="cancel" data-dismiss="modal" class="btn btn-danger">Cancel</button>

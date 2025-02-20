@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Lead\Database\factories\CustomerAccessoryFactory;
+use Modules\Product\Entities\Accessory;
 
 class CustomerAccessory extends Model
 {
@@ -26,7 +27,11 @@ class CustomerAccessory extends Model
         'accessory_price',
         'accessory_total'
     ];
-
+    public function accessory()
+    {
+        return $this->belongsTo(Accessory::class,'accessory_id','id');
+    }
+  
     protected static function newFactory(): CustomerAccessoryFactory
     {
         //return CustomerAccessoryFactory::new();

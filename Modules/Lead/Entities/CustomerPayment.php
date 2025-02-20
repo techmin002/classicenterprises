@@ -19,10 +19,10 @@ class CustomerPayment extends Model
         'lead_id',
         'branch_id',
         'created_by',
-        'product_id',
         'cutsomer_id',
         'paid_amount',
         'receipt',
+        'payment_method',
         'status',
     ];
 

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->longText('address');
             $table->longText('message')->nullable();
             $table->string('branch_id')->nullable();
+            $table->string('lead_source')->nullable();
             $table->string('created_by')->nullable();
             $table->string('lead_type')->default('cold');
             $table->dateTime('followups')->nullable();

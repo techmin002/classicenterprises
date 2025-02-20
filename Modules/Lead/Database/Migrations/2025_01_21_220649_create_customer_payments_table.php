@@ -15,11 +15,11 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->integer('lead_id');
             $table->integer('branch_id');
-            $table->integer('product_id');
             $table->integer('cutsomer_id');
             $table->integer('created_by');
             $table->integer('paid_amount');
             $table->string('receipt')->nullable();
+            $table->string('payment_method')->nullable();
             $table->string('status')->nullable();
             $table->softDeletes();
             $table->timestamps();

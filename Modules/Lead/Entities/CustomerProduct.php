@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Lead\Database\factories\CustomerProductFactory;
+use Modules\Product\Entities\Machinery;
 
 class CustomerProduct extends Model
 {
@@ -27,7 +28,10 @@ class CustomerProduct extends Model
         'status',
         'remarks'
     ];
-
+    public function product()
+    {
+        return $this->belongsTo(Machinery::class,'product_id','id');
+    }
     protected static function newFactory(): CustomerProductFactory
     {
         //return CustomerProductFactory::new();

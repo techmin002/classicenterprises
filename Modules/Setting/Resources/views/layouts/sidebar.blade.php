@@ -304,14 +304,14 @@
                               </a>
                           </li>
                           <li class="nav-item">
-                              <a href="{{ route('products-brands.index') }}"
-                                  class="nav-link @if (request()->routeIs('products-brands.index')) active @endif">
+                              <a href="{{ route('installation.reports') }}"
+                                  class="nav-link @if (request()->routeIs('installation.reports')) active @endif">
                                   <p>Installation Reports</p>
                               </a>
                           </li>
                           <li class="nav-item">
-                              <a href="{{ route('products-machineries.index') }}"
-                                  class="nav-link @if (request()->routeIs('products-machineries.index')) active @endif">
+                              <a href="{{ route('installation.complete') }}"
+                                  class="nav-link @if (request()->routeIs('installation.complete')) active @endif">
                                   <p>Installation Complete</p>
                               </a>
                           </li>

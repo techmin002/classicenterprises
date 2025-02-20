@@ -16,10 +16,13 @@ return new class extends Migration
             $table->integer('lead_id');
             $table->integer('branch_id');
             $table->integer('created_by');
+            $table->integer('converted_by')->nullable();
+            $table->string('user_name')->nullable();
             $table->integer('total_amount')->nullable();
             $table->integer('paid_amount')->nullable();
             $table->integer('due_amount')->nullable();
             $table->string('customer_type')->nullable();
+            $table->timestamp('install_date')->nullable();
             $table->string('status')->nullable();
             $table->softDeletes();
             $table->timestamps();
