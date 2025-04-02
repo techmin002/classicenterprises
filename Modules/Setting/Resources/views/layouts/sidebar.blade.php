@@ -131,6 +131,33 @@
                           </ul>
                       </li>
                   @endcan
+                  <li
+                  class="nav-item {{ request()->routeIs('users.*', 'salecategories.*') ? 'menu-is-opening menu-open' : '' }}">
+                  <a href="#" class="nav-link" {{ request()->routeIs('users.*', 'salecategories.*') ? 'active' : '' }}>
+                      <i class="nav-icon fas fa-users"></i>
+                      <p>
+                          Sales Category
+                          <i class="right fas fa-angle-left"></i>
+                      </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                      <li class="nav-item">
+                          <a href="{{ route('salecategories.retailler') }}"
+                              class="nav-link {{ request()->routeIs('salecategories.retailler') ? 'active' : '' }}">
+                              {{-- <i class="far fa-circle nav-icon"></i> --}}
+                              <p>Retailler</p>
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                          <a href="{{ route('salecategories.wholeseller') }}"
+                              class="nav-link {{ request()->routeIs('salecategories.wholeseller') ? 'active' : '' }}">
+                              {{-- <i class="far fa-circle nav-icon"></i> --}}
+                              <p>Wholeseller</p>
+                          </a>
+                      </li>
+
+                  </ul>
+              </li>
                   @if (auth()->user()->access_type === 'Admin')
                   @else
                       @can('access_branch')

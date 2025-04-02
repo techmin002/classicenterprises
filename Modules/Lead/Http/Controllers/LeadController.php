@@ -61,6 +61,7 @@ class LeadController extends Controller
         $lead = new Lead();
         $lead->name = $request->input('name') ?? 'N/A';
         $lead->lead_source = $request->input('lead_source') ?? 'N/A';
+        $lead->sales_type = $request->input('sales_type') ?? 'N/A';
         $lead->email = $request->input('email') ?? NULL;
         $lead->address = $request->input('address') ?? 'N/A';
         $lead->mobile = $request->input('mobile');
@@ -118,6 +119,7 @@ class LeadController extends Controller
         $lead->address = $request->input('address');
         $lead->mobile = $request->input('mobile');
         $lead->lead_source = $request->input('lead_source') ?? 'N/A';
+        $lead->sales_type = $request->input('sales_type') ?? 'N/A';
         $lead->message = $request->input('message');
         $lead->save();
 
@@ -330,5 +332,29 @@ class LeadController extends Controller
             }
         }
         return redirect(route('installation-queue.index'))->with('success', 'Customer added successfully');
+    }
+    public function retailler()
+    {
+        $branches = Branch::all();
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('sales_type','retailler')->get();
+        } else {
+            $branch_id = auth()->user()->branch_id;
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('sales_type','retailler')->get();
+        }
+        $type = 'Retailler';
+        return view('lead::leads.index', compact('leads', 'type', 'branches'));
+    }
+    public function wholeseller()
+    {
+        $branches = Branch::all();
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('sales_type','wholeseller')->get();
+        } else {
+            $branch_id = auth()->user()->branch_id;
+            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('sales_type','wholeseller')->get();
+        }
+        $type = 'Wholeseller';
+        return view('lead::leads.index', compact('leads', 'type', 'branches'));
     }
 }

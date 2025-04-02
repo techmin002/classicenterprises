@@ -20,6 +20,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('hot-leads',[LeadController::class,'hotLeads'])->name('hot-leads');
     Route::get('warm-leads',[LeadController::class,'warmLeads'])->name('warm-leads');
     Route::get('cold-leads',[LeadController::class,'coldLeads'])->name('cold-leads');
+    Route::get('salecategories',[LeadController::class,'salecategories'])->name('salecategories');
+    Route::get('salecategories.retailler',[LeadController::class,'retailler'])->name('salecategories.retailler');
+    Route::get('salecategories.wholeseller',[LeadController::class,'wholeseller'])->name('salecategories.wholeseller');
+
     Route::post('response-store',[LeadController::class,'responseStore'])->name('response.store');
     Route::post('response-update/{id}',[LeadController::class,'responseUpdate'])->name('response.update');
     Route::delete('response-delete/{id}',[LeadController::class,'responseDelete'])->name('response.destroy');

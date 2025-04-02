@@ -11,7 +11,6 @@
                     <div class="container">
                         <div class="row gy-3">
 
-
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Name</label>
                                 <input class="form-control" placeholder="Enter name" type="text" name="name"
@@ -62,9 +61,24 @@
                                 <label class="form-label12">Address</label>
                                 <input class="form-control" placeholder="" type="text" name="address" id="address">
                             </div>
-                            <div class="mt-3 col-lg-12">
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Lead Source</label>
-                                <input class="form-control" placeholder="Eg. Facebook, wahatsApp Etc." type="text" name="lead_source" id="lead_source">
+                                <select name="lead_source" id="" class="form-control">
+                                    <option value="" selected disabled>Select Lead Source</option>
+                                    <option value="facebook" >Facebook</option>
+                                    <option value="instagram" >Instagram</option>
+                                    <option value="whatsapp" >WhatsApp</option>
+                                    <option value="other" >Other</option>
+
+                                </select>
+                            </div>
+                            <div class="mt-3 col-lg-6">
+                                <label class="form-label12">Sales Category</label>
+                                <select name="sales_type" id="" class="form-control">
+                                    <option value="" selected disabled>Select Sales Category</option>
+                                    <option value="retailler" >Retailler</option>
+                                    <option value="wholeseller" >Wholeseller</option>
+                                </select>
                             </div>
                             <div class="mt-3 col-lg-12">
                                 <label class="form-label12">Message </label>

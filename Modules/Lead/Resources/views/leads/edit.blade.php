@@ -34,9 +34,26 @@
                                 <label class="form-label12">Address</label>
                                 <input class="form-control" placeholder="" type="text" value="{{ $exp->address }}" name="address" id="address">
                             </div>
-                            <div class="mt-3 col-lg-12">
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Lead Source</label>
-                                <input class="form-control" placeholder="Eg. Facebook, wahatsApp Etc." value="{{ $exp->lead_source }}" type="text" name="lead_source" id="lead_source">
+                                <select name="lead_source" id="" class="form-control">
+                                    <option value="" selected disabled>Select Lead Source</option>
+                                    <option value="facebook" @if($exp['lead_source'] == 'facebook') selected @endif>Facebook</option>
+                                    <option value="instagram" @if($exp['lead_source'] == 'instagram') selected @endif>Instagram</option>
+                                    <option value="whatsapp" @if($exp['lead_source'] == 'whatsapp') selected @endif>WhatsApp</option>
+                                    <option value="other" @if($exp['lead_source'] == 'other') selected @endif>Other</option>
+
+                                </select>
+                            </div>
+                            <div class="mt-3 col-lg-6">
+                                <label class="form-label12">Sales Category</label>
+                                <select name="sales_type" id="" class="form-control">
+                                    <option value="" selected disabled>Select Sales Category</option>
+                                    <option value="retailler" @if($exp['sales_type'] == 'retailler') selected @endif>Retailler</option>
+                                    <option value="wholeseller" @if($exp['sales_type'] == 'wholeseller') selected @endif>Wholeseller</option>
+
+
+                                </select>
                             </div>
                             <div class="mt-3 col-lg-12">
                                 <label class="form-label12">Message </label>

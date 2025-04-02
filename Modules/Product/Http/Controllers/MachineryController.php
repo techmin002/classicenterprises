@@ -41,10 +41,10 @@ class MachineryController extends Controller
             'price' => ['required'],
             'brand_id' => ['required'],
             'category_id' => ['required'],
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            // 'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp'],
             'description' => ['required'],
             'feature' => ['required'],
-            'images.*' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            // 'images.*' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp'],
         ]);
 
         // Handle single image upload
