@@ -24,6 +24,7 @@ class Customer extends Model
         'due_amount',
         'status',
         'customer_type',
+        'sales_type',
         'install_date',
         'converted_by'
     ];

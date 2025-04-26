@@ -20,56 +20,121 @@ class CustomerInstallationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($sale_type)
     {
-        $user = auth()->user();
+        $saleType = ucfirst($sale_type);
+        if($sale_type == 'retailler')
+        {
+            $user = auth()->user();
         if (auth()->user()->role['name'] == 'Super Admin') {
             $customers = Customer::with('lead')
             ->where('status', 'installation_queue')
+            ->where('sales_type','retailler')
             ->orderBy('created_at', 'desc')
             ->get();
         } else {
             $customers = Customer::with('lead')
             ->where('status', 'installation_queue')
             ->where('branch_id', $user->branch_id)
+            ->where('sales_type','retailler')
             ->orderBy('created_at', 'desc')
             ->get();
         }
-        return view('lead::installation.queue', compact('customers'));
+        }else{
+            $user = auth()->user();
+        if (auth()->user()->role['name'] == 'Super Admin') {
+            $customers = Customer::with('lead')
+            ->where('status', 'installation_queue')
+            ->where('sales_type','wholeseller')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        } else {
+            $customers = Customer::with('lead')
+            ->where('status', 'installation_queue')
+            ->where('branch_id', $user->branch_id)
+            ->where('sales_type','wholeseller')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        }
+        }
+
+        return view('lead::installation.queue', compact('customers','saleType'));
     }
-    public function installationReport()
+    public function installationReport($sale_type)
     {
         $user = auth()->user();
+        $saleType = ucfirst($sale_type);
+        if($sale_type == 'retailler')
+        {
         if (auth()->user()->role['name'] == 'Super Admin') {
             $customers = Customer::with('lead')
             ->where('status', 'installation_report')
+            ->where('sales_type','retailler')
             ->orderBy('created_at', 'desc')
             ->get();
         } else {
             $customers = Customer::with('lead')
             ->where('status', 'installation_report')
+            ->where('sales_type','retailler')
             ->where('branch_id', $user->branch_id)
             ->orderBy('created_at', 'desc')
             ->get();
         }
-        return view('lead::installation.reports', compact('customers'));
+    }else{
+        if (auth()->user()->role['name'] == 'Super Admin') {
+            $customers = Customer::with('lead')
+            ->where('status', 'installation_report')
+            ->where('sales_type','wholeseller')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        } else {
+            $customers = Customer::with('lead')
+            ->where('status', 'installation_report')
+            ->where('sales_type','wholeseller')
+            ->where('branch_id', $user->branch_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        }
     }
-    public function installationComplete()
+        return view('lead::installation.reports', compact('customers','saleType'));
+    }
+    public function installationComplete($sale_type)
     {
         $user = auth()->user();
+        $saleType = ucfirst($sale_type);
+        if($sale_type == 'retailler')
+        {
         if (auth()->user()->role['name'] == 'Super Admin') {
             $customers = Customer::with('lead')
             ->where('status', 'installation_complete')
+            ->where('sales_type','retailler')
             ->orderBy('created_at', 'desc')
             ->get();
         } else {
             $customers = Customer::with('lead')
             ->where('status', 'installation_complete')
+            ->where('sales_type','retailler')
             ->where('branch_id', $user->branch_id)
             ->orderBy('created_at', 'desc')
             ->get();
         }
-        return view('lead::installation.complete', compact('customers'));
+    }else{
+        if (auth()->user()->role['name'] == 'Super Admin') {
+            $customers = Customer::with('lead')
+            ->where('status', 'installation_complete')
+            ->where('sales_type','wholeseller')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        } else {
+            $customers = Customer::with('lead')
+            ->where('status', 'installation_complete')
+            ->where('sales_type','wholeseller')
+            ->where('branch_id', $user->branch_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        }
+    }
+        return view('lead::installation.complete', compact('customers','saleType'));
     }
     /**
      * Show the form for creating a new resource.

@@ -56,7 +56,8 @@
                   </li>
 
                   @can('access_user_management')
-                      <li class="nav-item {{ request()->routeIs('users.*', 'roles.*') ? 'menu-is-opening menu-open' : '' }}">
+                      <li
+                          class="nav-item {{ request()->routeIs('users.*', 'roles.*') ? 'menu-is-opening menu-open' : '' }}">
                           <a href="#" class="nav-link" {{ request()->routeIs('users.*', 'roles.*') ? 'active' : '' }}>
                               <i class="nav-icon fas fa-users"></i>
                               <p>
@@ -92,7 +93,8 @@
                   @can('access_user_management')
                       <li
                           class="nav-item {{ request()->routeIs('users.*', 'roles.*') ? 'menu-is-opening menu-open' : '' }}">
-                          <a href="#" class="nav-link" {{ request()->routeIs('users.*', 'roles.*') ? 'active' : '' }}>
+                          <a href="#" class="nav-link"
+                              {{ request()->routeIs('users.*', 'roles.*') ? 'active' : '' }}>
                               <i class="nav-icon fas fa-users"></i>
                               <p>
                                   Leads
@@ -132,32 +134,98 @@
                       </li>
                   @endcan
                   <li
-                  class="nav-item {{ request()->routeIs('users.*', 'salecategories.*') ? 'menu-is-opening menu-open' : '' }}">
-                  <a href="#" class="nav-link" {{ request()->routeIs('users.*', 'salecategories.*') ? 'active' : '' }}>
-                      <i class="nav-icon fas fa-users"></i>
-                      <p>
-                          Sales Category
-                          <i class="right fas fa-angle-left"></i>
-                      </p>
-                  </a>
-                  <ul class="nav nav-treeview">
-                      <li class="nav-item">
-                          <a href="{{ route('salecategories.retailler') }}"
-                              class="nav-link {{ request()->routeIs('salecategories.retailler') ? 'active' : '' }}">
-                              {{-- <i class="far fa-circle nav-icon"></i> --}}
-                              <p>Retailler</p>
-                          </a>
-                      </li>
-                      <li class="nav-item">
-                          <a href="{{ route('salecategories.wholeseller') }}"
-                              class="nav-link {{ request()->routeIs('salecategories.wholeseller') ? 'active' : '' }}">
-                              {{-- <i class="far fa-circle nav-icon"></i> --}}
-                              <p>Wholeseller</p>
-                          </a>
-                      </li>
+                      class="nav-item {{ request()->routeIs('users.*', 'salecategories.*') ? 'menu-is-opening menu-open' : '' }}">
+                      <a href="#" class="nav-link"
+                          {{ request()->routeIs('users.*', 'salecategories.*') ? 'active' : '' }}>
+                          <i class="nav-icon fas fa-users"></i>
+                          <p>
+                              Sales Category
+                              <i class="right fas fa-angle-left"></i>
+                          </p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                              <a href="{{ route('salecategories.retailler') }}"
+                                  class="nav-link {{ request()->routeIs('salecategories.retailler') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Retailler</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('salecategories.wholeseller') }}"
+                                  class="nav-link {{ request()->routeIs('salecategories.wholeseller') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Wholeseller</p>
+                              </a>
+                          </li>
 
-                  </ul>
-              </li>
+                      </ul>
+                  </li>
+                  <li class="nav-header text-primary"><b>Sales Detail's</b></li>
+                  @can('access_sliders')
+                      <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                          <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                              <i class="nav-icon fas fa-image"></i>
+                              <p>
+                                Retails
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('installation-queue.index','retailler') }}"
+                                      class="nav-link @if (request()->routeIs('installation-queue.index','retailler')) active @endif">
+                                      <p>Installation Queue</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('installation.reports','retailler') }}"
+                                      class="nav-link @if (request()->routeIs('installation.reports','retailler')) active @endif">
+                                      <p>Installation Reports</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('installation.complete','retailler') }}"
+                                      class="nav-link @if (request()->routeIs('installation.complete','retailler')) active @endif">
+                                      <p>Installation Complete</p>
+                                  </a>
+                              </li>
+
+                          </ul>
+                      </li>
+                  @endcan
+                  @can('access_sliders')
+                      <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                          <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                              <i class="nav-icon fas fa-image"></i>
+                              <p>
+                                Wholesale
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('installation-queue.index','wholeseller') }}"
+                                      class="nav-link @if (request()->routeIs('installation-queue.index','wholeseller')) active @endif">
+                                      <p>Installation Queue</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('installation.reports','wholeseller') }}"
+                                      class="nav-link @if (request()->routeIs('installation.reports','wholeseller')) active @endif">
+                                      <p>Installation Reports</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('installation.complete','wholeseller') }}"
+                                      class="nav-link @if (request()->routeIs('installation.complete','wholeseller')) active @endif">
+                                      <p>Installation Complete</p>
+                                  </a>
+                              </li>
+
+                          </ul>
+                      </li>
+                  @endcan
                   @if (auth()->user()->access_type === 'Admin')
                   @else
                       @can('access_branch')
@@ -314,38 +382,7 @@
                           </ul>
                       </li>
                   @endcan
-                  @can('access_sliders')
-                  <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
-                      <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
-                          <i class="nav-icon fas fa-image"></i>
-                          <p>
-                             Installation Mgnt
-                              <i class="right fas fa-angle-left"></i>
-                          </p>
-                      </a>
-                      <ul class="nav nav-treeview">
-                          <li class="nav-item">
-                              <a href="{{ route('installation-queue.index') }}"
-                                  class="nav-link @if (request()->routeIs('installation-queue.index')) active @endif">
-                                  <p>Installation Queue</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('installation.reports') }}"
-                                  class="nav-link @if (request()->routeIs('installation.reports')) active @endif">
-                                  <p>Installation Reports</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('installation.complete') }}"
-                                  class="nav-link @if (request()->routeIs('installation.complete')) active @endif">
-                                  <p>Installation Complete</p>
-                              </a>
-                          </li>
 
-                      </ul>
-                  </li>
-              @endcan
                   @can('access_sliders')
                       <li class="nav-item @if (request()->routeIs('services.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('services.*')) active @endif">

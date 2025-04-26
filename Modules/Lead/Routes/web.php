@@ -33,11 +33,11 @@ Route::group(['middleware' => 'auth'], function () {
     // web.php
     Route::get('/getproducts', [LeadController::class, 'getProducts'])->name('products');
     Route::get('/accessories', [LeadController::class, 'getAccessories'])->name('accessories');
-    Route::get('/installation-queue',[CustomerInstallationController::class,'index'])->name('installation-queue.index');
+    Route::get('/installation-queue/{sale_type}',[CustomerInstallationController::class,'index'])->name('installation-queue.index');
     Route::get('/installation-create/{id}',[CustomerInstallationController::class,'create'])->name('installation-create.create');
     Route::post('/installation-store/{id}',[CustomerInstallationController::class,'store'])->name('store.installation.customer');
-    Route::get('/installation-reports',[CustomerInstallationController::class,'installationReport'])->name('installation.reports');
-    Route::get('/installation-complete',[CustomerInstallationController::class,'installationComplete'])->name('installation.complete');
+    Route::get('/installation-reports/{sale_type}',[CustomerInstallationController::class,'installationReport'])->name('installation.reports');
+    Route::get('/installation-complete/{sale_type}',[CustomerInstallationController::class,'installationComplete'])->name('installation.complete');
 
 
 });

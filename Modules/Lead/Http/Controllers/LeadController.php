@@ -290,6 +290,7 @@ class LeadController extends Controller
                 'total_amount' => $request->grand_total,
                 'due_amount' => $request->grand_total,
                 'customer_type' => 'indor',
+                'sales_type' => $lead->sales_type,
                 'status' => 'installation_queue',
             ]);
         }
