@@ -162,6 +162,36 @@
                       </ul>
                   </li>
                   <li class="nav-header text-primary"><b>Sales Detail's</b></li>
+                  <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                    <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                        <i class="nav-icon fas fa-image"></i>
+                        <p>
+                          CC Installation
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('installation-queue.index','classic_customer') }}"
+                                class="nav-link @if (request()->routeIs('installation-queue.index','classic_customer')) active @endif">
+                                <p>Installation Queue</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('installation.reports','classic_customer') }}"
+                                class="nav-link @if (request()->routeIs('installation.reports','classic_customer')) active @endif">
+                                <p>Installation Reports</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('installation.complete','classic_customer') }}"
+                                class="nav-link @if (request()->routeIs('installation.complete','classic_customer')) active @endif">
+                                <p>Installation Complete</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
                   @can('access_sliders')
                       <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">

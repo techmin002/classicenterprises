@@ -76,8 +76,9 @@
                                 <label class="form-label12">Sales Category</label>
                                 <select name="sales_type" id="" class="form-control">
                                     <option value="" selected disabled>Select Sales Category</option>
-                                    <option value="retailler" >Retailler</option>
-                                    <option value="wholeseller" >Wholeseller</option>
+                                    <option value="classic_customer">Classic Customer</option>
+                                    <option value="retailler">Retailler</option>
+                                    <option value="wholeseller">Wholeseller</option>
                                 </select>
                             </div>
                             <div class="mt-3 col-lg-12">

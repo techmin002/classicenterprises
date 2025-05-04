@@ -290,7 +290,7 @@ class LeadController extends Controller
                 'total_amount' => $request->grand_total,
                 'due_amount' => $request->grand_total,
                 'customer_type' => 'indor',
-                'sales_type' => $lead->sales_type,
+                'sales_type' => $lead->sales_type ?? 'classic_customer',
                 'status' => 'installation_queue',
             ]);
         }
@@ -332,7 +332,7 @@ class LeadController extends Controller
                 }
             }
         }
-        return redirect(route('installation-queue.index'))->with('success', 'Customer added successfully');
+        return redirect()->route('installation-queue.index',['sale_type' => $lead->sales_type])->with('success', 'Customer added successfully');
     }
     public function retailler()
     {

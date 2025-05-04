@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('paid_amount')->nullable();
             $table->integer('due_amount')->nullable();
             $table->string('customer_type')->nullable();
-            $table->string('sales_type')->default('retailer');
+            $table->string('sales_type')->default('classic_customer');
             $table->timestamp('install_date')->nullable();
             $table->string('status')->nullable();
             $table->softDeletes();
