@@ -66,22 +66,13 @@
                                                 <td class="text-center">Rs.{{ $exp->due_amount }}</td>
 
                                                 <td>
-
-
-                                                        <button id="delete" class="btn btn-danger btn-sm" disabled
-                                                            onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
-                                                            <i class="fa fa-trash"></i>
-                                                            <form id="destroy{{ $exp->id }}" class="d-none"
-                                                                action="{{ route('leads.destroy', $exp->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('delete')
-                                                            </form>
-                                                        </button>
-                                                        <a type="button" href="{{ route('installation-create.create',$exp->id) }}" class="btn btn-secondary btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
-                                                            <i class="fa fa-user-plus"></i>
-                                                        </a>
-                                                </td>
+                                                    <a type="button" href="{{ route('customer.payment.details',$customer->id) }}" class="btn btn-primary btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
+                                                        Payment Detail's
+                                                    </a>
+                                                    <a type="button" href="{{ route('customer.payment.details',$customer->id) }}" class="btn btn-info btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
+                                                        View Detail's
+                                                    </a>
+                                            </td>
                                             </tr>
                                         @endforeach
 

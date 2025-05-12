@@ -38,6 +38,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/installation-store/{id}',[CustomerInstallationController::class,'store'])->name('store.installation.customer');
     Route::get('/installation-reports/{sale_type}',[CustomerInstallationController::class,'installationReport'])->name('installation.reports');
     Route::get('/installation-complete/{sale_type}',[CustomerInstallationController::class,'installationComplete'])->name('installation.complete');
-
+    Route::get('customer/payment/details/{id}',[CustomerInstallationController::class,'customerPaymentDetails'])->name('customer.payment.details');
+    Route::get('customer/details/{id}',[CustomerInstallationController::class,'customerDetails'])->name('customer.details');
 
 });

@@ -94,7 +94,7 @@ class CustomerInstallationController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->get();
             }
-        } else {
+        } elseif ($sale_type == 'wholeseller') {
             if (auth()->user()->role['name'] == 'Super Admin') {
                 $customers = Customer::with('lead')
                     ->where('status', 'installation_report')
@@ -105,6 +105,21 @@ class CustomerInstallationController extends Controller
                 $customers = Customer::with('lead')
                     ->where('status', 'installation_report')
                     ->where('sales_type', 'wholeseller')
+                    ->where('branch_id', $user->branch_id)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+        }else{
+            if (auth()->user()->role['name'] == 'Super Admin') {
+                $customers = Customer::with('lead')
+                    ->where('status', 'installation_report')
+                    ->where('sales_type', 'classic_customer')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            } else {
+                $customers = Customer::with('lead')
+                    ->where('status', 'installation_report')
+                    ->where('sales_type', 'classic_customer')
                     ->where('branch_id', $user->branch_id)
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -131,7 +146,7 @@ class CustomerInstallationController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->get();
             }
-        } else {
+        } elseif ($sale_type == 'wholeseller') {
             if (auth()->user()->role['name'] == 'Super Admin') {
                 $customers = Customer::with('lead')
                     ->where('status', 'installation_complete')
@@ -142,6 +157,21 @@ class CustomerInstallationController extends Controller
                 $customers = Customer::with('lead')
                     ->where('status', 'installation_complete')
                     ->where('sales_type', 'wholeseller')
+                    ->where('branch_id', $user->branch_id)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+        }else{
+            if (auth()->user()->role['name'] == 'Super Admin') {
+                $customers = Customer::with('lead')
+                    ->where('status', 'installation_complete')
+                    ->where('sales_type', 'classic_customer')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            } else {
+                $customers = Customer::with('lead')
+                    ->where('status', 'installation_complete')
+                    ->where('sales_type', 'classic_customer')
                     ->where('branch_id', $user->branch_id)
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -266,7 +296,7 @@ class CustomerInstallationController extends Controller
             'cutsomer_id' => $customer->id,
             'payment_method' => $request['method'],
         ]);
-        return redirect(route('installation-queue.index'))->with('success', 'Customer added successfully');
+        return redirect()->route('installation-queue.index', ['sale_type' => $lead->sales_type])->with('success', 'Customer added successfully');
     }
 
 
@@ -301,5 +331,16 @@ class CustomerInstallationController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function customerPaymentDetails($id)
+    {
+        $customer = Customer::where('id',$id)->with('lead','payments')->first();
+        return view('lead::installation.payment',compact('customer'));
+    }
+    public function customerDetails($id)
+    {
+        $customer = Customer::where('id',$id)->with('lead','products','accessories')->first();
+        // dd($customer);
+        return view('lead::installation.customer_details',compact('customer'));
     }
 }

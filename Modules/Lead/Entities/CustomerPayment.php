@@ -19,7 +19,7 @@ class CustomerPayment extends Model
         'lead_id',
         'branch_id',
         'created_by',
-        'cutsomer_id',
+        'customer_id',
         'paid_amount',
         'receipt',
         'payment_method',

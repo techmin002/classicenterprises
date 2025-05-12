@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->integer('lead_id');
             $table->integer('branch_id');
-            $table->integer('cutsomer_id');
+            $table->integer('customer_id');
             $table->integer('created_by');
             $table->integer('paid_amount');
             $table->string('receipt')->nullable();

@@ -31,8 +31,20 @@ class Customer extends Model
     public function lead(){
         return $this->belongsTo(Lead::class);
     }
+    public function payments()
+    {
+        return $this->hasMany(CustomerPayment::class);
+    }
     protected static function newFactory(): CustomerFactory
     {
         //return CustomerFactory::new();
+    }
+    public function products()
+    {
+        return $this->hasMany(CustomerProduct::class);
+    }
+    public function accessories()
+    {
+        return $this->hasMany(CustomerAccessory::class);
     }
 }
