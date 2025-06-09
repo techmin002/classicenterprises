@@ -14,6 +14,7 @@
 use Modules\Product\Http\Controllers\ProductController;
 use Modules\Product\Http\Controllers\MachineryController;
 use Modules\Product\Http\Controllers\AccessoryController;
+use Modules\Product\Http\Controllers\InventoryController;
 use Modules\Product\Http\Controllers\ProductBrandController;
 use Modules\Product\Http\Controllers\ProductCategoryController;
 
@@ -30,6 +31,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('products-categories', ProductCategoryController::class);
     Route::get('category/status/{id}', [ProductCategoryController::class,'status'])->name('product-category.status');
+    Route::get('inventories/{type}',[InventoryController::class,'index'])->name('inventories.index');
+    Route::get('inventories/create',[InventoryController::class,'create'])->name('inventories.create');
 
 });
 

@@ -39,7 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('employee-insentive/store', [PayrollController::class, 'storeEmployeeInsentive'])->name('employeeinsentive.store');
     Route::get('employee-insentive/delete/{id}', [PayrollController::class, 'deleteEmployeeinsentive'])->name('employeeinsentive.delete');
     Route::put('employee-insentive/update/{id}', [PayrollController::class, 'updateEmployeeinsentive'])->name('employeeinsentive.update');
-    
+
     //employee advanced pay
     Route::post('employee-advancedpay/store', [PayrollController::class, 'storeEmployeeadvancedpay'])->name('employeeadvancedpay.store');
     Route::get('employee-advancedpay/delete/{id}', [PayrollController::class, 'deleteEmployeeadvancedpay'])->name('employeeadvancedpay.delete');

@@ -412,7 +412,37 @@
                           </ul>
                       </li>
                   @endcan
-
+                  @can('access_sliders')
+                  <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                      <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                          <i class="nav-icon fas fa-image"></i>
+                          <p>
+                              Inventory Mgnt
+                              <i class="right fas fa-angle-left"></i>
+                          </p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                              <a href="{{ route('inventories.index','machinery') }}"
+                                  class="nav-link @if (request()->routeIs('inventories.index','machinery')) active @endif">
+                                  <p>Machineries</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{ route('inventories.index','machinery') }}"
+                                class="nav-link @if (request()->routeIs('inventories.index','accessory')) active @endif">
+                                <p>Accessories</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('inventories.create') }}"
+                                class="nav-link @if (request()->routeIs('inventories.create')) active @endif">
+                                <p>Purchase</p>
+                            </a>
+                        </li>
+                      </ul>
+                  </li>
+              @endcan
                   @can('access_sliders')
                       <li class="nav-item @if (request()->routeIs('services.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('services.*')) active @endif">
