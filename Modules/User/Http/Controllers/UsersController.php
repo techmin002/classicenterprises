@@ -33,7 +33,7 @@ class UsersController extends Controller
 
 
     public function store(Request $request) {
-        dd($request->all());
+        // dd($request->all());
         abort_if(Gate::denies('access_user_management'), 403);
 
         $request->validate([
@@ -141,7 +141,7 @@ class UsersController extends Controller
     }
 
     public function status($id)
-    { 
+    {
         abort_if(Gate::denies('access_user_management'), 403);
         $user = User::findOrfail($id);
         if($user->status == 'on')
@@ -151,7 +151,7 @@ class UsersController extends Controller
             $status = 'on';
         }
         $user->update([
-           'status' => $status 
+           'status' => $status
         ]);
         return redirect()->route('users.index')->with('success', 'Status Updated Successfully');
     }
