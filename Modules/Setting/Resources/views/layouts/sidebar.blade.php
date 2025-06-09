@@ -493,6 +493,33 @@
                           </ul>
                       </li>
                   @endcan
+                  {{-- @can('access_blogs') --}}
+                      <li class="nav-item {{ request()->routeIs('pettycash.*') ? 'menu-is-opening menu-open' : '' }}">
+                          <a href="#" class="nav-link" {{ request()->routeIs('pettycash.*') ? 'active' : '' }}>
+                              <i class="nav-icon fas fa-newspaper"></i>
+                              <p>
+                                  Petty Cash
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('pettycash-addcash.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-addcash.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Cash Add</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('pettycash-request.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Cash Request </p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                  {{-- @endcan --}}
                   @can('access_advertisements')
                       <li
                           class="nav-item {{ request()->routeIs('advertisements.*') ? 'menu-is-opening menu-open' : '' }}">

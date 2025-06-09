@@ -15,5 +15,6 @@
     "Employee": true,
     "Product": true,
     "Lead": true,
-    "Customer": true
+    "Customer": true,
+    "Pettycash": true
 }
