@@ -16,5 +16,6 @@
     "Product": true,
     "Lead": true,
     "Customer": true,
-    "Pettycash": true
+    "Pettycash": true,
+    "PetrolMGNT": true
 }

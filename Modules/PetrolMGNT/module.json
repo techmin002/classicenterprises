@@ -1,0 +1,11 @@
+{
+    "name": "PetrolMGNT",
+    "alias": "petrolmgnt",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\PetrolMGNT\\Providers\\PetrolMGNTServiceProvider"
+    ],
+    "files": []
+}
