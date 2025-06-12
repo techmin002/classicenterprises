@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('petty_cashes', function (Blueprint $table) {
+        Schema::create('petty_cash_adds', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
-            $table->string('amount');
+            $table->decimal('amount', 10, 2)->default(0);
             $table->string('date');
             $table->string('month');
-            $table->string('remaining_cash');
+            $table->decimal('lm_remaining_cash', 10, 2)->default(0);
+            $table->decimal('remaining_cash', 10, 2)->default(0);
+            $table->decimal('total_amount', 10, 2)->default(0);
             $table->string('slug');
             $table->string('branch_id')->nullable();
             $table->string('created_by')->nullable();
@@ -32,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('petty_cashes');
+        Schema::dropIfExists('petty_cash_adds');
     }
 };

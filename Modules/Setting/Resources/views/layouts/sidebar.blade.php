@@ -517,6 +517,13 @@
                                       <p>Cash Request </p>
                                   </a>
                               </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('pettycash-transfer.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-transfer.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Cash Transfer </p>
+                                  </a>
+                              </li>
                           </ul>
                       </li>
                   {{-- @endcan --}}

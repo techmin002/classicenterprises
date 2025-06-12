@@ -52,8 +52,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label class="form-label12">Last Month Remaining Cash</label>
-                                <input type="text" class="form-control" name="remaining_cash" value="remaining_cash"
-                                    readonly>
+                                <input type="number" class="form-control" name="lm_remaining_cash" required>
                             </div>
                         </div>
                         <div class="col-lg-12">

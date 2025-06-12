@@ -36,11 +36,14 @@
                         <!-- /.card -->
 
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title float-right"><a class="btn btn-primary text-white" data-toggle="modal"
-                                        data-target="#exampleModalCenter"><i class="fa fa-plus"></i> Create</a> </h3>
-                                @include('pettycash::cash_add.create')
-                            </div>
+                            @if (Auth::user()->role->name === 'Super Admin')
+                                <div class="card-header">
+                                    <h3 class="card-title float-right"><a class="btn btn-primary text-white"
+                                            data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus"></i>
+                                            Create</a> </h3>
+                                    @include('pettycash::cash_add.create')
+                                </div>
+                            @endif
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
@@ -51,6 +54,8 @@
                                             <th class="text-center">Amount</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Month</th>
+                                            <th class="text-center">Last Month Remaning Amount</th>
+                                            <th class="text-center">Total Amount</th>
                                             <th class="text-center">Remaning Amount</th>
                                             <th class="text-center">Branch</th>
                                             <th class="text-center">Status</th>
@@ -64,8 +69,10 @@
                                                 <td class="text-center">{{ $value->title }}</td>
                                                 <td class="text-center">{{ $value->amount }}</td>
                                                 <td class="text-center">{{ $value->date }}</td>
-                                               <td class="text-center">{{ $value->month_name }}</td>
-                                                <td class="text-center">{{ $value->remaning_amount }}</td>
+                                                <td class="text-center">{{ $value->month_name }}</td>
+                                                <td class="text-center">{{ $value->lm_remaining_cash }}</td>
+                                                <td class="text-center">{{ $value->total_amount }}</td>
+                                                <td class="text-center">{{ $value->remaining_cash }}</td>
                                                 <td class="text-center">{{ $value->branch->name ?? 'N/A' }}</td>
                                                 <td class="text-center">
                                                     @if ($value->status == 'on')
@@ -89,8 +96,6 @@
         ">
                                                         <i class="fa fa-trash"></i>
                                                         <form id="destroy{{ $value->id }}" class="d-none"
-
-
                                                             action="{{ route('pettycash-addcash.destroy', $value->id) }}"
                                                             method="POST">
                                                             @csrf
@@ -110,6 +115,7 @@
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Month</th>
                                             <th class="text-center">Remaning Amount</th>
+                                            <th class="text-center">Total Amount</th>
                                             <th class="text-center">Branch</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>

@@ -26,15 +26,15 @@
           </div>
         </div><!-- /.container-fluid -->
       </section>
-  
+
       <!-- Main content -->
       <section class="content">
         <div class="container-fluid">
           <div class="row">
             <div class="col-12">
-             
+
               <!-- /.card -->
-  
+
               <div class="card">
                 <div class="card-header">
                   <h3 class="card-title float-right"><a class="btn btn-info text-white" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus"></i> Create</a> </h3>
@@ -53,7 +53,7 @@
                       <th class="text-center">Expense Type</th>
                       <th class="text-center">Receipt</th>
                       <th class="text-center">Action</th>
-                      
+
                     </tr>
                     </thead>
                     <tbody>
@@ -90,7 +90,7 @@
                         </td>
                       </tr>
                       @endforeach
-                      
+
                     </tbody>
                     <tfoot>
                     <tr>
@@ -118,5 +118,5 @@
       </section>
       <!-- /.content -->
     </div>
-   
+
 @endsection

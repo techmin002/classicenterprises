@@ -111,14 +111,6 @@ class PettyCashRequestController extends Controller
         return redirect()->back()->with('success', 'Petty Cash Request Deleted!');
     }
 
-    public function approve($id)
-    {
-        $request = PettyCashRequest::findOrFail($id);
-        $request->status = 'approved';
-        $request->save();
-
-        return redirect()->back()->with('success', 'Request approved.');
-    }
 
     public function reject($id)
     {
