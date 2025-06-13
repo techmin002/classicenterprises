@@ -5,9 +5,9 @@ namespace Modules\Pettycash\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Modules\Branch\Entities\Branch;
-use Modules\Pettycash\Database\factories\PettyCashFactory;
+use Modules\Pettycash\Database\factories\PettyCashAddFactory;
 
-class PettyCash extends Model
+class PettyCashAdd extends Model
 {
     use HasFactory;
 
@@ -19,6 +19,8 @@ class PettyCash extends Model
         'amount',
         'date',
         'month',
+        'lm_remaining_cash',
+        'total_amount',
         'remaining_cash',
         'slug',
         'branch_id',

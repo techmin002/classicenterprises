@@ -9,8 +9,8 @@
                 <div class="modal-body">
                     <div class="container">
                         <div class="row gy-3">
-                           
-                            
+
+
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Title</label>
                                 <input class="form-control" placeholder="Enter Title" type="text" name="title" id="title">
@@ -27,12 +27,12 @@
                                 <label class="form-label12">Mode of Payment </label>
                                 <select class="form-control" name="mode">
                                     <option value="" selected disabled>Select Payment Mode</option>
-                                    <option value="cash">Cash</option>
+                                    <option value="petty cash">Petty Cash</option>
                                     <option value="online">Online</option>
                                     <option value="cheque">Cheque</option>
                                 </select>
                             </div>
-                           
+
                             <div class="mt-3 col-lg-6" data-select2-id="select2-data-5-a5wr">
                                 <label class="form-label12">Expense Type</label>
                                 <select class="form-control" name="categoryId">
@@ -42,7 +42,7 @@
                                 @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="mt-3 col-lg-6" data-select2-id="select2-data-5-a5wr">
                                 <label class="form-label12">Receipt <small>(Optional)</small></label>
                                 <input type="file" class="form-contro" name="receipt">
@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-start">
-    
+
                     <button type="submit" name="submit" id="btnSubmit" class="btn btn-success">Save Item</button>
 
                     <button type="cancel" data-dismiss="modal" class="btn btn-danger">Cancel</button>

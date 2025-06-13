@@ -15,12 +15,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Petty Cash</h1>
+                        <h1>Petty Cash Request</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Petty Cash</li>
+                            <li class="breadcrumb-item active">Petty Cash Request</li>
                         </ol>
                     </div>
                 </div>
@@ -81,19 +81,29 @@
                                                 <td class="text-center">{{ $req->date }}</td>
                                                 <td class="text-center">{{ $req->month_name }}</td>
                                                 <td class="text-center">{{ $req->description }}</td>
-                                                <td class="text-center"> <button class="btn btn-warning btn-sm">
-                                                        {{ ucfirst($req->status) }}
-                                                    </button></td>
+                                                <td class="text-center">
+                                                    @if ($req->status === 'approved')
+                                                        <button class="btn btn-success btn-sm">
+                                                            Approved
+                                                        </button>
+                                                    @elseif ($req->status === 'rejected')
+                                                        <button class="btn btn-danger btn-sm">
+                                                            Rejected
+                                                        </button>
+                                                    @else
+                                                        <button class="btn btn-warning btn-sm">
+                                                            Pending
+                                                        </button>
+                                                    @endif
+
+                                                </td>
                                                 @if (Auth::user()->role->name === 'Super Admin')
-                                                    <td class="text-center">
+                                                    <td>
                                                         @if ($req->status)
-                                                            <form method="POST"
-                                                                action="{{ route('pettycash-request.approve', $req->id) }}"
-                                                                style="display:inline;">
-                                                                @csrf
-                                                                <button type="submit"
-                                                                    class="btn btn-success">Approve</button>
-                                                            </form>
+                                                            <button type="submit" class="btn btn-primary text-white"
+                                                                data-toggle="modal"
+                                                                data-target="#exampleModalCentercashtransfer{{ $req->id }}">Transfer</button>
+                                                            @include('pettycash::cash_transfer.transfer')
                                                             <form method="POST"
                                                                 action="{{ route('pettycash-request.reject', $req->id) }}"
                                                                 style="display:inline;">
@@ -109,26 +119,27 @@
                                                 @if (Auth::user()->role->name !== 'Super Admin')
                                                     <td>
                                                         @if ($req->status === 'pending')
-                                                        <a data-toggle="modal"
-                                                            data-target="#editCategory{{ $req->id }}"
-                                                            class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
-                                                        @include('pettycash::cash_request.edit')
+                                                            <a data-toggle="modal"
+                                                                data-target="#editCategory{{ $req->id }}"
+                                                                class="btn btn-primary btn-sm"><i
+                                                                    class="fa fa-edit"></i></a>
+                                                            @include('pettycash::cash_request.edit')
 
-                                                        <button id="delete" class="btn btn-danger btn-sm"
-                                                            onclick="
+                                                            <button id="delete" class="btn btn-danger btn-sm"
+                                                                onclick="
                                                                 event.preventDefault();
                                                                 if (confirm('Are you sure? It will delete the data permanently!')) {
                                                                     document.getElementById('destroy{{ $req->id }}').submit()}">
-                                                            <i class="fa fa-trash"></i>
-                                                            <form id="destroy{{ $req->id }}" class="d-none"
-                                                                action="{{ route('pettycash-request.destroy', $req->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                            </form>
-                                                        </button>
+                                                                <i class="fa fa-trash"></i>
+                                                                <form id="destroy{{ $req->id }}" class="d-none"
+                                                                    action="{{ route('pettycash-request.destroy', $req->id) }}"
+                                                                    method="POST">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                </form>
+                                                            </button>
                                                         @else
-                                                        <button class="btn btn-danger btn-sm">Can't Take Action</button>
+                                                            <button class="btn btn-danger btn-sm">Can't Take Action</button>
                                                         @endif
                                                     </td>
                                                 @endif

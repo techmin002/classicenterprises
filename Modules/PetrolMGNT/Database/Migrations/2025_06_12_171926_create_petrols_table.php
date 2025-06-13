@@ -11,18 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('petty_cashes', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('title');
-            $table->string('amount');
+        Schema::create('petrols', function (Blueprint $table) {
+            $table->id();
+            $table->string('bike_id')->nullable();
+            $table->decimal('amount', 10, 2)->default(0);
             $table->string('date');
-            $table->string('month');
-            $table->string('remaining_cash');
-            $table->string('slug');
-            $table->string('branch_id')->nullable();
+            $table->string('km');
+            $table->string('message');
             $table->string('created_by')->nullable();
             $table->string('status')->default('on');
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('petty_cashes');
+        Schema::dropIfExists('petrols');
     }
 };
