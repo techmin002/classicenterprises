@@ -550,6 +550,45 @@
                           </ul>
                       </li>
                   {{-- @endcan --}}
+                  <li class="nav-item {{ request()->routeIs('supportdashboard.*') ? 'menu-is-opening menu-open' : '' }}">
+                    <a href="#" class="nav-link" {{ request()->routeIs('supportdashboard.*') ? 'active' : '' }}>
+                        <i class="nav-icon fas fa-newspaper"></i>
+                        <p>
+                            Support Dashboard
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('supportdashboard.create') }}"
+                                class="nav-link {{ request()->routeIs('supportdashboard.create') ? 'active' : '' }}">
+                                {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                <p>Task Create</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('pettycash-request.index') }}"
+                                class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                <p>Task Queue </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('pettycash-request.index') }}"
+                                class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                <p>Task Assign </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('pettycash-request.index') }}"
+                                class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                <p>Task Complete </p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                   @can('access_advertisements')
                       <li
                           class="nav-item {{ request()->routeIs('advertisements.*') ? 'menu-is-opening menu-open' : '' }}">

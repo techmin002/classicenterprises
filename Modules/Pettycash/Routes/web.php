@@ -19,7 +19,6 @@ use Modules\Pettycash\Http\Controllers\PettyCashRequestController;
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('pettycash-addcash', PettyCashAddController::class);
     Route::post('pettycash-addcash/status/{id}', [PettyCashAddController::class, 'status'])->name('pettycash-addcash.status');
-
     // Route::get('pettycash-addcash/index', [PettyCashAddController::class, 'index'])->name('pettycash-addcash.index');
     // Route::post('pettycash-addcash/store', [PettyCashAddController::class, 'store'])->name('pettycash-addcash.store');
     // Route::put('pettycash-addcash/update/{id}', [PettyCashAddController::class, 'update'])->name('pettycash-addcash.update');

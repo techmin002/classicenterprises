@@ -13,6 +13,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Modules\Service\Http\Controllers\GalleryController;
+use Modules\Service\Http\Controllers\ServiceCategoryController;
 use Modules\Service\Http\Controllers\ServiceController;
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('services', ServiceController::class);

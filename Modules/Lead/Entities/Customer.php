@@ -5,6 +5,7 @@ namespace Modules\Lead\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Branch\Entities\Branch;
 use Modules\Lead\Database\factories\CustomerFactory;
 
 class Customer extends Model
@@ -41,10 +42,14 @@ class Customer extends Model
     }
     public function products()
     {
-        return $this->hasMany(CustomerProduct::class);
+        return $this->hasMany(CustomerProduct::class)->with('product');
     }
     public function accessories()
     {
         return $this->hasMany(CustomerAccessory::class);
+    }
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 }
