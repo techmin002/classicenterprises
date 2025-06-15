@@ -83,7 +83,7 @@
                                                             class="btn btn-danger btn-sm">Off</a>
                                                     @endif
                                                 </td>
-                                                <td class="text-center">
+                                                <td>
                                                     <a data-toggle="modal" data-target="#editCategory{{ $value->id }}"
                                                         class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit">
                                                         <i class="fa fa-edit"></i>

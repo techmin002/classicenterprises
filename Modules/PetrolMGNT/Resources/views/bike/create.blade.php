@@ -10,20 +10,27 @@
                 <div class="modal-body">
                     <div class="container">
                         <div class="row gy-3">
-
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Name</label>
                                 <input class="form-control" placeholder="Enter Bike Name" type="text" required
                                     name="name">
                             </div>
-
+                            <div class="mt-3 col-lg-6" data-select2-id="select2-data-5-a5wr">
+                                <label class="form-label12">Branch</label>
+                                <select class="form-control" name="branch_id">
+                                    <option value="1" selected disabled>Select Branch</option>
+                                    @foreach ($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Model No</label>
                                 <input class="form-control" placeholder="Enter Model Number" type="text" required
                                     name="model">
                             </div>
 
-                            <div class="mt-3 col-lg-12">
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Bike Number</label>
                                 <input class="form-control" placeholder="Enter Bike Number" type="text" required
                                     name="bikenumber">

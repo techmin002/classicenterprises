@@ -8,6 +8,8 @@ use Illuminate\Routing\Controller;
 use Modules\Branch\Entities\Branch;
 use Modules\Expenses\Entities\ExpenseCategory;
 use Modules\Expenses\Entities\Expenses;
+use Modules\Pettycash\Entities\PettyCashAdd;
+use Modules\Pettycash\Entities\PettyCashTransaction;
 use Yajra\DataTables\DataTables;
 
 class ExpensesController extends Controller
@@ -16,13 +18,27 @@ class ExpensesController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
-    {
-        $expenses = Expenses::with('category')->orderBy('created_at', 'DESC')->get();
-        $categories = ExpenseCategory::where('status', 'on')->get();
-        $branches = Branch::where('status', 'on')->get();
-        return view('expenses::expenses.index', compact('expenses', 'categories', 'branches'));
+   public function index()
+{
+    $user = auth()->user();
+
+    if ($user->role->name === 'Super Admin') {
+        $expenses = Expenses::with('category')
+            ->orderBy('created_at', 'DESC')
+            ->get();
+    } else {
+        $expenses = Expenses::with('category')
+            ->where('branch_id', $user->branch_id)
+            ->orderBy('created_at', 'DESC')
+            ->get();
     }
+
+    $categories = ExpenseCategory::where('status', 'on')->get();
+    $branches = Branch::where('status', 'on')->get();
+
+    return view('expenses::expenses.index', compact('expenses', 'categories', 'branches'));
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -46,25 +62,26 @@ class ExpensesController extends Controller
             $request->receipt->move(public_path('upload/images/expenses-receipt'), $image);
         }
 
-        // 🌟 If mode is petty cash, check if enough cash is available
+        $branchId = $request->branchId;
+
         if ($request->mode === 'petty cash') {
-            $pettyCash = \Modules\Pettycash\Entities\PettyCashAdd::where('branch_id', $request->branchId)->first();
+            $pettyCash = PettyCashAdd::where('branch_id', $branchId)->first();
 
             if (!$pettyCash) {
                 return back()->with('error', 'Petty cash record not found for this branch!');
             }
 
-            if ((float)$request->amount >= (float)$pettyCash->remaining_cash) {
+            if ((float)$request->amount > (float)$pettyCash->remaining_cash) {
                 return back()->with('error', 'Insufficient petty cash funds for this expense!');
             }
         }
 
-        // 🌟 If all good, create the expense
+        // Save expense
         $expense = new Expenses;
         $expense->expense_category_id = $request->categoryId;
         $expense->title = $request->title;
         $expense->amount = $request->amount;
-        $expense->branch_id = $request->branchId;
+        $expense->branch_id = $branchId;
         $expense->created_by = auth()->user()->id;
         $expense->date = $request->date;
         $expense->mode = $request->mode;
@@ -73,14 +90,29 @@ class ExpensesController extends Controller
         $expense->receipt = $image;
         $expense->save();
 
-        // 🌟 Deduct from petty cash if payment mode is petty cash
+        // Deduct & log transaction
         if ($expense->mode === 'petty cash') {
-            $pettyCash->remaining_cash -= (float)$expense->amount;
+            $before = $pettyCash->remaining_cash;
+            $after = $before - (float)$expense->amount;
+
+            $pettyCash->remaining_cash = $after;
             $pettyCash->save();
+
+            PettyCashTransaction::create([
+                'branch_id' => $branchId,
+                'type' => 'expense',
+                'amount' => $expense->amount,
+                'total_cash_before' => $before,
+                'remaining_cash_after' => $after,
+                'message' => 'Expense entry: ' . $expense->title,
+                'reference_id' => $expense->id,
+                'created_by' => auth()->id(),
+            ]);
         }
 
         return back()->with('success', 'Expense Added Successfully');
     }
+
 
     /**
      * Show the specified resource.
@@ -112,7 +144,6 @@ class ExpensesController extends Controller
     {
         $expense = Expenses::findOrFail($id);
 
-        // 🌟 Store old data before updating
         $oldAmount = $expense->amount;
         $oldMode = $expense->mode;
         $oldBranchId = $expense->branch_id;
@@ -123,53 +154,85 @@ class ExpensesController extends Controller
             $request->receipt->move(public_path('upload/images/expenses-receipt'), $image);
         }
 
-        // 🌟 If old mode was petty cash, revert that amount first
-        if ($oldMode == 'petty cash') {
-            $oldPettyCash = \Modules\Pettycash\Entities\PettyCashAdd::where('branch_id', $oldBranchId)->first();
+        // Revert old petty cash if needed
+        if ($oldMode === 'petty cash') {
+            $oldPettyCash = PettyCashAdd::where('branch_id', $oldBranchId)->first();
             if ($oldPettyCash) {
                 $oldPettyCash->remaining_cash += (float)$oldAmount;
                 $oldPettyCash->save();
             }
         }
 
-        // 🌟 If new mode is petty cash, check if enough petty cash is available
+        // Check if new mode is petty cash
         if ($request->mode === 'petty cash') {
-            $newPettyCash = \Modules\Pettycash\Entities\PettyCashAdd::where('branch_id', $request->branchId)->first();
-
+            $newPettyCash = PettyCashAdd::where('branch_id', $request->branchId)->first();
             if (!$newPettyCash) {
                 return back()->with('error', 'Petty cash record not found for this branch!');
             }
 
             if ((float)$request->amount > (float)$newPettyCash->remaining_cash) {
-                // 🌟 Since we already reverted the old amount (if needed), no extra adjustments here
                 return back()->with('error', 'Insufficient petty cash funds for this expense!');
             }
         }
 
-        // 🌟 All checks passed, update the expense
-        $expense->expense_category_id = $request->categoryId;
-        $expense->title = $request->title;
-        $expense->amount = $request->amount;
-        $expense->branch_id = $request->branchId;
-        $expense->created_by = auth()->user()->id;
-        $expense->date = $request->date;
-        $expense->mode = $request->mode;
-        $expense->description = $request->description;
-        $expense->status = 'on';
-        $expense->receipt = $image;
-        $expense->save();
+        // Update expense
+        $expense->update([
+            'expense_category_id' => $request->categoryId,
+            'title' => $request->title,
+            'amount' => $request->amount,
+            'branch_id' => $request->branchId,
+            'created_by' => auth()->user()->id,
+            'date' => $request->date,
+            'mode' => $request->mode,
+            'description' => $request->description,
+            'status' => 'on',
+            'receipt' => $image,
+        ]);
 
-        // 🌟 If new mode is petty cash, deduct the new amount
+        // Deduct and log if mode is petty cash
         if ($expense->mode === 'petty cash') {
-            $newPettyCash = \Modules\Pettycash\Entities\PettyCashAdd::where('branch_id', $expense->branch_id)->first();
-            if ($newPettyCash) {
-                $newPettyCash->remaining_cash -= (float)$expense->amount;
-                $newPettyCash->save();
+            $pettyCash = PettyCashAdd::where('branch_id', $request->branchId)->first();
+
+            $before = $pettyCash->remaining_cash;
+            $after = $before - (float)$expense->amount;
+
+            $pettyCash->remaining_cash = $after;
+            $pettyCash->save();
+
+            $transaction = PettyCashTransaction::where('reference_id', $expense->id)
+                ->where('type', 'expense')
+                ->first();
+
+            if ($transaction) {
+                $transaction->update([
+                    'amount' => $expense->amount,
+                    'total_cash_before' => $before,
+                    'remaining_cash_after' => $after,
+                    'message' => 'Expense entry: ' . $expense->title,
+                    'created_by' => auth()->id(),
+                ]);
+            } else {
+                PettyCashTransaction::create([
+                    'branch_id' => $request->branchId,
+                    'type' => 'expense',
+                    'amount' => $expense->amount,
+                    'total_cash_before' => $before,
+                    'remaining_cash_after' => $after,
+                    'message' => 'Expense entry: ' . $expense->title,
+                    'reference_id' => $expense->id,
+                    'created_by' => auth()->id(),
+                ]);
             }
+        } else {
+            // Mode changed from petty cash to something else — delete old transaction
+            PettyCashTransaction::where('reference_id', $expense->id)
+                ->where('type', 'expense')
+                ->delete();
         }
 
         return back()->with('success', 'Expenses Updated Successfully');
     }
+
 
 
 
@@ -182,10 +245,28 @@ class ExpensesController extends Controller
      */
     public function destroy($id)
     {
-        $categorys = Expenses::findOrfail($id);
-        $categorys->delete();
+        $expense = Expenses::findOrFail($id);
+
+        // Reverse petty cash if mode was 'petty cash'
+        if ($expense->mode === 'petty cash') {
+            $pettyCash = PettyCashAdd::where('branch_id', $expense->branch_id)->first();
+            if ($pettyCash) {
+                $pettyCash->remaining_cash += (float)$expense->amount;
+                $pettyCash->save();
+            }
+
+            // Delete associated petty cash transaction
+            PettyCashTransaction::where('reference_id', $expense->id)
+                ->where('type', 'expense')
+                ->delete();
+        }
+
+        $expense->delete();
+
         return redirect()->back()->with('success', 'Expense Deleted!');
     }
+
+
     public function Status($id)
     {
         $categorys = Expenses::findOrfail($id);

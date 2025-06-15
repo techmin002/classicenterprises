@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Pettycash\Http\Controllers\PettyCashAddController;
 use Modules\Pettycash\Http\Controllers\PettyCashController;
 use Modules\Pettycash\Http\Controllers\PettyCashRequestController;
+use Modules\Pettycash\Http\Controllers\PettyCashTransactionController;
 use Modules\Pettycash\Http\Controllers\PettyCashTransferController;
 
 /*
@@ -42,6 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('pettycash-transfer', PettyCashTransferController::class);
     Route::post('pettycash-transfer/store/{id}', [PettyCashTransferController::class, 'store'])->name('petty-cash-transfer.store');
 
+    Route::resource('pettycash-transaction', PettyCashTransactionController::class);
 
 
 });
