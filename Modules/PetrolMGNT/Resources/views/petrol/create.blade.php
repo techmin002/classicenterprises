@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="border-radius: 8px;">
             <div class="modal-header justify-content-center" style="background-color: #0837a4; color: #fff;">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Petty Cash</h1>
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Petrol For Bike</h1>
             </div>
             <form action="{{ route('petrol.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
