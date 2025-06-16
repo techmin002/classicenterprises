@@ -17,3 +17,4 @@ use Modules\SupportDashboard\Http\Controllers\SupportDashboardController;
 Route::group([], function () {
     Route::resource('supportdashboard', SupportDashboardController::class)->names('supportdashboard');
 });
+    // Route::get('supportdashboard', SupportDashboardController::class)->name('supportdashboard.create');

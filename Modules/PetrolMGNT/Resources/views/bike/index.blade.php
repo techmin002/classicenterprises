@@ -49,7 +49,7 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">S.N</th>+
+                                            <th class="text-center">S.N</th>
                                             <th class="text-center">Name</th>
                                             <th class="text-center">Model No</th>
                                             <th class="text-center">Number Plate</th>
@@ -99,7 +99,7 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th class="text-center">S.N</th>+
+                                            <th class="text-center">S.N</th>
                                             <th class="text-center">Name</th>
                                             <th class="text-center">Model No</th>
                                             <th class="text-center">Number Plate</th>

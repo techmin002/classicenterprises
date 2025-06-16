@@ -24,7 +24,7 @@
                         </ol>
                     </div>
                 </div>
-            </div><!-- /.container-fluid -->
+            </div>
         </section>
 
         <!-- Main content -->
@@ -32,19 +32,19 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-
-                        <!-- /.card -->
-
+                        <!-- Card -->
                         <div class="card">
-                            @if (Auth::user()->role->name === 'Super Admin')
-                                <div class="card-header">
-                                    <h3 class="card-title float-right"><a class="btn btn-primary text-white"
-                                            data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus"></i>
-                                            Create</a> </h3>
+                            <div class="card-header">
+                                @if (Auth::user()->role->name === 'Super Admin')
+                                    <h3 class="card-title float-right">
+                                        <a class="btn btn-info text-white" data-toggle="modal" data-target="#exampleModalCenter">
+                                            <i class="fa fa-plus"></i> Create
+                                        </a>
+                                    </h3>
                                     @include('pettycash::cash_add.create')
-                                </div>
-                            @endif
-                            <!-- /.card-header -->
+                                @endif
+                            </div>
+
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
@@ -54,9 +54,9 @@
                                             <th class="text-center">Amount</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Month</th>
-                                            <th class="text-center">Last Month Remaning Amount</th>
+                                            <th class="text-center">Last Month Remaining Amount</th>
                                             <th class="text-center">Total Amount</th>
-                                            <th class="text-center">Remaning Amount</th>
+                                            <th class="text-center">Remaining Amount</th>
                                             <th class="text-center">Branch</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
@@ -77,23 +77,24 @@
                                                 <td class="text-center">
                                                     @if ($value->status == 'on')
                                                         <a href="{{ route('pettycash-addcash.status', $value->id) }}"
-                                                            class="btn btn-success">On</a>
+                                                            class="btn btn-success btn-sm">On</a>
                                                     @else
                                                         <a href="{{ route('pettycash-addcash.status', $value->id) }}"
-                                                            class="btn btn-danger">Off</a>
+                                                            class="btn btn-danger btn-sm">Off</a>
                                                     @endif
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     <a data-toggle="modal" data-target="#editCategory{{ $value->id }}"
-                                                        class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                                        class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit">
+                                                        <i class="fa fa-edit"></i>
+                                                    </a>
                                                     @include('pettycash::cash_add.edit')
-                                                    <button id="delete" class="btn btn-danger btn-sm"
-                                                        onclick="
-        event.preventDefault();
-        if (confirm('Are you sure? It will delete the data permanently!')) {
-            document.getElementById('destroy{{ $value->id }}').submit()
-        }
-        ">
+
+                                                    <button id="delete" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete"
+                                                        onclick="event.preventDefault();
+                                                            if (confirm('Are you sure? It will delete the data permanently!')) {
+                                                                document.getElementById('destroy{{ $value->id }}').submit();
+                                                            }">
                                                         <i class="fa fa-trash"></i>
                                                         <form id="destroy{{ $value->id }}" class="d-none"
                                                             action="{{ route('pettycash-addcash.destroy', $value->id) }}"
@@ -105,7 +106,6 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -114,8 +114,9 @@
                                             <th class="text-center">Amount</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Month</th>
-                                            <th class="text-center">Remaning Amount</th>
+                                            <th class="text-center">Last Month Remaining Amount</th>
                                             <th class="text-center">Total Amount</th>
+                                            <th class="text-center">Remaining Amount</th>
                                             <th class="text-center">Branch</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
@@ -127,13 +128,15 @@
                         </div>
                         <!-- /.card -->
                     </div>
-                    <!-- /.col -->
                 </div>
-                <!-- /.row -->
             </div>
-            <!-- /.container-fluid -->
         </section>
         <!-- /.content -->
     </div>
 
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
 @endsection

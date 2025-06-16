@@ -19,7 +19,12 @@ use Modules\Pettycash\Http\Controllers\PettyCashTransferController;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('pettycash-addcash', PettyCashAddController::class);
+<<<<<<< HEAD
     Route::post('pettycash-addcash/status/{id}', [PettyCashAddController::class, 'status'])->name('pettycash-addcash.status');
+=======
+    Route::get('pettycash-addcash/status/{id}', [PettyCashAddController::class, 'status'])->name('pettycash-addcash.status');
+
+>>>>>>> ca9638b38c134a0ebcb29ff5d0438fc546d3b1b5
     // Route::get('pettycash-addcash/index', [PettyCashAddController::class, 'index'])->name('pettycash-addcash.index');
     // Route::post('pettycash-addcash/store', [PettyCashAddController::class, 'store'])->name('pettycash-addcash.store');
     // Route::put('pettycash-addcash/update/{id}', [PettyCashAddController::class, 'update'])->name('pettycash-addcash.update');

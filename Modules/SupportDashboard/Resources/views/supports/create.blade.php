@@ -37,14 +37,7 @@
                         <!-- /.card -->
 
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title float-right">
-                                    <a class="btn btn-info text-white" href="{{ route('products-accessories.create') }}"><i
-                                            class="fa fa-plus"></i> Create</a>
-                                </h3>
-                                @include('product::category.create')
-                                </h3>
-                            </div>
+                            
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">

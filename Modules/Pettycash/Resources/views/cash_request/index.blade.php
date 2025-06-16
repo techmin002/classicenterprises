@@ -4,7 +4,7 @@
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active">Petty Cash</li>
+        <li class="breadcrumb-item active">Petty Cash Request</li>
     </ol>
 @endsection
 
@@ -32,26 +32,23 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-
-                        <!-- /.card -->
-
+                        <!-- Card -->
                         <div class="card">
                             @if (Auth::user()->role->name !== 'Super Admin')
                                 <div class="card-header">
-                                    <h3 class="card-title float-right"><a class="btn btn-primary text-white"
-                                            data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus"></i>
-                                            Request Extra Cash</a> </h3>
+                                    <h3 class="card-title float-right">
+                                        <a class="btn btn-primary text-white" data-toggle="modal"
+                                            data-target="#exampleModalCenter">
+                                            <i class="fa fa-plus"></i> Request Extra Cash
+                                        </a>
+                                    </h3>
                                     @include('pettycash::cash_request.create')
                                 </div>
                             @endif
-                            <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            @if (Auth::user()->role === 'Admin' || Auth::user()->role === 'Super Admin')
-                                                <th>Branch</th>
-                                            @endif
                                             <th class="text-center">S.N</th>
                                             <th class="text-center">Branch</th>
                                             <th class="text-center">Title</th>
@@ -60,22 +57,14 @@
                                             <th class="text-center">Month</th>
                                             <th class="text-center">Description</th>
                                             <th class="text-center">Status</th>
-                                            @if (Auth::user()->role->name == 'Super Admin')
-                                                <th class="text-center">Action</th>
-                                            @endif
-                                            @if (Auth::user()->role->name !== 'Super Admin')
-                                                <th class="text-center">Action</th>
-                                            @endif
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse ($requests as $req)
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                                {{-- @if (Auth::user()->role === 'Admin')
-                                                    <td class="text-center">{{ $req->branch->name }}</td>
-                                                @endif --}}
-                                                <td class="text-center">{{ $req->branch->name }}</td>
+                                                <td class="text-center">{{ $req->branch->name ?? 'N/A' }}</td>
                                                 <td class="text-center">{{ $req->title }}</td>
                                                 <td class="text-center">{{ $req->amount }}</td>
                                                 <td class="text-center">{{ $req->date }}</td>
@@ -83,41 +72,48 @@
                                                 <td class="text-center">{{ $req->description }}</td>
                                                 <td class="text-center">
                                                     @if ($req->status === 'approved')
-                                                        <button class="btn btn-success btn-sm">
-                                                            Approved
-                                                        </button>
+                                                        <span class="btn btn-success btn-sm">Approved</span>
                                                     @elseif ($req->status === 'rejected')
-                                                        <button class="btn btn-danger btn-sm">
-                                                            Rejected
-                                                        </button>
+                                                        <span class="btn btn-danger btn-sm">Rejected</span>
                                                     @else
-                                                        <button class="btn btn-warning btn-sm">
-                                                            Pending
-                                                        </button>
+                                                        <span class="btn btn-warning btn-sm">Pending</span>
                                                     @endif
-
                                                 </td>
-                                                @if (Auth::user()->role->name === 'Super Admin')
-                                                    <td>
-                                                        @if ($req->status)
-                                                            <button type="submit" class="btn btn-primary text-white"
+                                                <td>
+                                                    @if (Auth::user()->role->name === 'Super Admin')
+                                                        @if ($req->status === 'pending')
+                                                            <button type="button" class="btn btn-primary btn-sm text-white"
                                                                 data-toggle="modal"
-                                                                data-target="#exampleModalCentercashtransfer{{ $req->id }}">Transfer</button>
+                                                                data-target="#exampleModalCentercashtransfer{{ $req->id }}">
+                                                                Transfer
+                                                            </button>
+                                                            @include('pettycash::cash_transfer.transfer')
+
+                                                            <form method="POST"
+                                                                action="{{ route('pettycash-request.reject', $req->id) }}"
+                                                                style="display:inline;">
+                                                                @csrf
+                                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                                    Reject
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <button type="button" class="btn btn-primary btn-sm text-white"
+                                                                data-toggle="modal"
+                                                                data-target="#exampleModalCentercashtransfer{{ $req->id }}">
+                                                                Transfer
+                                                            </button>
                                                             @include('pettycash::cash_transfer.transfer')
                                                             <form method="POST"
                                                                 action="{{ route('pettycash-request.reject', $req->id) }}"
                                                                 style="display:inline;">
                                                                 @csrf
-                                                                <button type="submit"
-                                                                    class="btn btn-danger">Reject</button>
+                                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                                    Reject
+                                                                </button>
                                                             </form>
-                                                        @else
-                                                            ---
                                                         @endif
-                                                    </td>
-                                                @endif
-                                                @if (Auth::user()->role->name !== 'Super Admin')
-                                                    <td>
+                                                    @else
                                                         @if ($req->status === 'pending')
                                                             <a data-toggle="modal"
                                                                 data-target="#editCategory{{ $req->id }}"
@@ -125,11 +121,12 @@
                                                                     class="fa fa-edit"></i></a>
                                                             @include('pettycash::cash_request.edit')
 
-                                                            <button id="delete" class="btn btn-danger btn-sm"
+                                                            <button class="btn btn-danger btn-sm"
                                                                 onclick="
                                                                 event.preventDefault();
                                                                 if (confirm('Are you sure? It will delete the data permanently!')) {
-                                                                    document.getElementById('destroy{{ $req->id }}').submit()}">
+                                                                    document.getElementById('destroy{{ $req->id }}').submit();
+                                                                }">
                                                                 <i class="fa fa-trash"></i>
                                                                 <form id="destroy{{ $req->id }}" class="d-none"
                                                                     action="{{ route('pettycash-request.destroy', $req->id) }}"
@@ -139,18 +136,16 @@
                                                                 </form>
                                                             </button>
                                                         @else
-                                                            <button class="btn btn-danger btn-sm">Can't Take Action</button>
+                                                            <span class="btn btn-secondary btn-sm">Locked</span>
                                                         @endif
-                                                    </td>
-                                                @endif
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="text-center text-danger">No requests
-                                                    found.</td>
+                                                <td colspan="9" class="text-center text-danger">No requests found.</td>
                                             </tr>
                                         @endforelse
-
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -162,28 +157,18 @@
                                             <th class="text-center">Month</th>
                                             <th class="text-center">Description</th>
                                             <th class="text-center">Status</th>
-                                            @if (Auth::user()->role->name === 'Super Admin')
-                                                <th class="text-center">Action</th>
-                                            @endif
-                                            @if (Auth::user()->role->name !== 'Super Admin')
-                                                <th class="text-center">Action</th>
-                                            @endif
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </tfoot>
-
                                 </table>
                             </div>
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
                     </div>
-                    <!-- /.col -->
                 </div>
-                <!-- /.row -->
             </div>
-            <!-- /.container-fluid -->
         </section>
         <!-- /.content -->
     </div>
-
 @endsection
