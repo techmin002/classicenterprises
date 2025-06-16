@@ -15,7 +15,7 @@
                                 <div class="form-group">
                                     <label class="form-label12">Amount</label>
                                     <input class="form-control" placeholder="Enter Amount" type="number"
-                                        name="amount">
+                                        name="amount" value="{{ $req->amount}}" readonly>
                                 </div>
                             </div>
                             <div class="col-lg-6">

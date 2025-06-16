@@ -30,5 +30,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('service', BikeServiceController::class);
     // Route::get('service/status/{id}', [BikeServiceController::class, 'status'])->name('service.status');
     Route::get('bike-service/status/{id}', [BikeServiceController::class, 'status'])->name('bike-service.status');
-
+    Route::get('/get-bikes-by-branch', [BikeServiceController::class, 'getBikesByBranch'])->name('get.bikes.by.branch');
 });

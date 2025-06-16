@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Pettycash\Entities\PettyCashAdd;
 use Modules\Pettycash\Entities\PettyCashRequest;
 use Modules\Pettycash\Entities\PettyCashTransfer;
 
@@ -46,7 +47,6 @@ class PettyCashTransferController extends Controller
      */
     public function store(Request $request, $id): RedirectResponse
     {
-        // dd($request->all());
         $validated = $request->validate([
             'amount' => 'required|numeric',
             'branch_id' => 'required',
@@ -54,18 +54,32 @@ class PettyCashTransferController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        // 1. Create a transfer record
         PettyCashTransfer::create([
             'branch_id' => $validated['branch_id'],
             'amount' => $validated['amount'],
             'date' => $validated['date'],
-            'description' => $validated['description'] ?? null
+            'description' => $validated['description'] ?? null,
         ]);
 
+        // 2. Update PettyCashRequest as approved
+        $cashRequest = PettyCashRequest::findOrFail($id);
+        $cashRequest->status = 'approved';
+        $cashRequest->save();
 
+        // 3. Add amount to petty cash of that branch for that month
+        $month = $cashRequest->month;
 
+        $pettyCash = PettyCashAdd::firstOrCreate(
+            ['branch_id' => $validated['branch_id'], 'month' => $month],
+            ['total_amount' => 0, 'remaining_cash' => 0]
+        );
 
-        PettyCashRequest::where('id', $id)->update(['status' => 'approved']);
-        return redirect()->route('pettycash-transfer.index')->with('success', 'Transfer Successful.');
+        $pettyCash->total_amount += $validated['amount'];
+        $pettyCash->remaining_cash += $validated['amount'];
+        $pettyCash->save();
+
+        return redirect()->route('pettycash-transfer.index')->with('success', 'Transfer successful and petty cash updated.');
     }
 
     /**

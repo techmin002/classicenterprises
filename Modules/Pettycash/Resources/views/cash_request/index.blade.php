@@ -97,21 +97,19 @@
                                                                     Reject
                                                                 </button>
                                                             </form>
-                                                        @else
+                                                        @endif
+                                                        @if ($req->status === 'approved')
+                                                            <button type="button" class="btn btn-danger btn-sm text-white">
+                                                                Locked
+                                                            </button>
+                                                        @endif
+                                                        @if ($req->status === 'rejected')
                                                             <button type="button" class="btn btn-primary btn-sm text-white"
                                                                 data-toggle="modal"
                                                                 data-target="#exampleModalCentercashtransfer{{ $req->id }}">
                                                                 Transfer
                                                             </button>
                                                             @include('pettycash::cash_transfer.transfer')
-                                                            <form method="POST"
-                                                                action="{{ route('pettycash-request.reject', $req->id) }}"
-                                                                style="display:inline;">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                                    Reject
-                                                                </button>
-                                                            </form>
                                                         @endif
                                                     @else
                                                         @if ($req->status === 'pending')
