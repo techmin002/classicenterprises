@@ -569,7 +569,7 @@
                       <a href="#" class="nav-link" {{ request()->routeIs('PetrolMGNT.*') ? 'active' : '' }}>
                           <i class="nav-icon fas fa-newspaper"></i>
                           <p>
-                              Petrol MGNT
+                              Vehical MGNT
                               <i class="right fas fa-angle-left"></i>
                           </p>
                       </a>
@@ -586,6 +586,13 @@
                                   class="nav-link {{ request()->routeIs('petrol.index') ? 'active' : '' }}">
                                   {{-- <i class="far fa-circle nav-icon"></i> --}}
                                   <p>Petrol </p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('service.index') }}"
+                                  class="nav-link {{ request()->routeIs('service.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Service</p>
                               </a>
                           </li>
                       </ul>

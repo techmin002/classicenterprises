@@ -35,7 +35,7 @@ class Petrol extends Model
         return $this->belongsTo(Bike::class, 'bike_id');
     }
     public function branch()
-{
-    return $this->belongsTo(Branch::class);
-}
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }

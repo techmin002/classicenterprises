@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\PetrolMGNT\Http\Controllers\BikeController;
 use Modules\PetrolMGNT\Http\Controllers\PetrolController;
 use Modules\PetrolMGNT\Http\Controllers\PetrolMGNTController;
+use Modules\PetrolMGNT\Http\Controllers\BikeServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,5 +27,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('bike/status/{id}', [BikeController::class, 'status'])->name('bike.status');
 
 
+    Route::resource('service', BikeServiceController::class);
+    // Route::get('service/status/{id}', [BikeServiceController::class, 'status'])->name('service.status');
+    Route::get('bike-service/status/{id}', [BikeServiceController::class, 'status'])->name('bike-service.status');
 
 });
