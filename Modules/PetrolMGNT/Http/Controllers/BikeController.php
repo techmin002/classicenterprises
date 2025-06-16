@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Branch\Entities\Branch;
 use Modules\PetrolMGNT\Entities\Bike;
 
 class BikeController extends Controller
@@ -15,9 +16,21 @@ class BikeController extends Controller
      */
     public function index()
     {
-        $bike = Bike::all();
-        return view('petrolmgnt::bike.index', compact('bike'));
+        $user = auth()->user();
+        $branches = Branch::where('status', 'on')->get();
+
+        if ($user->role->name === 'Super Admin') {
+            $bike = Bike::with('branch')->latest()->get();
+        } else {
+            $bike = Bike::with('branch')
+                ->where('branch_id', $user->branch_id)
+                ->latest()
+                ->get();
+        }
+
+        return view('petrolmgnt::bike.index', compact('bike', 'branches'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -36,6 +49,7 @@ class BikeController extends Controller
         // dd($request->all());
         Bike::create([
             'name' => $request->name,
+            'branch_id' => $request->branch_id,
             'model' => $request->model,
             'bikenumber' => $request->bikenumber,
             'created_by' => auth()->user()->id,
@@ -70,6 +84,7 @@ class BikeController extends Controller
         // dd($bike);
         $bike->update([
             'name' => $request->name,
+            'branch_id' => $request->branch_id,
             'model' => $request->model,
             'bikenumber' => $request->bikenumber,
             'status' => $request->status

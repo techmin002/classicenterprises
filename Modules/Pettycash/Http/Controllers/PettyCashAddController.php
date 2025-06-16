@@ -17,10 +17,22 @@ class PettyCashAddController extends Controller
      */
     public function index()
     {
-        $pettycash = PettyCashAdd::with('branch')->get();
+        $user = auth()->user();
+
+        if ($user->role->name === 'Super Admin') {
+            $pettycash = PettyCashAdd::with('branch')->latest()->get();
+        } else {
+            $pettycash = PettyCashAdd::with('branch')
+                ->where('branch_id', $user->branch_id)
+                ->latest()
+                ->get();
+        }
+
         $branches = Branch::where('status', 'on')->get();
+
         return view('pettycash::cash_add.index', compact('branches', 'pettycash'));
     }
+
 
     /**
      * Show the form for creating a new resource.

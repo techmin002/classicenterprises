@@ -50,7 +50,8 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center">S.N</th>
-                                            <th class="text-center">Name</th>
+                                            <th class="text-center">Branch Name</th>
+                                            <th class="text-center">Bike Name</th>
                                             <th class="text-center">Model No</th>
                                             <th class="text-center">Number Plate</th>
                                             <th class="text-center">Status</th>
@@ -61,6 +62,7 @@
                                         @foreach ($bike as $value)
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
+                                                <td class="text-center">{{ $value->branch->name }}</td>
                                                 <td class="text-center">{{ $value->name }}</td>
                                                 <td class="text-center">{{ $value->model }}</td>
                                                 <td class="text-center">{{ $value->bikenumber }}</td>
@@ -100,7 +102,8 @@
                                     <tfoot>
                                         <tr>
                                             <th class="text-center">S.N</th>
-                                            <th class="text-center">Name</th>
+                                            <th class="text-center">Branch Name</th>
+                                            <th class="text-center">Bike Name</th>
                                             <th class="text-center">Model No</th>
                                             <th class="text-center">Number Plate</th>
                                             <th class="text-center">Status</th>

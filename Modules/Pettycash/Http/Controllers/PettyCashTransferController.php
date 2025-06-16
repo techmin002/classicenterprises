@@ -16,9 +16,22 @@ class PettyCashTransferController extends Controller
      */
     public function index()
     {
-        $transfer = PettyCashTransfer::with('branch')->get();
+        $user = auth()->user();
+
+        // Super Admin can see all transfers
+        if ($user->role->name === 'Super Admin') {
+            $transfer = PettyCashTransfer::with('branch')->latest()->get();
+        } else {
+            // Normal users see only their branch transfers
+            $transfer = PettyCashTransfer::with('branch')
+                ->where('branch_id', $user->branch_id)
+                ->latest()
+                ->get();
+        }
+
         return view('pettycash::cash_transfer.index', compact('transfer'));
     }
+
 
     /**
      * Show the form for creating a new resource.

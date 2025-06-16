@@ -22,19 +22,35 @@
 
                             <div class="col-lg-6">
                                 <label class="form-label12">Amount</label>
-                                <input class="form-control" placeholder="Enter Amount" type="text" name="amount" required>
+                                <input class="form-control" placeholder="Enter Amount" type="text" name="amount"
+                                    required>
                             </div>
 
-                            <div class="col-lg-6">
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Date</label>
                                 <input class="form-control" type="date" name="date" required>
                             </div>
 
-                            <div class="col-lg-6">
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">KM</label>
-                                <input class="form-control" placeholder="Enter Kilometer" type="text" name="km" required>
+                                <input class="form-control" placeholder="Enter Kilometer" type="text" name="km"
+                                    required>
                             </div>
-
+                            {{-- new --}}
+                            <div class="mt-3 col-lg-6">
+                                <label class="form-label12">Mode of Payment </label>
+                                <select class="form-control" name="mode">
+                                    <option value="" selected disabled>Select Payment Mode</option>
+                                    <option value="petty cash">Petty Cash</option>
+                                    <option value="online">Online</option>
+                                    <option value="cheque">Cheque</option>
+                                </select>
+                            </div>
+                            <div class="mt-3 col-lg-6" data-select2-id="select2-data-5-a5wr">
+                                <label class="form-label12">Receipt</label>
+                                <input type="file" class="form-contro" name="image" required>
+                            </div>
+                            {{-- new --}}
                             <div class="col-lg-12">
                                 <label class="form-label12">Message</label>
                                 <textarea name="message" class="form-control" required></textarea>

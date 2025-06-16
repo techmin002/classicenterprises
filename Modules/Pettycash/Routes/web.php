@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Pettycash\Http\Controllers\PettyCashAddController;
 use Modules\Pettycash\Http\Controllers\PettyCashController;
 use Modules\Pettycash\Http\Controllers\PettyCashRequestController;
+use Modules\Pettycash\Http\Controllers\PettyCashTransactionController;
 use Modules\Pettycash\Http\Controllers\PettyCashTransferController;
 
 /*
@@ -19,12 +20,8 @@ use Modules\Pettycash\Http\Controllers\PettyCashTransferController;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('pettycash-addcash', PettyCashAddController::class);
-<<<<<<< HEAD
-    Route::post('pettycash-addcash/status/{id}', [PettyCashAddController::class, 'status'])->name('pettycash-addcash.status');
-=======
     Route::get('pettycash-addcash/status/{id}', [PettyCashAddController::class, 'status'])->name('pettycash-addcash.status');
 
->>>>>>> ca9638b38c134a0ebcb29ff5d0438fc546d3b1b5
     // Route::get('pettycash-addcash/index', [PettyCashAddController::class, 'index'])->name('pettycash-addcash.index');
     // Route::post('pettycash-addcash/store', [PettyCashAddController::class, 'store'])->name('pettycash-addcash.store');
     // Route::put('pettycash-addcash/update/{id}', [PettyCashAddController::class, 'update'])->name('pettycash-addcash.update');
@@ -46,6 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('pettycash-transfer', PettyCashTransferController::class);
     Route::post('pettycash-transfer/store/{id}', [PettyCashTransferController::class, 'store'])->name('petty-cash-transfer.store');
 
+    Route::resource('pettycash-transaction', PettyCashTransactionController::class);
 
 
 });
