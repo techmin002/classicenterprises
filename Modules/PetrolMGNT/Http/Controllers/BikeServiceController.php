@@ -203,12 +203,19 @@ class BikeServiceController extends Controller
         return view('petrolmgnt::edit');
     }
     public function status($id)
-{
-    $service = BikeService::findOrFail($id);
-    $status = $service->status === 'on' ? 'off' : 'on';
-    $service->update(['status' => $status]);
+    {
+        $service = BikeService::findOrFail($id);
+        $status = $service->status === 'on' ? 'off' : 'on';
+        $service->update(['status' => $status]);
 
-    return redirect()->back()->with('success', 'Bike Service Status Updated!');
-}
+        return redirect()->back()->with('success', 'Bike Service Status Updated!');
+    }
+    public function getBikesByBranch(Request $request)
+    {
+        $bikes = Bike::where('branch_id', $request->branch_id)
+            ->where('status', 'on')
+            ->get(['id', 'bikenumber']);
 
+        return response()->json($bikes);
+    }
 }

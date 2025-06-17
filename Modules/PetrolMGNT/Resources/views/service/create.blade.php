@@ -10,17 +10,32 @@
                 <div class="modal-body">
                     <div class="container">
                         <div class="row gy-3">
+                            <div class="col-lg-6" data-select2-id="select2-data-5-a5wr">
+                                <label class="form-label12">Branch</label>
+                                <!-- Branch Dropdown -->
+                                <select class="form-control" name="branch_id" id="branchSelect">
+                                    <option value="" selected disabled>Select Branch</option>
+                                    @foreach ($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="col-lg-6">
                                 <label class="form-label12">Select Bike</label>
-                                <select class="form-control" name="bike_id" required>
+                                <!-- Bike Dropdown -->
+                                <select class="form-control" name="bike_id" id="bikeSelect" required>
+                                    <option value="" selected disabled>Select Bike Number</option>
+                                    {{-- Options will be filled by AJAX --}}
+                                </select>
+                                {{-- <select class="form-control" name="bike_id" required>
                                     <option value="" selected disabled>Select Bike Number</option>
                                     @foreach ($bike as $value)
                                         <option value="{{ $value->id }}">{{ $value->bikenumber }}</option>
                                     @endforeach
-                                </select>
+                                </select> --}}
                             </div>
 
-                            <div class="col-lg-6">
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Amount</label>
                                 <input class="form-control" placeholder="Enter Amount" type="text" name="amount"
                                     required>
@@ -51,12 +66,12 @@
                                 <input type="file" class="form-contro" name="image" required>
                             </div>
                             {{-- new --}}
-                            <div class="col-lg-12">
+                            <div class="mt-3 col-lg-12">
                                 <label class="form-label12">Message</label>
                                 <textarea name="message" class="form-control" required></textarea>
                             </div>
 
-                            <div class="col-md-12">
+                            <div class="mt-3 col-md-12">
                                 <label class="form-label12">Publish</label><br>
                                 <input type="checkbox" name="status" checked data-bootstrap-switch
                                     data-off-color="danger" data-on-color="success">
@@ -73,3 +88,31 @@
         <span id="output"></span>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#branchSelect').on('change', function() {
+            var branchId = $(this).val();
+            if (branchId) {
+                $.ajax({
+                    url: '{{ route('get.bikes.by.branch') }}',
+                    type: 'GET',
+                    data: {
+                        branch_id: branchId
+                    },
+                    success: function(data) {
+                        $('#bikeSelect').empty().append(
+                            '<option value="" disabled selected>Select Bike</option>');
+                        $.each(data, function(key, value) {
+                            $('#bikeSelect').append('<option value="' + value.id +
+                                '">' + value.bikenumber + '</option>');
+                        });
+                    },
+                    error: function() {
+                        alert('Unable to fetch bikes. Try again.');
+                    }
+                });
+            }
+        });
+    });
+</script>
