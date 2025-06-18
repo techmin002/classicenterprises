@@ -1,6 +1,6 @@
 @extends('setting::layouts.master')
 
-@section('title', "Customer Payments")
+@section('title', 'Customer Payments')
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
@@ -67,19 +67,22 @@
                                                 <td>
 
 
-                                                        <button id="delete" class="btn btn-danger btn-sm" disabled
-                                                            onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $payment->id }}').submit()}">
-                                                            <i class="fa fa-trash"></i>
-                                                            <form id="destroy{{ $payment->id }}" class="d-none"
-                                                                action="{{ route('leads.destroy', $payment->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('delete')
-                                                            </form>
-                                                        </button>
-                                                        <a type="button" href="{{ route('installation-create.create',$payment->id) }}" class="btn btn-secondary btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
-                                                            <i class="fa fa-user-plus"></i>
-                                                        </a>
+                                                    <button id="delete" class="btn btn-danger btn-sm" disabled
+                                                        onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $payment->id }}').submit()}">
+                                                        <i class="fa fa-trash"></i>
+                                                        <form id="destroy{{ $payment->id }}" class="d-none"
+                                                            action="{{ route('leads.destroy', $payment->id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            @method('delete')
+                                                        </form>
+                                                    </button>
+                                                    <a type="button"
+                                                        href="{{ route('installation-create.create', $payment->id) }}"
+                                                        class="btn btn-secondary btn-sm" disabled data-toggle="tooltip"
+                                                        data-placement="top" title="Convert lead into Client">
+                                                        <i class="fa fa-user-plus"></i>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -109,9 +112,8 @@
         <!-- /.content -->
     </div>
     <script>
-       $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
     </script>
 @endsection
-

@@ -567,6 +567,26 @@
                           </li>
                       </ul>
                   </li>
+                  <li
+                      class="nav-item {{ request()->routeIs('finance.*') ? 'menu-is-opening menu-open' : '' }}">
+                      <a href="#" class="nav-link"
+                          {{ request()->routeIs('finance.*') ? 'active' : '' }}>
+                          <i class="nav-icon fas fa-image"></i>
+                          <p>
+                              Finance
+                              <i class="right fas fa-angle-left"></i>
+                          </p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                              <a href="{{ route('finance.index') }}"
+                       cc           class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Payment Entry</p>
+                              </a>
+                          </li>
+                      </ul>
+                  </li>
                   {{-- @endcan --}}
                   @can('access_advertisements')
                       <li
