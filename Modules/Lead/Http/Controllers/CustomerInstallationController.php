@@ -344,3 +344,4 @@ class CustomerInstallationController extends Controller
         return view('lead::installation.customer_details',compact('customer'));
     }
 }
+

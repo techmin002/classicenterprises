@@ -18,5 +18,6 @@
     "Customer": true,
     "Pettycash": true,
     "PetrolMGNT": true,
-    "SupportDashboard": true
+    "SupportDashboard": true,
+    "Finance": true
 }
