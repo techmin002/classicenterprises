@@ -577,19 +577,29 @@
                       </a>
                       <ul class="nav nav-treeview">
                           <li class="nav-item">
-                              <a href="{{ route('finance.index') }}"
-                                  class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Payment Entry</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
                               <a href="{{ route('firstbill.index') }}"
                                   class="nav-link {{ request()->routeIs('firstbill.index') ? 'active' : '' }}">
                                   {{-- <i class="far fa-circle nav-icon"></i> --}}
                                   <p>First Bill</p>
                               </a>
                           </li>
+                          <li class="nav-item">
+                              <a href=""
+                                  class="nav-link
+                                  {{-- {{ request()->routeIs('') ? 'active' : '' }} --}}
+                                   ">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Field Payment Verification</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('finance.index') }}"
+                                  class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Payment Entry</p>
+                              </a>
+                          </li>
+
                           <li class="nav-item">
                               <a href="{{ route('daily.index') }}"
                                   class="nav-link {{ request()->routeIs('daily.index') ? 'active' : '' }}">
