@@ -567,10 +567,8 @@
                           </li>
                       </ul>
                   </li>
-                  <li
-                      class="nav-item {{ request()->routeIs('finance.*') ? 'menu-is-opening menu-open' : '' }}">
-                      <a href="#" class="nav-link"
-                          {{ request()->routeIs('finance.*') ? 'active' : '' }}>
+                  <li class="nav-item {{ request()->routeIs('finance.*') ? 'menu-is-opening menu-open' : '' }}">
+                      <a href="#" class="nav-link" {{ request()->routeIs('finance.*') ? 'active' : '' }}>
                           <i class="nav-icon fas fa-image"></i>
                           <p>
                               Finance
@@ -580,9 +578,23 @@
                       <ul class="nav nav-treeview">
                           <li class="nav-item">
                               <a href="{{ route('finance.index') }}"
-                       cc           class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
+                                  class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
                                   {{-- <i class="far fa-circle nav-icon"></i> --}}
                                   <p>Payment Entry</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('firstbill.index') }}"
+                                  class="nav-link {{ request()->routeIs('firstbill.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>First Bill</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('daily.index') }}"
+                                  class="nav-link {{ request()->routeIs('daily.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Daily Collection</p>
                               </a>
                           </li>
                       </ul>
