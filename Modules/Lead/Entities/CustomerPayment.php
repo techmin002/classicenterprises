@@ -14,7 +14,7 @@ class CustomerPayment extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $table='customer_payments';
+    protected $table = 'customer_payments';
     protected $fillable = [
         'lead_id',
         'branch_id',
@@ -29,5 +29,9 @@ class CustomerPayment extends Model
     protected static function newFactory(): CustomerPaymentFactory
     {
         //return CustomerPaymentFactory::new();
+    }
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 }

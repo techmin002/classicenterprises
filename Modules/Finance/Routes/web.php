@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Finance\Http\Controllers\DailyCOllectionController;
 use Modules\Finance\Http\Controllers\FinanceController;
+use Modules\Finance\Http\Controllers\FirstBillController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +18,7 @@ use Modules\Finance\Http\Controllers\FinanceController;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('finance', FinanceController::class)->names('finance');
+    Route::resource('daily', DailyCOllectionController::class)->names('daily');
+    Route::resource('firstbill', FirstBillController::class)->names('firstbill');
+
 });
