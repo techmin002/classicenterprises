@@ -185,6 +185,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('inventries') }}"
+                                class="nav-link {{ request()->routeIs('inventries') ? 'active' : '' }}">
+                                <p>Inventries</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a href="{{ route('sales.index') }}"
                                 class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
                                 <p>Sales</p>

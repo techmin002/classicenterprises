@@ -52,13 +52,13 @@ class DevicePurchaseController extends Controller
             'machineries.*.branch_id' => 'required|exists:branches,id',
         ]);
 
-         DB::transaction(function () use ($request) {
-        $receiptPath = null;
-        if ($request->hasFile('receipt')) {
-            $imageName = time().'.'.$request->receipt->extension();
-            $request->receipt->move(public_path('upload/images/receipts'), $imageName);
-            $receiptPath = 'upload/images/receipts/'.$imageName;
-        }
+        DB::transaction(function () use ($request) {
+            $receiptPath = null;
+            if ($request->hasFile('receipt')) {
+                $imageName = time() . '.' . $request->receipt->extension();
+                $request->receipt->move(public_path('upload/images/receipts'), $imageName);
+                $receiptPath = 'upload/images/receipts/' . $imageName;
+            }
 
             $devicePurchase = DevicePurchase::create([
                 'supplier_id' => $request->supplier_id,
@@ -165,7 +165,7 @@ class DevicePurchaseController extends Controller
 
     public function update(Request $request, DevicePurchase $devicePurchase): RedirectResponse
     {
-         $request->validate([
+        $request->validate([
             'supplier_id' => 'required|exists:suppliers,id',
             'branch_id' => 'required|exists:branches,id',
             'bill_no' => 'required|string|max:255',
@@ -187,18 +187,18 @@ class DevicePurchaseController extends Controller
             'machineries.*.branch_id' => 'nullable|exists:branches,id',
         ]);
 
-         DB::transaction(function () use ($request, $devicePurchase) {
-        $receiptPath = $devicePurchase->receipt;
-        if ($request->hasFile('receipt')) {
-            // Delete old receipt if exists
-            if ($receiptPath && file_exists(public_path($receiptPath))) {
-                unlink(public_path($receiptPath));
+        DB::transaction(function () use ($request, $devicePurchase) {
+            $receiptPath = $devicePurchase->receipt;
+            if ($request->hasFile('receipt')) {
+                // Delete old receipt if exists
+                if ($receiptPath && file_exists(public_path($receiptPath))) {
+                    unlink(public_path($receiptPath));
+                }
+
+                $imageName = time() . '.' . $request->receipt->extension();
+                $request->receipt->move(public_path('upload/images/receipts'), $imageName);
+                $receiptPath = 'upload/images/receipts/' . $imageName;
             }
-            
-            $imageName = time().'.'.$request->receipt->extension();
-            $request->receipt->move(public_path('upload/images/receipts'), $imageName);
-            $receiptPath = 'upload/images/receipts/'.$imageName;
-        }
 
             $devicePurchase->update([
                 'supplier_id' => $request->supplier_id,
@@ -289,23 +289,53 @@ class DevicePurchaseController extends Controller
         return redirect()->route('device-purchases.index')->with('success', 'Device purchase deleted successfully.');
     }
 
-    public function getAccessories(DevicePurchase $devicePurchase)
+    public function showMachineriesAccessories($id)
     {
-        $accessories = $devicePurchase->accessories()->with('accessory')->get();
-        
-        return view('inventory::DevicePurchase.accessories', compact('devicePurchase', 'accessories'));
+        $purchase = DevicePurchase::with('supplier')->findOrFail($id);
+
+        $machineries = DevicePurchaseMachinery::with(['machineries', 'branch'])
+            ->where('device_purchase_id', $id)
+            ->get();
+        $accessories = DevicePurchaseAccessory::with(['accessories', 'branch'])
+            ->where('device_purchase_id', $id)
+            ->get();
+
+        return view('inventory::DevicePurchase.machineries_accessories', [
+            'supplier' => $purchase->supplier,
+            'bill_no' => $purchase->bill_no,
+            'machineries' => $machineries,
+            'accessories' => $accessories,
+        ]);
     }
 
-    public function getMachineries(DevicePurchase $devicePurchase)
+    public function getInventories()
     {
-        $machineries = $devicePurchase->machineries()->with('machinery')->get();
-        return view('inventory::DevicePurchase.machineries', compact('devicePurchase', 'machineries'));
-    }
+        $user = auth()->user();
 
-    public function getInventories(DevicePurchase $devicePurchase)
-    {
-        $inventories = Inventory::where('device_purchase_id', $devicePurchase->id)->get();
-        return view('inventory::DevicePurchase.inventories', compact('devicePurchase', 'inventories'));
+        $query = Inventory::with([
+            'accessories:id,name',
+            'machineries:id,name',
+            'branch:id,name',
+            'user:id,name'
+        ])->latest();
+
+        if ($user->branch_id) {
+            $query->where('branch_id', $user->branch_id);
+        }
+
+        $inventories = $query->get();
+
+        $filteredAccessories = $inventories->filter(function($inventory) {
+            return !empty($inventory->accessories);
+        });
+
+        $filteredMachineries = $inventories->filter(function($inventory) {
+            return !empty($inventory->machineries);
+        });
+
+        return view('inventory::inventories.index', compact(
+            'filteredAccessories',
+            'filteredMachineries'
+        ));
     }
-   
 }

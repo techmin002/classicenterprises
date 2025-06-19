@@ -57,7 +57,6 @@
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Receipt</th>
                                             <th class="text-center">Action</th>
-                                            <th class="text-center">View</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -99,17 +98,10 @@
                                                         </button>
                                                     </form>
 
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('device_purchase_acessories', $devicePurchase->id) }}" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="View Accessories">
-                                                        <i class="fa fa-cogs"></i>
+                                                     <a href="{{ route('device_purchase_machineries_accessories', $devicePurchase->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="View Machineries and Accessories"><i class="fa fa-wrench" ></i></a>
+
                                                     </a>
 
-                                                    <a href="{{ route('device_purchase_machineries', $devicePurchase->id) }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="View Machineries"><i class="fa fa-wrench" ></i></a>
-
-                                                    <a href="{{ route('device_purchase_inventory', $devicePurchase->id) }}" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="top" title="View Inventory">
-                                                        <i class="fa fa-archive"></i>
-                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -125,7 +117,6 @@
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Receipt</th>
                                             <th class="text-center">Action</th>
-                                            <th class="text-center">View</th>
                                         </tr>
                                     </tfoot>
                                 </table>

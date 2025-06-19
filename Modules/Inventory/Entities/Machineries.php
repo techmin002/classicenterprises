@@ -17,6 +17,29 @@ class Machineries extends Model
     
     protected static function newFactory(): MachineriesFactory
     {
-        //return MachineriesFactory::new();
+        return MachineriesFactory::new();
     }
+
+    public function devicePurchases()
+    {
+        return $this->hasMany(DevicePurchaseMachinery::class);
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function User()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function devicePurchasesMachineries()
+    {
+        return $this->hasMany(DevicePurchaseMachinery::class);
+    }
+
+
+    
 }

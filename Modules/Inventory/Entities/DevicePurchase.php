@@ -48,4 +48,10 @@ class DevicePurchase extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    // If using route model binding
+public function getRouteKeyName()
+{
+    return 'id'; // or whatever field you're using
+}
 }

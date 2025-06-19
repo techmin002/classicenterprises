@@ -36,13 +36,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('device-purchases/{devicePurchase}/edit', [DevicePurchaseController::class, 'edit'])->name('device_purchase_edit');
     Route::put('device-purchases/{devicePurchase}', [DevicePurchaseController::class, 'update'])->name('device_purchases_update');
     Route::delete('device-purchases/{devicePurchase}', [DevicePurchaseController::class, 'destroy'])->name('device_purchase_destroy');
-    Route::get('device_purchase_acessories/{devicePurchase}', [DevicePurchaseController::class, 'getAccessories'])->name('device_purchase_acessories');
-    Route::get('device_purchase_machineries/{devicePurchase}', [DevicePurchaseController::class, 'getMachineries'])->name('device_purchase_machineries');
-    Route::get('device_purchase_inventory/{devicePurchase}', [DevicePurchaseController::class, 'getInventories'])->name('device_purchase_inventory');
+    // Route to show purchase details
+
+    Route::get('inventries', [DevicePurchaseController::class, 'getInventories'])->name('inventries');
+
+    Route::get('device_purchase_machineries_accessories/{id}', [DevicePurchaseController::class, 'showMachineriesAccessories'])->name('device_purchase_machineries_accessories');
 
 
 
     Route::resource('sales', SalesController::class)->names('sales');
-    Route::post('sales/store', [SalesController::class, 'store'])->name('sales_store');
+    Route::post('/sales', [SalesController::class, 'store'])->name('sales_store');
+    
     Route::resource('stock', StockController::class)->names('stock-transfers');
 });
