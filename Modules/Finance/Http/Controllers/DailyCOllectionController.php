@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Modules\Finance\Entities\Payment;
 use Modules\Lead\Entities\CustomerPayment;
 
 class DailyCOllectionController extends Controller
@@ -14,17 +15,16 @@ class DailyCOllectionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $today = \Carbon\Carbon::today();
+        $date = $request->input('date') ?? Carbon::today()->toDateString();
 
-        $collections = \Modules\Lead\Entities\CustomerPayment::with(['customer.lead'])
-            ->whereDate('created_at', $today)
-            ->get();
+        // Filter by created_at instead of payment_date
+        $collections = Payment::whereDate('created_at', $date)->get();
 
-        $grandTotal = $collections->sum('paid_amount');
+        $grandTotal = $collections->sum('amount');
 
-        return view('finance::dailycollection.index', compact('collections', 'grandTotal'));
+        return view('finance::dailycollection.index', compact('collections', 'grandTotal', 'date'));
     }
 
     /**

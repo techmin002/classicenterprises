@@ -4,7 +4,7 @@
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active"> Daily Collection</li>
+        <li class="breadcrumb-item active"> Daily Collection </li>
     </ol>
 @endsection
 
@@ -15,7 +15,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1> Daily Collection</h1>
+                        <h1> Daily Collection </h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -44,45 +44,35 @@
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
-                                        {{-- <tr>
-                                            <th class="text-center">S.N</th>
-                                            <th class="text-center">Name</th>
-                                            <th class="text-center">Email</th>
-                                            <th class="text-center">Mobile</th>
-                                            <th class="text-center">Address</th>
-                                            <th class="text-center">Paid</th>
-                                            <th class="text-center">Total</th>
-                                            <th class="text-center">Due</th>
-                                            <th class="text-center">Action</th>
-                                        </tr> --}}
                                         <tr>
                                             <th class="text-center">S.N</th>
-                                            <th class="text-center">Customer</th>
+                                            <th class="text-center">Name</th>
                                             <th class="text-center">Method</th>
-                                            <th class="text-center">Date & Time</th>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Message</th>
                                             <th class="text-center">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($collections as $payment)
+                                        @forelse($collections as $item)
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                                <td class="text-center">
-                                                    {{ ucfirst($payment->customer->lead->name ?? 'N/A') }}</td>
-                                                <td class="text-center">{{ ucfirst($payment->payment_method) }}</td>
-                                                <td class="text-center">{{ $payment->created_at }}</td>
-                                                <td class="text-center">{{ $payment->paid_amount }}</td>
+                                                <td class="text-center">{{ $item->name }}</td>
+                                                <td class="text-center">{{ $item->payment_method }}</td>
+                                                <td class="text-center">{{ $item->created_at }}</td>
+                                                <td class="text-center">{{ $item->message }}</td>
+                                                <td class="text-center">₹{{ $item->amount }}</td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">No collections today.</td>
+                                                <td colspan="6" class="text-center">No collections today.</td>
                                             </tr>
                                         @endforelse
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th class="text-center" colspan="4">Grand Total</th>
-                                            <th class="text-center">{{ $grandTotal }}</th>
+                                            <th class="text-center" colspan="5">Grand Total</th>
+                                            <th class="text-center">₹{{ number_format($grandTotal, 2) }}</th>
                                         </tr>
                                     </tfoot>
                                 </table>
