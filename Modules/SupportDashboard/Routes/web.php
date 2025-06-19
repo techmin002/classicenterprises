@@ -13,8 +13,6 @@ use Modules\SupportDashboard\Http\Controllers\SupportDashboardController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::group([], function () {
+Route::group(['middleware' => 'auth'], function () {
     Route::resource('supportdashboard', SupportDashboardController::class)->names('supportdashboard');
 });
-    // Route::get('supportdashboard', SupportDashboardController::class)->name('supportdashboard.create');

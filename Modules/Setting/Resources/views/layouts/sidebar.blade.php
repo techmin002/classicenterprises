@@ -631,21 +631,21 @@
                             <a href="{{ route('supportdashboard.create') }}"
                                 class="nav-link {{ request()->routeIs('supportdashboard.create') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                <p>Task Create</p>
+                                <p>Ticket Create</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('pettycash-request.index') }}"
                                 class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                <p>Task Queue </p>
+                                <p>Ticket Queue </p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('pettycash-request.index') }}"
                                 class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                <p>Task Assign </p>
+                                <p>Ticket Assign </p>
                             </a>
                         </li>
                         <li class="nav-item">
