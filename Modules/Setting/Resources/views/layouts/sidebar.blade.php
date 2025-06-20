@@ -161,7 +161,10 @@
 
                       </ul>
                   </li>
-                  <li class="nav-header text-primary"><b>Sales Detail's</b></li>
+                  <div class="my-3 border-top border-success pt-1">
+                    <li class="nav-header text-primary">
+                        <strong>Sales Detail's</strong>
+                    </li>
                   <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                       <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
                           <i class="nav-icon fas fa-image"></i>
@@ -192,6 +195,7 @@
 
                       </ul>
                   </li>
+
                   @can('access_sliders')
                       <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
@@ -256,6 +260,8 @@
                           </ul>
                       </li>
                   @endcan
+                </div>
+                <div class="border-top border-success"></div>
                   @if (auth()->user()->access_type === 'Admin')
                   @else
                       @can('access_branch')
@@ -413,36 +419,36 @@
                       </li>
                   @endcan
                   @can('access_sliders')
-                  <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
-                      <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
-                          <i class="nav-icon fas fa-image"></i>
-                          <p>
-                              Inventory Mgnt
-                              <i class="right fas fa-angle-left"></i>
-                          </p>
-                      </a>
-                      <ul class="nav nav-treeview">
-                          <li class="nav-item">
-                              <a href="{{ route('inventories.index','machinery') }}"
-                                  class="nav-link @if (request()->routeIs('inventories.index','machinery')) active @endif">
-                                  <p>Machineries</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                            <a href="{{ route('inventories.index','machinery') }}"
-                                class="nav-link @if (request()->routeIs('inventories.index','accessory')) active @endif">
-                                <p>Accessories</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('inventories.create') }}"
-                                class="nav-link @if (request()->routeIs('inventories.create')) active @endif">
-                                <p>Purchase</p>
-                            </a>
-                        </li>
-                      </ul>
-                  </li>
-              @endcan
+                      <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                          <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                              <i class="nav-icon fas fa-image"></i>
+                              <p>
+                                  Inventory Mgnt
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('inventories.index', 'machinery') }}"
+                                      class="nav-link @if (request()->routeIs('inventories.index', 'machinery')) active @endif">
+                                      <p>Machineries</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('inventories.index', 'machinery') }}"
+                                      class="nav-link @if (request()->routeIs('inventories.index', 'accessory')) active @endif">
+                                      <p>Accessories</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('inventories.create') }}"
+                                      class="nav-link @if (request()->routeIs('inventories.create')) active @endif">
+                                      <p>Purchase</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                  @endcan
                   @can('access_sliders')
                       <li class="nav-item @if (request()->routeIs('services.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('services.*')) active @endif">
@@ -640,45 +646,52 @@
                       </ul>
                   </li>
                   {{-- @endcan --}}
-                  <li class="nav-item {{ request()->routeIs('supportdashboard.*') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#" class="nav-link" {{ request()->routeIs('supportdashboard.*') ? 'active' : '' }}>
-                        <i class="nav-icon fas fa-newspaper"></i>
-                        <p>
-                            Support Dashboard
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('supportdashboard.create') }}"
-                                class="nav-link {{ request()->routeIs('supportdashboard.create') ? 'active' : '' }}">
-                                {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                <p>Ticket Create</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('pettycash-request.index') }}"
-                                class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
-                                {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                <p>Ticket Queue </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('pettycash-request.index') }}"
-                                class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
-                                {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                <p>Ticket Assign </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('pettycash-request.index') }}"
-                                class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
-                                {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                <p>Task Complete </p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                  <!-- Support Dashboard Section -->
+                  <div class="my-3 border-top border-success pt-1">
+                      <li class="nav-header text-primary">
+                          <strong>Support Dashboard</strong>
+                      </li>
+
+                      <li
+                          class="nav-item {{ request()->routeIs('supportdashboard.*') ? 'menu-is-opening menu-open' : '' }}">
+                          <a href="#"
+                              class="nav-link {{ request()->routeIs('supportdashboard.*') ? 'active' : '' }}">
+                              <i class="nav-icon fas fa-newspaper"></i>
+                              <p>
+                                  Tickets
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('supportdashboard.create') }}"
+                                      class="nav-link {{ request()->routeIs('supportdashboard.create') ? 'active' : '' }}">
+                                      <p>Ticket Create</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('pettycash-request.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                      <p>Ticket Queue</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('pettycash-request.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                      <p>Ticket Assign</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('pettycash-request.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                      <p>Task Complete</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                  </div>
+                  <div class="border-top border-success"></div>
                   @can('access_advertisements')
                       <li
                           class="nav-item {{ request()->routeIs('advertisements.*') ? 'menu-is-opening menu-open' : '' }}">
