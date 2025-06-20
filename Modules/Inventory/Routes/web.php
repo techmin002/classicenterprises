@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('sales', SalesController::class)->names('sales');
     Route::post('/sales', [SalesController::class, 'store'])->name('sales_store');
+    Route::get('sales/{id}/details', [SalesController::class, 'showDetails'])->name('sales.details');
     
     Route::resource('stock', StockController::class)->names('stock-transfers');
 });

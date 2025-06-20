@@ -95,7 +95,8 @@
                                                     </form>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="" class="btn btn-sm btn-info" data-toggle="tooltip" title="View Details"><i class="fa fa-eye"></i></a>
+                                                    <a href="{{ route('sales.details', $sale->id) }}" class="btn btn-sm btn-info" data-toggle="tooltip" title="View Details">
+                                                    <i class="fa fa-eye"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach

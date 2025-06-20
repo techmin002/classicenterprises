@@ -53,5 +53,14 @@ class Sale extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function saleAccessories()
+    {
+        return $this->hasMany(SaleAccessory::class);
+    }
+
+    public function saleMachineries()
+    {
+        return $this->hasMany(SaleMachinery::class);
+    }
     
 }
