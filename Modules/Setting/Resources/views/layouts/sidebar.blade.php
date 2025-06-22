@@ -614,9 +614,8 @@
                               </a>
                           </li>
                           <li class="nav-item">
-                              <a href=""
-                                  class="nav-link
-                                  {{-- {{ request()->routeIs('') ? 'active' : '' }} --}}
+                              <a href="{{ route('payment-verification.index') }}"
+                                  class="nav-link {{ request()->routeIs('payment-verification.index') ? 'active' : '' }}
                                    ">
                                   {{-- <i class="far fa-circle nav-icon"></i> --}}
                                   <p>Field Payment Verification</p>
