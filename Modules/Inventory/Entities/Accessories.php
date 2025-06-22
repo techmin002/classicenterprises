@@ -74,4 +74,10 @@ class Accessories extends Model
     {
         return $query->where('status', 'on');
     }
+
+     public function stockTransfers()
+{
+    return $this->belongsToMany(StockTransfer::class, 'stock_transfer_accessories')
+        ->withPivot(['quantity', 'serial_numbers', 'condition']);
+}
 }

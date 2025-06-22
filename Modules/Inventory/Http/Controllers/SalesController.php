@@ -12,8 +12,7 @@ use Modules\Inventory\Entities\Accessories;
 use Modules\Inventory\Entities\Machineries;
 use Modules\Inventory\Entities\SaleAccessory;
 use Modules\Inventory\Entities\SaleMachinery;
-use App\Models\Accessory;
-use App\Models\Machinery;
+use Modules\Inventory\Entities\Inventory;
 
 class SalesController extends Controller
 {
@@ -68,9 +67,10 @@ class SalesController extends Controller
                 'created_by' => auth()->id(),
             ]);
 
-            // Store accessories
+            // Store accessories and update inventory
             if ($request->has('accessories')) {
                 foreach ($request->accessories as $accessory) {
+                    // Create sale accessory record
                     SaleAccessory::create([
                         'sale_id' => $sale->id,
                         'accessory_id' => $accessory['id'],
@@ -80,12 +80,30 @@ class SalesController extends Controller
                         'total' => $accessory['total'],
                         'warranty' => $accessory['warranty'],
                     ]);
+
+                    // Update inventory
+                    $inventory = Inventory::where('accessory_id', $accessory['id'])
+                        ->first();
+
+                    if ($inventory) {
+                        // Check if enough stock exists
+                        if ($inventory->quantity < $accessory['quantity']) {
+                            throw new \Exception("Not enough stock for accessory: " . Accessories::find($accessory['id'])->name);
+                        }
+
+                        // Decrease the quantity
+                        $inventory->quantity -= $accessory['quantity'];
+                        $inventory->save();
+                    } else {
+                        throw new \Exception("Inventory not found for accessory: " . Accessories::find($accessory['id'])->name);
+                    }
                 }
             }
 
-            // Store machineries
+            // Store machineries and update inventory
             if ($request->has('machineries')) {
                 foreach ($request->machineries as $machinery) {
+                    // Create sale machinery record
                     SaleMachinery::create([
                         'sale_id' => $sale->id,
                         'machinery_id' => $machinery['id'],
@@ -95,6 +113,23 @@ class SalesController extends Controller
                         'total' => $machinery['total'],
                         'warranty' => $machinery['warranty'],
                     ]);
+
+                    // Update inventory
+                    $inventory = Inventory::where('machinery_id', $machinery['id'])
+                        ->first();
+
+                    if ($inventory) {
+                        // Check if enough stock exists
+                        if ($inventory->quantity < $machinery['quantity']) {
+                            throw new \Exception("Not enough stock for machinery: " . Machineries::find($machinery['id'])->name);
+                        }
+
+                        // Decrease the quantity
+                        $inventory->quantity -= $machinery['quantity'];
+                        $inventory->save();
+                    } else {
+                        throw new \Exception("Inventory not found for machinery: " . Machineries::find($machinery['id'])->name);
+                    }
                 }
             }
 
@@ -141,8 +176,7 @@ class SalesController extends Controller
         ));
     }
 
-
-     public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         DB::beginTransaction();
 
@@ -173,27 +207,77 @@ class SalesController extends Controller
                 foreach ($request->accessories as $accessoryId => $accessoryData) {
                     $existingAccessoryIds[] = $accessoryId;
                     
-                    SaleAccessory::where('id', $accessoryId)->update([
+                    $saleAccessory = SaleAccessory::find($accessoryId);
+                    $originalQuantity = $saleAccessory->quantity;
+                    $newQuantity = $accessoryData['quantity'];
+                    
+                    // Update sale accessory record
+                    $saleAccessory->update([
                         'accessory_id' => $accessoryData['id'],
-                        'quantity' => $accessoryData['quantity'],
+                        'quantity' => $newQuantity,
                         'price' => $accessoryData['price'],
                         'total' => $accessoryData['total'],
                         'warranty' => $accessoryData['warranty'],
                     ]);
+
+                    // Update inventory
+                    $inventory = Inventory::where('accessory_id', $accessoryData['id'])
+                        ->first();
+
+                    if ($inventory) {
+                        // Calculate difference and adjust inventory
+                        $quantityDifference = $originalQuantity - $newQuantity;
+                        $inventory->quantity += $quantityDifference;
+                        
+                        // Check if enough stock exists after adjustment
+                        if ($inventory->quantity < 0) {
+                            throw new \Exception("Not enough stock for accessory: " . $saleAccessory->name);
+                        }
+                        
+                        $inventory->save();
+                    }
                 }
                 
                 // Delete accessories that were removed
-                SaleAccessory::where('sale_id', $sale->id)
+                $removedAccessories = SaleAccessory::where('sale_id', $sale->id)
                     ->whereNotIn('id', $existingAccessoryIds)
-                    ->delete();
+                    ->get();
+
+                foreach ($removedAccessories as $removed) {
+                    // Return quantity to inventory
+                    $inventory = Inventory::where('accessory_id', $removed->accessory_id)
+                        ->first();
+
+                    if ($inventory) {
+                        $inventory->quantity += $removed->quantity;
+                        $inventory->save();
+                    }
+
+                    // Delete the sale accessory record
+                    $removed->delete();
+                }
             } else {
-                // If no accessories were submitted, delete all
+                // If no accessories were submitted, delete all and return to inventory
+                $removedAccessories = SaleAccessory::where('sale_id', $sale->id)->get();
+                
+                foreach ($removedAccessories as $removed) {
+                    // Return quantity to inventory
+                    $inventory = Inventory::where('accessory_id', $removed->accessory_id)
+                        ->first();
+
+                    if ($inventory) {
+                        $inventory->quantity += $removed->quantity;
+                        $inventory->save();
+                    }
+                }
+                
                 SaleAccessory::where('sale_id', $sale->id)->delete();
             }
 
             // Handle new accessories
             if ($request->has('new_accessories')) {
                 foreach ($request->new_accessories as $newAccessory) {
+                    // Create sale accessory record
                     SaleAccessory::create([
                         'sale_id' => $sale->id,
                         'accessory_id' => $newAccessory['id'],
@@ -203,37 +287,104 @@ class SalesController extends Controller
                         'total' => $newAccessory['total'],
                         'warranty' => $newAccessory['warranty'],
                     ]);
+
+                    // Update inventory
+                    $inventory = Inventory::where('accessory_id', $newAccessory['id'])
+                        ->first();
+
+                    if ($inventory) {
+                        // Check if enough stock exists
+                        if ($inventory->quantity < $newAccessory['quantity']) {
+                            throw new \Exception("Not enough stock for accessory: " . Accessories::find($newAccessory['id'])->name);
+                        }
+
+                        // Decrease the quantity
+                        $inventory->quantity -= $newAccessory['quantity'];
+                        $inventory->save();
+                    } else {
+                        throw new \Exception("Inventory not found for accessory: " . Accessories::find($newAccessory['id'])->name);
+                    }
                 }
             }
 
-            // Handle existing machineries
+            // Handle existing machineries (similar to accessories)
             if ($request->has('machineries')) {
                 $existingMachineryIds = [];
                 
                 foreach ($request->machineries as $machineryId => $machineryData) {
                     $existingMachineryIds[] = $machineryId;
                     
-                    SaleMachinery::where('id', $machineryId)->update([
+                    $saleMachinery = SaleMachinery::find($machineryId);
+                    $originalQuantity = $saleMachinery->quantity;
+                    $newQuantity = $machineryData['quantity'];
+                    
+                    // Update sale machinery record
+                    $saleMachinery->update([
                         'machinery_id' => $machineryData['id'],
-                        'quantity' => $machineryData['quantity'],
+                        'quantity' => $newQuantity,
                         'price' => $machineryData['price'],
                         'total' => $machineryData['total'],
                         'warranty' => $machineryData['warranty'],
                     ]);
+
+                    // Update inventory
+                    $inventory = Inventory::where('machinery_id', $machineryData['id'])
+                        ->first();
+
+                    if ($inventory) {
+                        // Calculate difference and adjust inventory
+                        $quantityDifference = $originalQuantity - $newQuantity;
+                        $inventory->quantity += $quantityDifference;
+                        
+                        // Check if enough stock exists after adjustment
+                        if ($inventory->quantity < 0) {
+                            throw new \Exception("Not enough stock for machinery: " . $saleMachinery->name);
+                        }
+                        
+                        $inventory->save();
+                    }
                 }
                 
                 // Delete machineries that were removed
-                SaleMachinery::where('sale_id', $sale->id)
+                $removedMachineries = SaleMachinery::where('sale_id', $sale->id)
                     ->whereNotIn('id', $existingMachineryIds)
-                    ->delete();
+                    ->get();
+
+                foreach ($removedMachineries as $removed) {
+                    // Return quantity to inventory
+                    $inventory = Inventory::where('machinery_id', $removed->machinery_id)
+                        ->first();
+
+                    if ($inventory) {
+                        $inventory->quantity += $removed->quantity;
+                        $inventory->save();
+                    }
+
+                    // Delete the sale machinery record
+                    $removed->delete();
+                }
             } else {
-                // If no machineries were submitted, delete all
+                // If no machineries were submitted, delete all and return to inventory
+                $removedMachineries = SaleMachinery::where('sale_id', $sale->id)->get();
+                
+                foreach ($removedMachineries as $removed) {
+                    // Return quantity to inventory
+                    $inventory = Inventory::where('machinery_id', $removed->machinery_id)
+                        ->first();
+
+                    if ($inventory) {
+                        $inventory->quantity += $removed->quantity;
+                        $inventory->save();
+                    }
+                }
+                
                 SaleMachinery::where('sale_id', $sale->id)->delete();
             }
 
             // Handle new machineries
             if ($request->has('new_machineries')) {
                 foreach ($request->new_machineries as $newMachinery) {
+                    // Create sale machinery record
                     SaleMachinery::create([
                         'sale_id' => $sale->id,
                         'machinery_id' => $newMachinery['id'],
@@ -243,6 +394,23 @@ class SalesController extends Controller
                         'total' => $newMachinery['total'],
                         'warranty' => $newMachinery['warranty'],
                     ]);
+
+                    // Update inventory
+                    $inventory = Inventory::where('machinery_id', $newMachinery['id'])
+                        ->first();
+
+                    if ($inventory) {
+                        // Check if enough stock exists
+                        if ($inventory->quantity < $newMachinery['quantity']) {
+                            throw new \Exception("Not enough stock for machinery: " . Machineries::find($newMachinery['id'])->name);
+                        }
+
+                        // Decrease the quantity
+                        $inventory->quantity -= $newMachinery['quantity'];
+                        $inventory->save();
+                    } else {
+                        throw new \Exception("Inventory not found for machinery: " . Machineries::find($newMachinery['id'])->name);
+                    }
                 }
             }
 
@@ -259,38 +427,62 @@ class SalesController extends Controller
     }
 
     public function destroy($id)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
-        $sale = Sale::findOrFail($id);
+        try {
+            $sale = Sale::findOrFail($id);
 
-        // Delete related records first
-        SaleAccessory::where('sale_id', $sale->id)->delete();
-        SaleMachinery::where('sale_id', $sale->id)->delete();
+            // Get all accessories and machineries to return to inventory
+            $saleAccessories = SaleAccessory::where('sale_id', $sale->id)->get();
+            $saleMachineries = SaleMachinery::where('sale_id', $sale->id)->get();
 
-        // Delete the sale record
-        $sale->delete();
+            // Return accessory quantities to inventory
+            foreach ($saleAccessories as $accessory) {
+                $inventory = Inventory::where('accessory_id', $accessory->accessory_id)
+                    ->first();
 
-        DB::commit();
+                if ($inventory) {
+                    $inventory->quantity += $accessory->quantity;
+                    $inventory->save();
+                }
+            }
 
-        return redirect()->route('sales.index')
-            ->with('success', 'Sale #' . $sale->invoice_number . ' has been deleted successfully.');
+            // Return machinery quantities to inventory
+            foreach ($saleMachineries as $machinery) {
+                $inventory = Inventory::where('machinery_id', $machinery->machinery_id)
+                    ->first();
 
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->route('sales.index')
-            ->with('error', 'Failed to delete sale: ' . $e->getMessage());
+                if ($inventory) {
+                    $inventory->quantity += $machinery->quantity;
+                    $inventory->save();
+                }
+            }
+
+            // Delete related records
+            SaleAccessory::where('sale_id', $sale->id)->delete();
+            SaleMachinery::where('sale_id', $sale->id)->delete();
+
+            // Delete the sale record
+            $sale->delete();
+
+            DB::commit();
+
+            return redirect()->route('sales.index')
+                ->with('success', 'Sale #' . $sale->invoice_number . ' has been deleted successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('sales.index')
+                ->with('error', 'Failed to delete sale: ' . $e->getMessage());
+        }
     }
-}
 
-public function showDetails($id)
-{
-    $sale = Sale::with(['saleAccessories.accessory', 'saleMachineries.machinery'])
-                ->findOrFail($id);
+    public function showDetails($id)
+    {
+        $sale = Sale::with(['saleAccessories.accessory', 'saleMachineries.machinery'])
+                    ->findOrFail($id);
 
-    return view('inventory::Sales.details', compact('sale'));
-}
-
-    
+        return view('inventory::Sales.details', compact('sale'));
+    }
 }

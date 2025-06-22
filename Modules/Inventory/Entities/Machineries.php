@@ -40,6 +40,12 @@ class Machineries extends Model
         return $this->hasMany(DevicePurchaseMachinery::class);
     }
 
+    public function stockTransfers()
+{
+    return $this->belongsToMany(StockTransfer::class, 'stock_transfer_machineries')
+        ->withPivot(['quantity', 'serial_numbers', 'condition']);
+}
+
 
     
 }
