@@ -7,7 +7,7 @@
                     Create Stock Transfer
                 </h1>
             </div>
-            <form action="{{ route('stock-transfers.store') }}" method="post" class="needs-validation" novalidate>
+            <form action="{{ route('stock-transfers.store') }}" method="post" class="needs-validation" novalidate id="stockTransferForm">
                 @csrf
                 <div class="modal-body modal-body-advanced">
                     <div class="transfer-details-card p-4 mb-4">
@@ -25,6 +25,7 @@
                                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                         @endforeach
                                     </select>
+                                    <div class="invalid-feedback">Please select a source branch</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
@@ -36,12 +37,14 @@
                                             <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                         @endforeach
                                     </select>
+                                    <div class="invalid-feedback">Please select a destination branch</div>
                                 </div>
                             </div>
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <label for="transfer_date" class="form-label12 fw-semibold">Transfer Date</label>
                                     <input type="date" class="form-control border-primary shadow-sm" id="transfer_date" name="transfer_date" value="{{ date('Y-m-d') }}" required>
+                                    <div class="invalid-feedback">Please select a transfer date</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -53,6 +56,7 @@
                                         <option value="completed">Completed</option>
                                         <option value="cancelled">Cancelled</option>
                                     </select>
+                                    <div class="invalid-feedback">Please select a status</div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -75,6 +79,7 @@
                         <button type="button" id="addMachinery" class="btn btn-warning mt-3">
                             <i class="bi bi-plus-circle"></i> Add Machinery
                         </button>
+                        <div id="machineryError" class="text-danger mt-2 d-none">At least one machinery item is required</div>
                     </div>
 
                     <div class="accessories-transfer-card p-4">
@@ -88,10 +93,11 @@
                         <button type="button" id="addAccessory" class="btn btn-success mt-3">
                             <i class="bi bi-plus-circle"></i> Add Accessory
                         </button>
+                        <div id="accessoryError" class="text-danger mt-2 d-none">At least one accessory item is required</div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-start modal-footer-advanced">
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow-sm">
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow-sm" id="submitBtn">
                         <i class="bi bi-check-circle me-2"></i>Create Transfer
                     </button>
                     <button type="button" data-dismiss="modal" class="btn btn-outline-secondary px-5 py-2 fw-bold shadow-sm">
@@ -171,6 +177,10 @@
     .form-control:focus {
         border-color: #4b6cb7;
         box-shadow: 0 0 0 0.2rem rgba(75, 108, 183, 0.15);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
     }
 
     .section-title {
@@ -268,20 +278,11 @@
         let machineryIndex = 0;
         let isSubmitting = false;
 
-        // Debounce function to prevent rapid clicks
-        function debounce(func, wait) {
-            let timeout;
-            return function() {
-                const context = this, args = arguments;
-                clearTimeout(timeout);
-                timeout = setTimeout(() => {
-                    func.apply(context, args);
-                }, wait);
-            };
-        }
+        // Initialize form validation
+        initFormValidation();
 
         // Add accessory row
-        $('#addAccessory').on('click', debounce(function() {
+        $('#addAccessory').on('click', function() {
             accessoryIndex++;
             const row = `
             <div class="row gy-3 item-row accessory-row" id="accessory-row-${accessoryIndex}">
@@ -296,6 +297,7 @@
                                 </option>
                             @endforeach
                         </select>
+                        <div class="invalid-feedback">Please select an accessory</div>
                     </div>
                 </div>
                 <div class="col-lg-2">
@@ -307,6 +309,7 @@
                                value="1" 
                                min="1"
                                required>
+                        <div class="invalid-feedback">Please enter a valid quantity</div>
                     </div>
                 </div>
                 <div class="col-lg-3">
@@ -327,6 +330,7 @@
                             <option value="refurbished">Refurbished</option>
                             <option value="damaged">Damaged</option>
                         </select>
+                        <div class="invalid-feedback">Please select a condition</div>
                     </div>
                 </div>
                 <div class="col-lg-1 d-flex align-items-end">
@@ -336,10 +340,11 @@
                 </div>
             </div>`;
             $('#accessoriesContainer').append(row);
-        }, 300));
+            $('#accessoryError').addClass('d-none');
+        });
 
         // Add machinery row
-        $('#addMachinery').on('click', debounce(function() {
+        $('#addMachinery').on('click', function() {
             machineryIndex++;
             const row = `
             <div class="row gy-3 item-row machinery-row" id="machinery-row-${machineryIndex}">
@@ -354,6 +359,7 @@
                                 </option>
                             @endforeach
                         </select>
+                        <div class="invalid-feedback">Please select a machinery</div>
                     </div>
                 </div>
                 <div class="col-lg-2">
@@ -365,6 +371,7 @@
                                value="1" 
                                min="1"
                                required>
+                        <div class="invalid-feedback">Please enter a valid quantity</div>
                     </div>
                 </div>
                 <div class="col-lg-3">
@@ -385,6 +392,7 @@
                             <option value="refurbished">Refurbished</option>
                             <option value="damaged">Damaged</option>
                         </select>
+                        <div class="invalid-feedback">Please select a condition</div>
                     </div>
                 </div>
                 <div class="col-lg-1 d-flex align-items-end">
@@ -394,37 +402,98 @@
                 </div>
             </div>`;
             $('#machineryContainer').append(row);
-        }, 300));
+            $('#machineryError').addClass('d-none');
+        });
 
-        // Remove row with confirmation
+        // Remove row
         $(document).on('click', '.remove-item', function() {
             const rowId = $(this).data('row');
             const $row = $(`#${rowId}`);
             
-            // Simple fade out animation
             $row.fadeOut(300, function() {
                 $(this).remove();
+                validateItemCount();
             });
         });
 
+        // Validate quantity against available stock
+        $(document).on('change', 'select[name*="[accessory_id]"], select[name*="[machinery_id]"]', function() {
+            const maxQuantity = $(this).find('option:selected').data('quantity');
+            const quantityInput = $(this).closest('.item-row').find('input[name*="[quantity]"]');
+            quantityInput.attr('max', maxQuantity);
+        });
+
         // Form submission handler
-        $('form').on('submit', function(e) {
-            if (isSubmitting) {
-                e.preventDefault();
+        $('#stockTransferForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            if (isSubmitting) return;
+            
+            // Validate form
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                $(this).addClass('was-validated');
+                validateItemCount();
+                return;
+            }
+            
+            // Validate at least one item exists
+            if ($('.accessory-row').length === 0 && $('.machinery-row').length === 0) {
+                $('#accessoryError').removeClass('d-none');
+                $('#machineryError').removeClass('d-none');
                 return;
             }
             
             // Add loading state
             isSubmitting = true;
-            const $submitBtn = $(this).find('[type="submit"]');
+            const $submitBtn = $('#submitBtn');
             $submitBtn.addClass('btn-loading');
             $submitBtn.prop('disabled', true);
             
-            // You could add additional form validation here if needed
+            // Submit form
+            this.submit();
         });
 
-        // Add first row for each section
-        $('#addAccessory').trigger('click');
-        $('#addMachinery').trigger('click');
+        // Initialize form validation
+        function initFormValidation() {
+            // Prevent default form submission
+            $('#stockTransferForm').on('submit', function(e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                $(this).addClass('was-validated');
+            });
+            
+            // Add first row for each section
+            $('#addAccessory').trigger('click');
+            $('#addMachinery').trigger('click');
+        }
+
+        // Validate item count
+        function validateItemCount() {
+            if ($('.accessory-row').length === 0) {
+                $('#accessoryError').removeClass('d-none');
+            } else {
+                $('#accessoryError').addClass('d-none');
+            }
+            
+            if ($('.machinery-row').length === 0) {
+                $('#machineryError').removeClass('d-none');
+            } else {
+                $('#machineryError').addClass('d-none');
+            }
+        }
+
+        // Prevent same branch selection
+        $('#from_branch_id, #to_branch_id').change(function() {
+            const fromBranch = $('#from_branch_id').val();
+            const toBranch = $('#to_branch_id').val();
+            
+            if (fromBranch && toBranch && fromBranch === toBranch) {
+                alert('Source and destination branches cannot be the same');
+                $(this).val('').focus();
+            }
+        });
     });
 </script>
