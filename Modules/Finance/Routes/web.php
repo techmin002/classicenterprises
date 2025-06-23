@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Finance\Http\Controllers\DailyCOllectionController;
 use Modules\Finance\Http\Controllers\FinanceController;
 use Modules\Finance\Http\Controllers\FirstBillController;
+use Modules\Finance\Http\Controllers\PaymentVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,5 +21,23 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('finance', FinanceController::class)->names('finance');
     Route::resource('daily', DailyCOllectionController::class)->names('daily');
     Route::resource('firstbill', FirstBillController::class)->names('firstbill');
+
+
+    // Route::resource('payment-verification', PaymentVerificationController::class)->names('payment-verification.index');
+
+    Route::get('payment-verification/index', [PaymentVerificationController::class, 'index'])->name('payment-verification.index');
+    Route::post('/payment-verification/{id}', [PaymentVerificationController::class, 'store'])->name('payment-verification.store');
+
+
+    Route::post('/closing-amount', [DailyCollectionController::class, 'storeClosingAmount'])->name('closing.amount.store');
+
+    Route::post('/deposited/history/store', [DailyCollectionController::class, 'depositedHistorystore'])->name('deposite.history.store');
+
+    Route::get('/deposite/history', [DailyCollectionController::class, 'depositedHistory'])->name('deposite.history');
+
+    Route::get('/all-collection', [DailyCollectionController::class, 'AllCollection'])->name('all-collection');
+
+
+
 
 });
