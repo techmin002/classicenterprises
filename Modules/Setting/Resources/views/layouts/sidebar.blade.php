@@ -196,6 +196,81 @@
                       </ul>
                   </li>
 
+                  <li class="nav-header text-primary"><b>Sales Detail's</b></li>
+
+                <li class="nav-item {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'menu-is-opening menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-boxes"></i>
+                        <p>
+                            Inventory
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('suppliers.index') }}"
+                                class="nav-link {{ request()->routeIs('suppliers.index') ? 'active' : '' }}">
+                                <p>Suppliers</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('device-purchases.index') }}"
+                                class="nav-link {{ request()->routeIs('device-purchases.index') ? 'active' : '' }}">
+                                <p>Device Purchases</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('inventries') }}"
+                                class="nav-link {{ request()->routeIs('inventries') ? 'active' : '' }}">
+                                <p>Inventries</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('sales.index') }}"
+                                class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
+                                <p>Sales</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('stock-transfers.index') }}"
+                                class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
+                                <p>Stock Transfer</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                  <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                      <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                          <i class="nav-icon fas fa-image"></i>
+                          <p>
+                              CC Installation
+                              <i class="right fas fa-angle-left"></i>
+                          </p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                              <a href="{{ route('installation-queue.index', 'classic_customer') }}"
+                                  class="nav-link @if (request()->routeIs('installation-queue.index', 'classic_customer')) active @endif">
+                                  <p>Installation Queue</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('installation.reports', 'classic_customer') }}"
+                                  class="nav-link @if (request()->routeIs('installation.reports', 'classic_customer')) active @endif">
+                                  <p>Installation Reports</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('installation.complete', 'classic_customer') }}"
+                                  class="nav-link @if (request()->routeIs('installation.complete', 'classic_customer')) active @endif">
+                                  <p>Installation Complete</p>
+                              </a>
+                          </li>
+
+                      </ul>
+                  </li>
                   @can('access_sliders')
                       <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
