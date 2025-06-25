@@ -37,7 +37,7 @@
                         <!-- /.card -->
 
                         <div class="card">
-                            
+
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
@@ -79,67 +79,84 @@
                                                         class="btn btn-primary btn-sm" data-toggle="modal"
                                                         data-target="#exampleModal{{ $value->id }}"> Create Ticket</a>
 
-                                                        <div class="modal fade" id="exampleModal{{ $value->id }}" tabindex="-1"
-                                                            role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-lg" role="document">
-                                                                <div class="modal-content border-0 shadow">
+                                                    <div class="modal fade" id="exampleModal{{ $value->id }}"
+                                                        tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                                                        aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg" role="document">
+                                                            <div class="modal-content border-0 shadow">
 
-                                                                    <!-- Modal Header -->
-                                                                    <div class="modal-header bg-primary text-white">
-                                                                        <div>
-                                                                            <h5 class="modal-title mb-0" id="exampleModalLabel">
-                                                                                <i class="fa fa-headset mr-2"></i> Create Support Ticket
-                                                                            </h5>
-                                                                            <small>Customer: <strong>{{ ucfirst($value->lead->name) }}</strong></small>
+                                                                <!-- Modal Header -->
+                                                                <div class="modal-header bg-primary text-white">
+                                                                    <div>
+                                                                        <h5 class="modal-title mb-0" id="exampleModalLabel">
+                                                                            <i class="fa fa-headset mr-2"></i> Create
+                                                                            Support Ticket
+                                                                        </h5>
+                                                                        <small>Customer:
+                                                                            <strong>{{ ucfirst($value->lead->name) }}</strong></small>
+                                                                    </div>
+                                                                    <button type="button" class="close text-white"
+                                                                        data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <!-- Modal Body -->
+                                                                <form action="{{ route('supportdashboard-task.store') }}" method="POST">
+                                                                    @csrf
+                                                                    <div class="modal-body">
+                                                                        <input type="hidden" name="customer_id" value="{{ $value->id }}">
+                                                                        <div class="form-group">
+                                                                            <label for="support_type"
+                                                                                class="font-weight-bold">Support
+                                                                                Type</label>
+                                                                            <select name="support_type" id="support_type"
+                                                                                class="form-control">
+                                                                                <option value="" selected disabled>
+                                                                                    Select Support Type</option>
+                                                                                <option value="normal_service">Normal Service
+                                                                                </option>
+                                                                                <option value="maintenance">Maintenance</option>
+                                                                                <option value="location_shifting">Location Shifting
+                                                                                </option>
+                                                                            </select>
                                                                         </div>
-                                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true">&times;</span>
-                                                                        </button>
+
+                                                                        <div class="form-group">
+                                                                            <label for="priority"
+                                                                                class="font-weight-bold">Priority</label>
+                                                                            <select name="priority" id="priority"
+                                                                                class="form-control">
+                                                                                <option value="" selected disabled>
+                                                                                    Select Priority</option>
+                                                                                <option value="high">High</option>
+                                                                                <option value="medium">Medium</option>
+                                                                                <option value="low">Low</option>
+                                                                            </select>
+                                                                        </div>
+
+                                                                        <div class="form-group">
+                                                                            <label for="message"
+                                                                                class="font-weight-bold">Message</label>
+                                                                            <textarea name="message" id="message" class="form-control" rows="4" placeholder="Enter message..."></textarea>
+                                                                        </div>
                                                                     </div>
 
-                                                                    <!-- Modal Body -->
-                                                                    <form action="">
-                                                                        <div class="modal-body">
-                                                                            <div class="form-group">
-                                                                                <label for="support_type" class="font-weight-bold">Support Type</label>
-                                                                                <select name="support_type" id="support_type" class="form-control">
-                                                                                    <option value="" selected disabled>Select Support Type</option>
-                                                                                    <option value="">Normal Service</option>
-                                                                                    <option value="">Maintenance</option>
-                                                                                    <option value="">Location Shifting</option>
-                                                                                </select>
-                                                                            </div>
-
-                                                                            <div class="form-group">
-                                                                                <label for="priority" class="font-weight-bold">Priority</label>
-                                                                                <select name="priority" id="priority" class="form-control">
-                                                                                    <option value="" selected disabled>Select Priority</option>
-                                                                                    <option value="high">High</option>
-                                                                                    <option value="medium">Medium</option>
-                                                                                    <option value="low">Low</option>
-                                                                                </select>
-                                                                            </div>
-
-                                                                            <div class="form-group">
-                                                                                <label for="message" class="font-weight-bold">Message</label>
-                                                                                <textarea name="message" id="message" class="form-control" rows="4" placeholder="Enter message..."></textarea>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <!-- Modal Footer -->
-                                                                        <div class="modal-footer bg-light">
-                                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                                                                                <i class="fa fa-times mr-1"></i> Close
-                                                                            </button>
-                                                                            <button type="submit" class="btn btn-success">
-                                                                                <i class="fa fa-paper-plane mr-1"></i> Create Support
-                                                                            </button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
+                                                                    <!-- Modal Footer -->
+                                                                    <div class="modal-footer bg-light">
+                                                                        <button type="button" class="btn btn-secondary"
+                                                                            data-dismiss="modal">
+                                                                            <i class="fa fa-times mr-1"></i> Close
+                                                                        </button>
+                                                                        <button type="submit" class="btn btn-success">
+                                                                            <i class="fa fa-paper-plane mr-1"></i> Create
+                                                                            Support
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
                                                             </div>
                                                         </div>
-
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach

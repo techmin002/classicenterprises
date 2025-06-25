@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Lead\Entities\Customer;
+use Modules\SupportDashboard\Entities\Task;
 
 class SupportDashboardController extends Controller
 {
@@ -15,6 +16,7 @@ class SupportDashboardController extends Controller
      */
     public function index()
     {
+
         return view('supportdashboard::index');
     }
 
@@ -23,16 +25,15 @@ class SupportDashboardController extends Controller
      */
     public function create()
     {
-        $customers = Customer::where('customer_type','indoor')->with('lead','branch','products')->get();
+        $customers = Customer::where('customer_type', 'indoor')->with('lead', 'branch', 'products')->get();
         return view('supportdashboard::supports.create', compact('customers'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        //
     }
 
     /**
@@ -54,7 +55,7 @@ class SupportDashboardController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id)
     {
         //
     }

@@ -127,9 +127,6 @@
                                         <button type="button" id="addAccessory" class="badge badge-primary mt-3">Add
                                             Accessory</button>
 
-
-
-
                                         <div class="mt-3">
                                             <label for="overallTotal">Overall Total: </label>
                                             <input type="text" name="grand_total" id="overallTotal" class="form-control"
