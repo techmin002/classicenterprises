@@ -689,7 +689,7 @@
                           </li>
                       </ul>
                   </li>
-                  {{-- @endcan --}}
+                  @endcan
                   <!-- Support Dashboard Section -->
                   <div class="my-3 border-top border-success pt-1">
                       <li class="nav-header text-primary">
@@ -730,24 +730,7 @@
                                       <p>Ticket Complete</p>
                                   </a>
                               </li>
-                              {{-- <li class="nav-item">
-                                  <a href="{{ route('supportdashboard-task.queue') }}"
-                                      class="nav-link {{ request()->routeIs('supportdashboard-task.queue') ? 'active' : '' }}">
-                                      <p>Ticket Queue</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('supportdashboard-task.assign') }}"
-                                      class="nav-link {{ request()->routeIs('supportdashboard-task.assign') ? 'active' : '' }}">
-                                      <p>Ticket Assign</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('supportdashboard-task.complete') }}"
-                                      class="nav-link {{ request()->routeIs('supportdashboard-task.complete') ? 'active' : '' }}">
-                                      <p>Task Complete</p>
-                                  </a>
-                              </li> --}}
+
                           </ul>
                       </li>
                   </div>
