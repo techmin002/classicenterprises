@@ -203,67 +203,99 @@
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
                               <i class="nav-icon fas fa-image"></i>
                               <p>
-                                  Retails
+                                  CC Installation
                                   <i class="right fas fa-angle-left"></i>
                               </p>
                           </a>
                           <ul class="nav nav-treeview">
                               <li class="nav-item">
-                                  <a href="{{ route('installation-queue.index', 'retailler') }}"
-                                      class="nav-link @if (request()->routeIs('installation-queue.index', 'retailler')) active @endif">
+                                  <a href="{{ route('installation-queue.index', 'classic_customer') }}"
+                                      class="nav-link @if (request()->routeIs('installation-queue.index', 'classic_customer')) active @endif">
                                       <p>Installation Queue</p>
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('installation.reports', 'retailler') }}"
-                                      class="nav-link @if (request()->routeIs('installation.reports', 'retailler')) active @endif">
+                                  <a href="{{ route('installation.reports', 'classic_customer') }}"
+                                      class="nav-link @if (request()->routeIs('installation.reports', 'classic_customer')) active @endif">
                                       <p>Installation Reports</p>
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('installation.complete', 'retailler') }}"
-                                      class="nav-link @if (request()->routeIs('installation.complete', 'retailler')) active @endif">
+                                  <a href="{{ route('installation.complete', 'classic_customer') }}"
+                                      class="nav-link @if (request()->routeIs('installation.complete', 'classic_customer')) active @endif">
                                       <p>Installation Complete</p>
                                   </a>
                               </li>
 
                           </ul>
                       </li>
-                  @endcan
-                  @can('access_sliders')
-                      <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
-                          <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
-                              <i class="nav-icon fas fa-image"></i>
-                              <p>
-                                  Wholesale
-                                  <i class="right fas fa-angle-left"></i>
-                              </p>
-                          </a>
-                          <ul class="nav nav-treeview">
-                              <li class="nav-item">
-                                  <a href="{{ route('installation-queue.index', 'wholeseller') }}"
-                                      class="nav-link @if (request()->routeIs('installation-queue.index', 'wholeseller')) active @endif">
-                                      <p>Installation Queue</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('installation.reports', 'wholeseller') }}"
-                                      class="nav-link @if (request()->routeIs('installation.reports', 'wholeseller')) active @endif">
-                                      <p>Installation Reports</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('installation.complete', 'wholeseller') }}"
-                                      class="nav-link @if (request()->routeIs('installation.complete', 'wholeseller')) active @endif">
-                                      <p>Installation Complete</p>
-                                  </a>
-                              </li>
 
-                          </ul>
-                      </li>
-                  @endcan
-                </div>
-                <div class="border-top border-success"></div>
+                      @can('access_sliders')
+                          <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                              <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                                  <i class="nav-icon fas fa-image"></i>
+                                  <p>
+                                      Retails
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-queue.index', 'retailler') }}"
+                                          class="nav-link @if (request()->routeIs('installation-queue.index', 'retailler')) active @endif">
+                                          <p>Installation Queue</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation.reports', 'retailler') }}"
+                                          class="nav-link @if (request()->routeIs('installation.reports', 'retailler')) active @endif">
+                                          <p>Installation Reports</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation.complete', 'retailler') }}"
+                                          class="nav-link @if (request()->routeIs('installation.complete', 'retailler')) active @endif">
+                                          <p>Installation Complete</p>
+                                      </a>
+                                  </li>
+
+                              </ul>
+                          </li>
+                      @endcan
+                      @can('access_sliders')
+                          <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                              <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                                  <i class="nav-icon fas fa-image"></i>
+                                  <p>
+                                      Wholesale
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-queue.index', 'wholeseller') }}"
+                                          class="nav-link @if (request()->routeIs('installation-queue.index', 'wholeseller')) active @endif">
+                                          <p>Installation Queue</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation.reports', 'wholeseller') }}"
+                                          class="nav-link @if (request()->routeIs('installation.reports', 'wholeseller')) active @endif">
+                                          <p>Installation Reports</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation.complete', 'wholeseller') }}"
+                                          class="nav-link @if (request()->routeIs('installation.complete', 'wholeseller')) active @endif">
+                                          <p>Installation Complete</p>
+                                      </a>
+                                  </li>
+
+                              </ul>
+                          </li>
+                      @endcan
+                  </div>
+                  <div class="border-top border-success"></div>
                   @if (auth()->user()->access_type === 'Admin')
                   @else
                       @can('access_branch')
@@ -663,18 +695,16 @@
                       <li class="nav-header text-primary">
                           <strong>Support Dashboard</strong>
                       </li>
-
                       <li
                           class="nav-item {{ request()->routeIs('supportdashboard.*') ? 'menu-is-opening menu-open' : '' }}">
-                          <a href="#"
-                              class="nav-link {{ request()->routeIs('supportdashboard.*') ? 'active' : '' }}">
+                          <a href="#" class="nav-link"
+                              {{ request()->routeIs('supportdashboard.*') ? 'active' : '' }}>
                               <i class="nav-icon fas fa-newspaper"></i>
                               <p>
                                   Tickets
                                   <i class="right fas fa-angle-left"></i>
                               </p>
                           </a>
-
                           <ul class="nav nav-treeview">
                               <li class="nav-item">
                                   <a href="{{ route('supportdashboard.create') }}"
@@ -683,23 +713,41 @@
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('pettycash-request.index') }}"
-                                      class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                  <a href="{{ route('supportdashboard-task.queue') }}"
+                                      class="nav-link {{ request()->routeIs('supportdashboard-task.queue') ? 'active' : '' }}">
                                       <p>Ticket Queue</p>
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('pettycash-request.index') }}"
-                                      class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                                  <a href="{{ route('supportdashboard-task.assign') }}"
+                                      class="nav-link {{ request()->routeIs('supportdashboard-task.assign') ? 'active' : '' }}">
                                       <p>Ticket Assign</p>
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('pettycash-request.index') }}"
-                                      class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
-                                      <p>Task Complete</p>
+                                  <a href="{{ route('supportdashboard-task.complete') }}"
+                                      class="nav-link {{ request()->routeIs('supportdashboard-task.complete') ? 'active' : '' }}">
+                                      <p>Ticket Complete</p>
                                   </a>
                               </li>
+                              {{-- <li class="nav-item">
+                                  <a href="{{ route('supportdashboard-task.queue') }}"
+                                      class="nav-link {{ request()->routeIs('supportdashboard-task.queue') ? 'active' : '' }}">
+                                      <p>Ticket Queue</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('supportdashboard-task.assign') }}"
+                                      class="nav-link {{ request()->routeIs('supportdashboard-task.assign') ? 'active' : '' }}">
+                                      <p>Ticket Assign</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('supportdashboard-task.complete') }}"
+                                      class="nav-link {{ request()->routeIs('supportdashboard-task.complete') ? 'active' : '' }}">
+                                      <p>Task Complete</p>
+                                  </a>
+                              </li> --}}
                           </ul>
                       </li>
                   </div>
