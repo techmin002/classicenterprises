@@ -41,7 +41,6 @@
                                     <thead>
                                         <tr>
                                             <th>S.N</th>
-                                            <th>ID</th>
                                             <th class="text-center">Name</th>
                                             <th class="text-center">Contact</th>
                                             <th class="text-center">Amount</th>
@@ -57,28 +56,25 @@
                                         @foreach ($data as $key => $value)
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                                <td class="text-center">{{ $value->id }}</td>
 
-                                                <td class="text-center">{{ $value->customer->lead->name }}</td>
-                                                <td class="text-center">{{ $value->customer->lead->mobile }}</td>
+                                                <td class="text-center">{{ $value->name }}</td>
+                                                <td class="text-center">{{ $value->contact }}</td>
                                                 <td class="text-center">{{ isset($value->amount) ? $value->amount : 'N/A' }}
                                                 </td>
                                                 <td class="text-center">{{ ucfirst($value->assign_to) }}</td>
-                                                <td class="text-center">
-                                                    @foreach ($value->customer->products as $product)
-                                                        {{ $product->product['name'] }}
-                                                    @endforeach
-                                                </td>
-                                                <td class="text-center">{{ $value->customer->lead->address }}
+                                                <td class="text-center">{{ $value->product }}</td>
+                                                <td class="text-center">{{ $value->address }}
                                                 </td>
                                                 <td class="text-center">{{ $value->created_at }}</td>
                                                 <td class="text-center">{{ $value->status }}</td>
 
                                                 <td>
-                                                    <a href="{{ route('task.complete.details', $value->id) }}" class="btn btn-success btn-xs">View Details</a>
+                                                    <a href="{{ route('outsider.complete.details', $value->id) }}"
+                                                        class="btn btn-success btn-xs">View Details</a>
 
 
-                                                    <a href="" class="btn btn-primary btn-xs w-100 mt-2" data-toggle="modal"
+                                                    <a href="" class="btn btn-primary btn-xs w-100 mt-2"
+                                                        data-toggle="modal"
                                                         data-target="#exampleModal1{{ $value->id }}">Note</a>
 
                                                     {{-- modal start --}}
@@ -91,7 +87,7 @@
                                                                 <div class="modal-header bg-primary text-white">
                                                                     <div>
                                                                         <small>Customer:
-                                                                            <strong>{{ ucfirst($value->customer->lead->name) }}</strong></small>
+                                                                            <strong>{{ ucfirst($value->name) }}</strong></small>
                                                                     </div>
                                                                     <button type="button" class="close text-white"
                                                                         data-dismiss="modal" aria-label="Close">
@@ -120,7 +116,6 @@
                                     <tfoot>
                                         <tr>
                                             <th>S.N</th>
-                                            <th>ID</th>
                                             <th class="text-center">Name</th>
                                             <th class="text-center">Contact</th>
                                             <th class="text-center">Amount</th>

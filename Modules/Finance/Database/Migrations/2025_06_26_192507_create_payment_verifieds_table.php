@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payment_verifications', function (Blueprint $table) {
+        Schema::create('payment_verifieds', function (Blueprint $table) {
             $table->id();
-            $table->string('customer_id');
-            $table->string('lead_id');
+            $table->string('customer_id')->nullable();
+            $table->string('lead_id')->nullable();
             $table->string('branch_id');
             $table->integer('total_amount');
             $table->integer('paid_amount');
             $table->integer('remaining_amount');
             $table->string('payment_method')->nullable();
-            $table->date('payment_date')->nullable();
+            $table->date('date')->nullable();
             $table->string('status')->default('on');
             $table->string('message')->nullable();
             $table->string('receipt')->nullable();
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payment_verifications');
+        Schema::dropIfExists('payment_verifieds');
     }
 };

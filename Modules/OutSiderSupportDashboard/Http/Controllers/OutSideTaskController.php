@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\SupportDashboard\Http\Controllers;
+namespace Modules\OutSiderSupportDashboard\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -8,29 +8,29 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Modules\Branch\Entities\Branch;
 use Modules\Finance\Entities\PaymentVerification;
 use Modules\Lead\Entities\Customer;
+use Modules\OutSiderSupportDashboard\Entities\OutSideTask;
 use Modules\Product\Entities\Accessory;
-use Modules\SupportDashboard\Entities\Task;
 
-class TaskController extends Controller
+class OutSideTaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('supportdashboard::index');
+        $data = OutSideTask::where('status', 'create')->get();
+        $branches = Branch::all();
+        $users = User::all()->groupBy('branch_id');
+        return view('outsidersupportdashboard::supports.index', compact('branches', 'data', 'users'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        $customers = Customer::where('customer_type', 'indoor')->with('lead', 'branch', 'products')->get();
-        return view('supportdashboard::supports.create', compact('customers'));
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
@@ -38,10 +38,19 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        Task::create([
-            'customer_id'     => $request->customer_id,
+        // dd($request->only(['address', 'home_address']));
+        OutSideTask::create([
+            'name'         => $request->name,
+            'product'      => $request->product,
+            'email'        => $request->email,
+            'contact'      => $request->contact,
+            'date'      => $request->date,
+            'branch_id'    => $request->branch_id,
+            'customer_id'     => $request->customer_id ?? null,
             'support_type'    => $request->support_type,
             'priority'        => $request->priority,
+            'address'        => $request->address,
+            'home_address'        => $request->home_address,
             'assign_to'       => $request->assign_to ?? null, // store only if present
             'payment_method'  => $request->payment_method ?? null,
             'service_charge'  => 0,
@@ -52,42 +61,32 @@ class TaskController extends Controller
             'created_by'      => auth()->user()->id ?? null,
         ]);
 
-        // return redirect()->back()->with('success', 'Support Ticket Created Successfully');
-        return redirect()->route('supportdashboard-task.queue')->with('success', 'Support Ticket Created Successfully.');
+        return redirect()->back()->with('success', 'Support Ticket Created Successfully');
     }
 
     /**
      * Show the specified resource.
      */
-    public function show()
-    {
-        $data = Task::with(['customer.lead', 'customer.products', 'customer.branch'])
-            ->where('status', 'create')
-            ->get();
+    public function show() {}
 
-        // All users grouped by branch_id
-        $users = User::all()->groupBy('branch_id');
-        // dd($users);
-        return view('supportdashboard::queue.index', compact('data', 'users'));
-    }
 
     public function assign()
     {
 
-        $data = Task::with('customer.lead', 'customer.products')
+        $data = OutSideTask::with('customer.lead', 'customer.products')
             ->where('status', 'assign')
             ->get();
         $accessories = Accessory::all();
 
-        return view('supportdashboard::assign.index', compact('data', 'accessories'));
+        return view('outsidersupportdashboard::assign.index', compact('data', 'accessories'));
     }
     public function complete()
     {
-        $data = Task::with('customer.lead', 'customer.products', 'serviceItems') // include serviceItems
+        $data = OutSideTask::with('customer.lead', 'customer.products', 'outer_service_items') // include serviceItems
             ->where('status', 'complete')
             ->get();
 
-        return view('supportdashboard::complete.index', compact('data'));
+        return view('outsidersupportdashboard::complete.index', compact('data'));
     }
     /**
      * Show the form for editing the specified resource.
@@ -120,7 +119,7 @@ class TaskController extends Controller
 
     public function assignstore(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
+        $task = OutSideTask::findOrFail($id);
 
         // dd($request->all()); // confirm all inputs are received correctly
 
@@ -138,7 +137,7 @@ class TaskController extends Controller
             $task->status = 'assign';
             $task->save(); // Make sure this line is present
 
-            return redirect()->route('supportdashboard-task.assign')->with('success', 'Task updated successfully.');
+            return redirect()->route('outsidersupportdashboard-task.assign')->with('success', 'Task updated successfully.');
         }
 
         return redirect()->back()->with('error', 'Invalid action type.');
@@ -147,7 +146,8 @@ class TaskController extends Controller
     public function completestore(Request $request, $id)
     {
 
-        $data = Task::findOrFail($id);
+        // dd($request->all());
+        $data = OutSideTask::findOrFail($id);
         // dd($request->all()); // confirm all inputs are received correctly
 
         $data->service_type =  $request->input('service_type');
@@ -163,9 +163,9 @@ class TaskController extends Controller
         // ✅ Insert into PaymentVerification
         if ($request->service_method === 'paid') {
             $verificationData = [
-                'customer_id'       => $data->customer_id ?? null,
+                'customer_id'       => $data->customer_id ?? $data->id,
                 'lead_id'           => $data->customer->lead_id ?? null,
-                'branch_id'         => $data->customer->branch_id ?? null,
+                'branch_id'         => $data->branch_id ?? null,
                 'total_amount'      => $request->total_amount ?? 0,
                 'paid_amount'       => $request->paid_amount ?? 0,
                 'remaining_amount'  => ($request->total_amount ?? 0) - ($request->paid_amount ?? 0),
@@ -174,7 +174,8 @@ class TaskController extends Controller
                 'status'            => 'on',
                 'message'           => $request->message ?? null,
                 'receipt'           => null,
-                'created_by'        => auth()->name,
+                'customer_type'     => 'outsider',
+                'created_by'        => auth()->user()->name,
             ];
             PaymentVerification::create($verificationData);
         }
@@ -182,7 +183,7 @@ class TaskController extends Controller
         // Store accessories
         if ($request->has('accessories')) {
             foreach ($request->accessories as $accessory) {
-                DB::table('task_service_items')->insert([
+                DB::table('outer_service_items')->insert([
                     'task_id' => $data->id,
                     'name' => $accessory['name'],
                     'qty' => $accessory['qty'],
@@ -195,21 +196,21 @@ class TaskController extends Controller
 
 
 
-        return redirect()->route('supportdashboard-task.complete')->with('success', 'Task Completed');
+        return redirect()->route('outsidersupportdashboard-task.complete')->with('success', 'Task Completed');
     }
     public function completeDetails($id)
     {
-        $task = Task::with('customer.lead', 'customer.products', 'serviceItems')
+        $task = OutSideTask::with('customer.lead', 'customer.products', 'outer_service_items')
             ->findOrFail($id);
 
         // Service items total (only for this task_id)
-        $itemsTotal = $task->serviceItems->sum(function ($item) {
+        $itemsTotal = $task->outer_service_items->sum(function ($item) {
             return $item->qty * $item->price;
         });
 
         // Grand total = service charge + items total
         $grandTotal = ($task->service_charge ?? 0) + $itemsTotal;
 
-        return view('supportdashboard::complete.viewdetails', compact('task', 'grandTotal'));
+        return view('outsidersupportdashboard::complete.viewdetails', compact('task', 'grandTotal'));
     }
 }

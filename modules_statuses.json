@@ -19,5 +19,6 @@
     "Pettycash": true,
     "PetrolMGNT": true,
     "SupportDashboard": true,
-    "Finance": true
+    "Finance": true,
+    "OutSiderSupportDashboard": true
 }

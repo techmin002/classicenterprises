@@ -52,7 +52,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($task->serviceItems as $index => $item)
+                                        @foreach ($task->outer_service_items as $index => $item)
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                 <td class="text-center">{{ $item->name }}</td>

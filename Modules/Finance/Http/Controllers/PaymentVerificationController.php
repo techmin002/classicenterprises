@@ -40,27 +40,27 @@ class PaymentVerificationController extends Controller
         // dd($id);
 
         $verification = PaymentVerification::findOrFail($id);
+        // dd($verification->customer_name);
+        // $customerId = $verification->customer_id;
+        // $leadId = $verification->lead_id;
+        // $branchId = $verification->branch_id;
 
-        $customerId = $verification->customer_id;
-        $leadId = $verification->lead_id;
-        $branchId = $verification->branch_id;
-
-        // $name => $verification->customer->lead->name;
-        // Step 3: Insert into PaymentVerified table
-        PaymentVerified::create([
-            'customer_id' => $customerId,
-            'lead_id' => $leadId,
-            'branch_id' => $branchId,
-            'total_amount' => $request->total_amount,
-            'paid_amount' => $request->paid_amount,
-            'remaining_amount' => $request->remaining_amount,
-            'date' => $request->date,
-            'status' => 'verify',
-        ]);
+        // // $name => $verification->customer->lead->name;
+        // // Step 3: Insert into PaymentVerified table
+        // PaymentVerified::create([
+        //     'customer_id' => $customerId ?? $id,
+        //     'lead_id' => $leadId ?? Null,
+        //     'branch_id' => $branchId,
+        //     'total_amount' => $request->total_amount,
+        //     'paid_amount' => $request->paid_amount,
+        //     'remaining_amount' => $request->remaining_amount,
+        //     'date' => $request->date,
+        //     'status' => 'verify',
+        // ]);
 
         // Step 4: Insert into Payments table
         Payment::create([
-            'name' => $verification->customer->lead->name ?? 'Lead Payment',
+            'name' => $verification->customer_name ?? 'Lead Payment',
             'amount' => $request->paid_amount,
             'payment_method' => $verification->payment_method ?? 'cash',
             'payment_date' => $request->date,

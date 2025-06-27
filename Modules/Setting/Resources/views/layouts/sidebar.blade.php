@@ -645,10 +645,10 @@
                       </ul>
                   </li>
                   {{-- @endcan --}}
-                  <!-- Support Dashboard Section -->
-                  <div class="my-3 border-top border-success pt-1">
+                  <!-- CE Support Dashboard Section -->
+                  <div class="border-top border-success pt-1">
                       <li class="nav-header text-primary">
-                          <strong>Support Dashboard</strong>
+                          <strong>CE Support Dashboard</strong>
                       </li>
                       <li
                           class="nav-item {{ request()->routeIs('supportdashboard.*') ? 'menu-is-opening menu-open' : '' }}">
@@ -685,24 +685,45 @@
                                       <p>Ticket Complete</p>
                                   </a>
                               </li>
-                              {{-- <li class="nav-item">
-                                  <a href="{{ route('supportdashboard-task.queue') }}"
-                                      class="nav-link {{ request()->routeIs('supportdashboard-task.queue') ? 'active' : '' }}">
-                                      <p>Ticket Queue</p>
+
+                          </ul>
+                      </li>
+                  </div>
+                  <!-- Outsider Support Dashboard Section -->
+                  <div class="border-top border-success pt-1">
+                      <li class="nav-header text-primary">
+                          <strong>Outsider Support Dashboard</strong>
+                      </li>
+                      <li
+                          class="nav-item {{ request()->routeIs('outsidersupportdashboard.*') ? 'menu-is-opening menu-open' : '' }}">
+                          <a href="#" class="nav-link"
+                              {{ request()->routeIs('outsidersupportdashboard.*') ? 'active' : '' }}>
+                              <i class="nav-icon fas fa-newspaper"></i>
+                              <p>
+                                  Tickets
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('outsidersupportdashboard.index') }}"
+                                      class="nav-link {{ request()->routeIs('outsidersupportdashboard.index') ? 'active' : '' }}">
+                                      <p>Ticket Create</p>
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('supportdashboard-task.assign') }}"
-                                      class="nav-link {{ request()->routeIs('supportdashboard-task.assign') ? 'active' : '' }}">
+                                  <a href="{{ route('outsidersupportdashboard-task.assign') }}"
+                                      class="nav-link {{ request()->routeIs('outsidersupportdashboard-task.assign') ? 'active' : '' }}">
                                       <p>Ticket Assign</p>
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('supportdashboard-task.complete') }}"
-                                      class="nav-link {{ request()->routeIs('supportdashboard-task.complete') ? 'active' : '' }}">
-                                      <p>Task Complete</p>
+                                  <a href="{{ route('outsidersupportdashboard-task.complete') }}"
+                                      class="nav-link {{ request()->routeIs('outsidersupportdashboard-task.complete') ? 'active' : '' }}">
+                                      <p>Ticket Complete</p>
                                   </a>
-                              </li> --}}
+                              </li>
+
                           </ul>
                       </li>
                   </div>

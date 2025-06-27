@@ -37,19 +37,26 @@
                         <!-- /.card -->
 
                         <div class="card">
-
+                            <div class="card-header">
+                                <h3 class="card-title float-right">
+                                    <a class="btn btn-primary text-white" data-toggle="modal"
+                                        data-target="#exampleModalCenter">
+                                        <i class="fa fa-plus"></i> Create
+                                    </a>
+                                </h3>
+                                @include('outsidersupportdashboard::supports.create')
+                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>S.N</th>
-                                            <th>ID</th>
                                             <th class="text-center">Name</th>
-                                            <th class="text-center">User Name</th>
                                             <th class="text-center">Contact</th>
                                             <th class="text-center">Product</th>
                                             <th class="text-center">Address</th>
+                                            <th class="text-center">Home Address</th>
                                             <th class="text-center">Support Type</th>
                                             <th class="text-center">Priority</th>
                                             <th class="text-center">Action</th>
@@ -58,21 +65,14 @@
                                     <tbody>
                                         @foreach ($data as $key => $value)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $value->id }}</td>
-
-                                                <td>{{ $value->customer->lead->name }}</td>
-                                                <td>{{ $value->customer->lead->user_name }}</td>
-                                                <td>{{ $value->customer->lead->mobile }}</td>
-                                                <td>
-                                                    @foreach ($value->customer->products as $product)
-                                                        {{ $product->product['name'] }}
-                                                    @endforeach
-                                                </td>
-                                                <td>{{ $value->customer->lead->address }}
-                                                </td>
-                                                <td>{{ $value->support_type }}</td>
-                                                <td>{{ $value->priority }}</td>
+                                                <td class="text-center">{{ $loop->iteration }}</td>
+                                                <td class="text-center">{{ $value->name }}</td>
+                                                <td class="text-center">{{ $value->contact }}</td>
+                                                <td class="text-center">{{ $value->product }}</td>
+                                                <td class="text-center">{{ $value->address }}</td>
+                                                <td class="text-center">{{ $value->home_address }}</td>
+                                                <td class="text-center">{{ $value->support_type }}</td>
+                                                <td class="text-center">{{ $value->priority }}</td>
 
                                                 <td>
                                                     <a href="" class="btn btn-success btn-xs w-75"
@@ -92,8 +92,7 @@
                                                                         <h5 class="modal-title mb-0" id="exampleModalLabel">
                                                                             <i class="fa fa-headset mr-2"></i> Take Action
                                                                         </h5>
-                                                                        <small>Customer:
-                                                                            <strong>{{ ucfirst($value->customer->lead->name) }}</strong></small>
+
                                                                     </div>
                                                                     <button type="button" class="close text-white"
                                                                         data-dismiss="modal" aria-label="Close">
@@ -103,7 +102,7 @@
 
                                                                 <!-- Modal Body -->
                                                                 <form
-                                                                    action="{{ route('supportdashboard-task.assignstore', $value->id) }}"
+                                                                    action="{{ route('outsidersupportdashboard-task.assignstore', $value->id) }}"
                                                                     method="POST">
                                                                     @csrf
                                                                     <div class="modal-body">
@@ -145,8 +144,7 @@
                                                                                 class="font-weight-bold">Select User</label>
 
                                                                             @php
-                                                                                $branchId =
-                                                                                    $value->customer->branch_id ?? null;
+                                                                                $branchId = $value->branch_id ?? null;
                                                                                 $branchUsers = $users[$branchId] ?? [];
                                                                             @endphp
 
@@ -199,8 +197,7 @@
                                                                 <!-- Modal Header -->
                                                                 <div class="modal-header bg-primary text-white">
                                                                     <div>
-                                                                        <small>Customer:
-                                                                            <strong>{{ ucfirst($value->customer->lead->name) }}</strong></small>
+
                                                                     </div>
                                                                     <button type="button" class="close text-white"
                                                                         data-dismiss="modal" aria-label="Close">
@@ -229,12 +226,11 @@
                                     <tfoot>
                                         <tr>
                                             <th>S.N</th>
-                                            <th>ID</th>
                                             <th class="text-center">Name</th>
-                                            <th class="text-center">User Name</th>
                                             <th class="text-center">Contact</th>
                                             <th class="text-center">Product</th>
                                             <th class="text-center">Address</th>
+                                            <th class="text-center">Home Address</th>
                                             <th class="text-center">Support Type</th>
                                             <th class="text-center">Priority</th>
                                             <th class="text-center">Action</th>

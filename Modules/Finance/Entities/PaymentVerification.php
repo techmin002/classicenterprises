@@ -8,6 +8,7 @@ use Modules\Branch\Entities\Branch;
 use Modules\Finance\Database\factories\PaymentVerificationFactory;
 use Modules\Lead\Entities\Customer;
 use Modules\Lead\Entities\Lead;
+use Modules\OutSiderSupportDashboard\Entities\OutSideTask;
 
 class PaymentVerification extends Model
 {
@@ -37,8 +38,13 @@ class PaymentVerification extends Model
     }
     public function customer()
     {
-        return $this->belongsTo(Customer::class, 'customer_id');
+        if ($this->status === 'classic') {
+            return $this->belongsTo(Customer::class, 'customer_id');
+        }
+
+        return $this->belongsTo(OutSideTask::class, 'customer_id');
     }
+
 
     public function lead()
     {
@@ -48,5 +54,13 @@ class PaymentVerification extends Model
     public function branch()
     {
         return $this->belongsTo(Branch::class, 'branch_id');
+    }
+    public function getCustomerNameAttribute()
+    {
+        if ($this->status === 'classic') {
+            return $this->customer->lead->name ?? '-';
+        }
+
+        return $this->customer->name ?? '-';
     }
 }
