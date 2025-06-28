@@ -17,8 +17,6 @@ class FinanceController extends Controller
      */
     public function index()
     {
-
-
         $customers = Customer::all();
         return view('finance::payment.index', compact('customers'));
     }

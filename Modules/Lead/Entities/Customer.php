@@ -52,4 +52,10 @@ class Customer extends Model
     {
         return $this->belongsTo(Branch::class);
     }
+
+    public function emiCustomer()
+{
+    return $this->hasOne(EmiCustomer::class);
+}
+
 }

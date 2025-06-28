@@ -5,6 +5,7 @@ use Modules\Finance\Http\Controllers\DailyCOllectionController;
 use Modules\Finance\Http\Controllers\FinanceController;
 use Modules\Finance\Http\Controllers\FirstBillController;
 use Modules\Finance\Http\Controllers\PaymentVerificationController;
+use Modules\Finance\Http\Controllers\EMIPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +23,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('daily', DailyCOllectionController::class)->names('daily');
     Route::resource('firstbill', FirstBillController::class)->names('firstbill');
 
+    Route::resource('emiPayment', EMIPaymentController::class)->names('emiPayment');
+    Route::get('emi.payment.details/{id}', [EMIPaymentController::class, 'emiPaymentDetails'])->name('emi.payment.details');
+   Route::post('/emi-payments/store', [EMIPaymentController::class, 'store'])->name('emi.payments.store');
 
     // Route::resource('payment-verification', PaymentVerificationController::class)->names('payment-verification.index');
 
