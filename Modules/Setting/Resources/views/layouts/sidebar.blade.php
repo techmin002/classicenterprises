@@ -286,6 +286,7 @@
                           </li>
                       @endcan
                   @endif
+                  @can('access_attendance')
                   <li class="nav-item @if (request()->routeIs('attendance.*')) menu-is-opening menu-open @endif">
                       <a href="#" class="nav-link @if (request()->routeIs('attendance.*')) active @endif">
                           <i class="nav-icon fas fa-calendar"></i>
@@ -328,6 +329,8 @@
                           </li>
                       </ul>
                   </li>
+                  @endcan
+                  @can('access_payroll')
                   <li class="nav-item @if (request()->routeIs('setsalary.*')) menu-is-opening menu-open @endif">
                       <a href="#" class="nav-link @if (request()->routeIs('setsalary.*')) active @endif">
                           <i class="nav-icon fas fa-receipt"></i>
@@ -353,7 +356,7 @@
                           </li>
                       </ul>
                   </li>
-
+                  @endcan
                   @can('access_sliders')
                       <li class="nav-item {{ request()->routeIs('sliders.*') ? 'menu-is-opening menu-open' : '' }}">
                           <a href="#" class="nav-link" {{ request()->routeIs('sliders.*') ? 'active' : '' }}>
@@ -381,7 +384,7 @@
                           </ul>
                       </li>
                   @endcan
-                  @can('access_sliders')
+                  @can('access_product')
                       <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
                               <i class="nav-icon fas fa-image"></i>
@@ -418,7 +421,7 @@
                           </ul>
                       </li>
                   @endcan
-                  @can('access_sliders')
+                  @can('access_inventory')
                       <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
                               <i class="nav-icon fas fa-image"></i>
@@ -871,6 +874,7 @@
                           </ul>
                       </li>
                   @endcan
+                  @can('access_gallery')
                   <li class="nav-item">
                       <a href="{{ route('galleries.index') }}"
                           class="nav-link {{ request()->routeIs('galleries.index') ? 'active' : '' }}">
@@ -878,8 +882,10 @@
                           <p>Gallery</p>
                       </a>
                   </li>
-                  <li class="nav-item {{ request()->routeIs('expenses.*') ? 'menu-is-opening menu-open' : '' }}">
-                      <a href="#" class="nav-link" {{ request()->routeIs('expenses.*') ? 'active' : '' }}>
+                  @endcan
+                  @can('access_leave')
+                  <li class="nav-item {{ request()->routeIs('leave.*') ? 'menu-is-opening menu-open' : '' }}">
+                      <a href="#" class="nav-link" {{ request()->routeIs('leave.*') ? 'active' : '' }}>
                           <i class="nav-icon fas fa-newspaper"></i>
                           <p>
                               Leaves
@@ -904,6 +910,8 @@
 
                       </ul>
                   </li>
+                  @endcan
+                  @can('access_inquiries')
                   <li class="nav-item">
                       <a href="{{ route('inquires.index') }}"
                           class="nav-link {{ request()->routeIs('inquires.index') ? 'active' : '' }}">
@@ -911,6 +919,7 @@
                           <p>Inquiries</p>
                       </a>
                   </li>
+                  @endcan
                   @can('access_settings')
                       <li class="nav-item {{ request()->routeIs('company.*') ? 'menu-is-opening menu-open' : '' }}">
                           <a href="#" class="nav-link" {{ request()->routeIs('company.*') ? 'active' : '' }}>

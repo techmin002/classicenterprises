@@ -37,11 +37,11 @@
 
                         <div class="card">
                             <div class="card-header">
-                              @if (auth()->user()->role['name'] === 'Super Admin')
-                              @else
-                                <h3 class="card-title float-right"><a class="btn btn-info text-white" data-toggle="modal"
-                                        data-target="#exampleModalCenter"><i class="fa fa-plus"></i> Create</a> </h3>
-                                @include('employee::leaves.create')
+                                @if(auth()->user()->can('create_leave'))
+                                    <h3 class="card-title float-right"><a class="btn btn-info text-white"
+                                            data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus"></i>
+                                            Create</a> </h3>
+                                    @include('employee::leaves.create')
                                 @endif
                             </div>
                             <!-- /.card-header -->

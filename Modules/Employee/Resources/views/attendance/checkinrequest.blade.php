@@ -44,14 +44,16 @@
                                                 <div class="d-flex align-items-center justify-content-start">
                                                     <h5>Check-In Request</h5>
                                                 </div>
-                                                
+
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="d-flex align-items-center justify-content-end">
-                                                <a href="" title="Set Salary" class="btn btn-sm btn-primary"
-                                                    data-toggle="modal" data-target="#requestCheckin">
-                                                     <i class="fa fa-plus"></i> Chek-In Request
-                                                </a>
+                                                    @can('create_attendance')
+                                                        <a href="" title="Set Salary" class="btn btn-sm btn-primary"
+                                                            data-toggle="modal" data-target="#requestCheckin">
+                                                            <i class="fa fa-plus"></i> Chek-In Request
+                                                        </a>
+                                                    @endcan
                                                 </div>
                                                 <!-- Add Salary Modal -->
                                                 <div class="modal fade" id="requestCheckin" tabindex="-1" role="dialog"
@@ -59,10 +61,11 @@
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="requestCheckinLabel">Chek-In Request
+                                                                <h5 class="modal-title" id="requestCheckinLabel">Chek-In
+                                                                    Request
                                                                 </h5>
-                                                                <button type="button" class="close"
-                                                                    data-dismiss="modal" aria-label="Close">
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
@@ -81,8 +84,7 @@
                                                                             placeholder="Enter Salary here"
                                                                             aria-label="amount"
                                                                             aria-describedby="basic-addon1" required>
-                                                                        <input type="hidden" name="emp_id"
-                                                                            value="">
+                                                                        <input type="hidden" name="emp_id" value="">
                                                                     </div>
                                                                     <div class="input-group mb-3">
                                                                         <div class="input-group-prepend">
@@ -118,16 +120,16 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>S.N.</th>
-                                                                @if(auth()->user()->role['name'] === 'Super Admin')
-                                                                <th>Name</th>
+                                                                @if (auth()->user()->role['name'] === 'Super Admin')
+                                                                    <th>Name</th>
                                                                 @endif
                                                                 <th>Date</th>
                                                                 <th>Day</th>
                                                                 <th>Check-In</th>
                                                                 <th>Message</th>
                                                                 <th>Status</th>
-                                                                @if(auth()->user()->role['name'] === 'Super Admin')
-                                                                <th>Action</th>
+                                                                @if (auth()->user()->role['name'] === 'Super Admin')
+                                                                    <th>Action</th>
                                                                 @endif
 
                                                             </tr>
@@ -136,11 +138,11 @@
                                                             @foreach ($checkin as $key => $check)
                                                                 <tr>
                                                                     <td>{{ $loop->iteration }}</td>
-                                                                    
-                                                                @if(auth()->user()->role['name'] === 'Super Admin')
-                                                                <td>{{ $check->employee->name }}</td>
-                                                                @endif
-                                                               
+
+                                                                    @if (auth()->user()->role['name'] === 'Super Admin')
+                                                                        <td>{{ $check->employee->name }}</td>
+                                                                    @endif
+
                                                                     <td>{{ \Carbon\Carbon::parse($check->date)->format('Y-M-d') }}
                                                                     </td>
                                                                     <td>{{ \Carbon\Carbon::parse($check->date)->format('l') }}
@@ -150,29 +152,40 @@
                                                                     </td>
                                                                     <td>{!! $check->message !!}
                                                                     </td>
-                                                                    <td> 
-                                                                        @if($check->status === 'pending')
-                                                                        <a href="#" class="badge badge-info">{{ ucfirst($check->status) }}</a>
+                                                                    <td>
+                                                                        @if ($check->status === 'pending')
+                                                                            <a href="#"
+                                                                                class="badge badge-info">{{ ucfirst($check->status) }}</a>
                                                                         @elseif($check->status === 'accept')
-                                                                        <a href="#" class="badge badge-success">Accepted</a>
+                                                                            <a href="#"
+                                                                                class="badge badge-success">Accepted</a>
                                                                         @else
-                                                                        <a href="#" class="badge badge-danger">Rejected</a>
+                                                                            <a href="#"
+                                                                                class="badge badge-danger">Rejected</a>
                                                                         @endif
                                                                     </td>
-                                                                    @if(auth()->user()->role['name'] === 'Super Admin')
-                                                                    <td>
-                                                                        <div class="dropdown show">
-                                                                            <a class="badge badge-info dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                                {{ ucfirst($check->status) }}   
-                                                                            </a>
-                                                                          
-                                                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                                                <a class="dropdown-item" href="{{ route('attendance.checkin.status', ['id' => $check->id, 'status' => 'accept']) }}">Accept</a>
-                                                                                <a class="dropdown-item" href="{{ route('attendance.checkin.status', ['id' => $check->id, 'status' => 'reject']) }}">Reject</a>
-                                                                                
+                                                                    @if (auth()->user()->role['name'] === 'Super Admin')
+                                                                        <td>
+                                                                            <div class="dropdown show">
+                                                                                <a class="badge badge-info dropdown-toggle"
+                                                                                    href="#" role="button"
+                                                                                    id="dropdownMenuLink"
+                                                                                    data-toggle="dropdown"
+                                                                                    aria-haspopup="true"
+                                                                                    aria-expanded="false">
+                                                                                    {{ ucfirst($check->status) }}
+                                                                                </a>
+
+                                                                                <div class="dropdown-menu"
+                                                                                    aria-labelledby="dropdownMenuLink">
+                                                                                    <a class="dropdown-item"
+                                                                                        href="{{ route('attendance.checkin.status', ['id' => $check->id, 'status' => 'accept']) }}">Accept</a>
+                                                                                    <a class="dropdown-item"
+                                                                                        href="{{ route('attendance.checkin.status', ['id' => $check->id, 'status' => 'reject']) }}">Reject</a>
+
+                                                                                </div>
                                                                             </div>
-                                                                          </div>
-                                                                    </td>
+                                                                        </td>
                                                                     @endif
 
                                                                 </tr>
@@ -181,16 +194,16 @@
                                                         <tfoot>
                                                             <tr>
                                                                 <th>S.N.</th>
-                                                                @if(auth()->user()->role['name'] === 'Super Admin')
-                                                                <th>Name</th>
+                                                                @if (auth()->user()->role['name'] === 'Super Admin')
+                                                                    <th>Name</th>
                                                                 @endif
                                                                 <th>Date</th>
                                                                 <th>Day</th>
                                                                 <th>Check-In</th>
                                                                 <th>Message</th>
                                                                 <th>Status</th>
-                                                                @if(auth()->user()->role['name'] === 'Super Admin')
-                                                                <th>Action</th>
+                                                                @if (auth()->user()->role['name'] === 'Super Admin')
+                                                                    <th>Action</th>
                                                                 @endif
                                                             </tr>
                                                         </tfoot>
