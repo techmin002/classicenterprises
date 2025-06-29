@@ -80,7 +80,8 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if (Auth::user()->role->name === 'Super Admin')
+                                                    {{-- @if (Auth::user()->role->name === 'Super Admin') --}}
+                                                    @if (auth()->user()->can('edit_pettycash'))
                                                         @if ($req->status === 'pending')
                                                             <button type="button" class="btn btn-primary btn-sm text-white"
                                                                 data-toggle="modal"

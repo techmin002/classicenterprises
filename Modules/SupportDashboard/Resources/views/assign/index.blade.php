@@ -72,9 +72,11 @@
                                                 <td class="text-center">{{ $value->created_at }}</td>
 
                                                 <td>
-                                                    <a href="" class="btn btn-success btn-xs w-75"
-                                                        data-toggle="modal"
-                                                        data-target="#exampleModal{{ $value->id }}">Action</a>
+                                                    @can('edit_ticket')
+                                                        <a href="" class="btn btn-success btn-xs w-75"
+                                                            data-toggle="modal"
+                                                            data-target="#exampleModal{{ $value->id }}">Action</a>
+                                                    @endcan
                                                     <!-- Modal -->
                                                     <div class="modal fade" id="exampleModal{{ $value->id }}"
                                                         tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

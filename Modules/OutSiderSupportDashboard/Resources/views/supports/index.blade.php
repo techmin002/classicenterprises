@@ -38,12 +38,14 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title float-right">
-                                    <a class="btn btn-primary text-white" data-toggle="modal"
-                                        data-target="#exampleModalCenter">
-                                        <i class="fa fa-plus"></i> Create
-                                    </a>
-                                </h3>
+                                @can('create_ticket')
+                                    <h3 class="card-title float-right">
+                                        <a class="btn btn-primary text-white" data-toggle="modal"
+                                            data-target="#exampleModalCenter">
+                                            <i class="fa fa-plus"></i> Create
+                                        </a>
+                                    </h3>
+                                @endcan
                                 @include('outsidersupportdashboard::supports.create')
                             </div>
                             <!-- /.card-header -->
@@ -75,10 +77,11 @@
                                                 <td class="text-center">{{ $value->priority }}</td>
 
                                                 <td>
-                                                    <a href="" class="btn btn-success btn-xs w-75"
-                                                        data-toggle="modal"
-                                                        data-target="#exampleModal{{ $value->id }}">Action</a>
-
+                                                    @can('edit_ticket')
+                                                        <a href="" class="btn btn-success btn-xs w-75"
+                                                            data-toggle="modal"
+                                                            data-target="#exampleModal{{ $value->id }}">Action</a>
+                                                    @endcan
                                                     {{-- modal start --}}
                                                     <div class="modal fade" id="exampleModal{{ $value->id }}"
                                                         tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

@@ -75,10 +75,11 @@
                                                 <td>{{ $value->priority }}</td>
 
                                                 <td>
-                                                    <a href="" class="btn btn-success btn-xs w-75"
-                                                        data-toggle="modal"
-                                                        data-target="#exampleModal{{ $value->id }}">Action</a>
-
+                                                    @can('edit_ticket')
+                                                        <a href="" class="btn btn-success btn-xs w-75"
+                                                            data-toggle="modal"
+                                                            data-target="#exampleModal{{ $value->id }}">Action</a>
+                                                    @endcan
                                                     {{-- modal start --}}
                                                     <div class="modal fade" id="exampleModal{{ $value->id }}"
                                                         tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

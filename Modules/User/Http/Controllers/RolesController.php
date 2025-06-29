@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Role;
 
 class RolesController extends Controller
 {
-    public function index() { 
+    public function index() {
         // abort_if(Gate::denies('access_user_management'), 403);
 
         $roles = Role::all();
@@ -28,7 +28,7 @@ class RolesController extends Controller
 
     public function store(Request $request) {
         // abort_if(Gate::denies('access_user_management'), 403);
-
+        dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
             'permissions' => 'required|array'

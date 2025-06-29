@@ -34,13 +34,14 @@
                     <div class="col-12">
                         <!-- /.card -->
                         <div class="card">
-                            {{-- @if (Auth::user()->role->name === 'Super Admin') --}}
-                            <div class="card-header">
-                                <h3 class="card-title float-right"><a class="btn btn-primary text-white" data-toggle="modal"
-                                        data-target="#exampleModalCenter"><i class="fa fa-plus"></i>
-                                        Create</a> </h3>
-                                @include('petrolmgnt::petrol.create')
-                            </div>
+                            @can('create_vehicle')
+                                <div class="card-header">
+                                    <h3 class="card-title float-right"><a class="btn btn-primary text-white" data-toggle="modal"
+                                            data-target="#exampleModalCenter"><i class="fa fa-plus"></i>
+                                            Create</a> </h3>
+                                    @include('petrolmgnt::petrol.create')
+                                </div>
+                            @endcan
                             {{-- @endif --}}
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -66,7 +67,7 @@
                                         @foreach ($petrol as $value)
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                                <td class="text-center">{{ ($value->bike->branch)->name ?? 'N/A' }}
+                                                <td class="text-center">{{ $value->bike->branch->name ?? 'N/A' }}
                                                 </td>
 
                                                 <td class="text-center">{{ $value->bike->name }}</td>
@@ -91,24 +92,28 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a data-toggle="modal" data-target="#editCategory{{ $value->id }}"
-                                                        class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                                    @can('edit_vehicle')
+                                                        <a data-toggle="modal" data-target="#editCategory{{ $value->id }}"
+                                                            class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                                    @endcan
                                                     @include('petrolmgnt::petrol.edit')
-                                                    <button id="delete" class="btn btn-danger btn-sm"
-                                                        onclick="
+                                                    @can('delete_vehicle')
+                                                        <button id="delete" class="btn btn-danger btn-sm"
+                                                            onclick="
         event.preventDefault();
         if (confirm('Are you sure? It will delete the data permanently!')) {
             document.getElementById('destroy{{ $value->id }}').submit()
         }
         ">
-                                                        <i class="fa fa-trash"></i>
-                                                        <form id="destroy{{ $value->id }}" class="d-none"
-                                                            action="{{ route('petrol.destroy', $value->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                        </form>
-                                                    </button>
+                                                            <i class="fa fa-trash"></i>
+                                                            <form id="destroy{{ $value->id }}" class="d-none"
+                                                                action="{{ route('petrol.destroy', $value->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                            </form>
+                                                        </button>
+                                                    @endcan
                                                 </td>
                                             </tr>
                                         @endforeach

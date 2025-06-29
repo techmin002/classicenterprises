@@ -21,11 +21,29 @@ class OutSideTaskController extends Controller
      */
     public function index()
     {
-        $data = OutSideTask::where('status', 'create')->get();
-        $branches = Branch::all();
+        $user = auth()->user();
+
+        // Super Admin check (you can adjust this logic based on your role system)
+        $isSuperAdmin = $user->name === 'Super Admin'; // or $user->role === 'superadmin'
+
+        if ($isSuperAdmin) {
+            // Super Admin gets all branches and all tasks
+            $branches = Branch::all();
+            $data = OutSideTask::where('status', 'create')->get();
+        } else {
+            // Regular user only sees their own branch data
+            $branches = Branch::where('id', $user->branch_id)->get();
+            $data = OutSideTask::where('status', 'create')
+                ->where('branch_id', $user->branch_id)
+                ->get();
+        }
+
+        // All users grouped by branch
         $users = User::all()->groupBy('branch_id');
+
         return view('outsidersupportdashboard::supports.index', compact('branches', 'data', 'users'));
     }
+
 
     /**
      * Show the form for creating a new resource.

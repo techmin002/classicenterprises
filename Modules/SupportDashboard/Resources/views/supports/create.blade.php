@@ -35,9 +35,7 @@
                     <div class="col-12">
 
                         <!-- /.card -->
-
                         <div class="card">
-
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
@@ -75,9 +73,11 @@
                                                 </td>
 
                                                 <td>
+                                                    @can('create_ticket')
                                                     <a href="{{ route('products-accessories.edit', $value->id) }}"
                                                         class="btn btn-primary btn-sm" data-toggle="modal"
                                                         data-target="#exampleModal{{ $value->id }}"> Create Ticket</a>
+                                                    @endcan
 
                                                     <div class="modal fade" id="exampleModal{{ $value->id }}"
                                                         tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
