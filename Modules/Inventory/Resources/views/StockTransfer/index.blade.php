@@ -10,6 +10,41 @@
 
 @section('content')
     <div class="content-wrapper bg-white rounded shadow-sm p-3">
+        <!-- Error Display Section -->
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5><i class="icon fas fa-ban"></i> Validation Errors!</h5>
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5><i class="icon fas fa-check"></i> Success!</h5>
+                {{ session('success') }}
+            </div>
+        @endif
+        
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5><i class="icon fas fa-ban"></i> Error!</h5>
+                {{ session('error') }}
+            </div>
+        @endif
+
         <section class="content-header mb-3">
             <div class="container-fluid">
                 <div class="row mb-2 align-items-center">
@@ -88,12 +123,7 @@
                                                     @include('inventory::StockTransfer.view', ['transfer' => $transfer])
                                                     
                                                     @if($transfer->status == 'pending' || $transfer->status == 'in_transit')
-                                                    <button class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#editTransfer{{ $transfer->id }}"
-                                                        title="Edit">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    @include('inventory::StockTransfer.edit', ['transfer' => $transfer])
+                                                      <a href="{{ route('stock-transfers.edit', $transfer->id) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
                                                     @endif
                                                     
                                                     <form action="{{ route('stock-transfers.destroy', $transfer->id) }}" method="POST" class="d-inline">
@@ -136,6 +166,16 @@
             .btn-group .btn:last-child {
                 margin-right: 0;
             }
+            .text-danger {
+                font-size: 0.875rem;
+                margin-top: 0.25rem;
+            }
+            .is-invalid {
+                border-color: #dc3545;
+            }
+            .alert-danger ul {
+                margin-bottom: 0;
+            }
         </style>
     @endpush
 
@@ -144,6 +184,11 @@
         <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
         <script>
             $(function () {
+                // Show modal if there are errors
+                @if($errors->any())
+                    $('#createStockTransfer').modal('show');
+                @endif
+                
                 $('[data-toggle="tooltip"]').tooltip();
                 $('#example1').DataTable({
                     "responsive": true,

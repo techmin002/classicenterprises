@@ -92,13 +92,15 @@ class DevicePurchaseController extends Controller
                         'machinery_id' => null,
                     ]);
 
-                    if (!$inventory->exists) {
-                        $inventory->opening_quantity = $acc['quantity'];
+                    // Always increase opening_quantity with new purchases
+                    $inventory->opening_quantity += $acc['quantity'];
+                    
+                    // For quantity, add only if inventory exists, otherwise set to purchased quantity
+                    if ($inventory->exists) {
+                        $inventory->quantity += $acc['quantity'];
+                    } else {
                         $inventory->quantity = $acc['quantity'];
                         $inventory->status = true;
-                    } else {
-                        // For existing inventory, keep opening_quantity as is and add to quantity
-                        $inventory->quantity += $acc['quantity'];
                     }
 
                     $inventory->updated_by = auth()->id();
@@ -126,13 +128,15 @@ class DevicePurchaseController extends Controller
                         'accessory_id' => null,
                     ]);
 
-                    if (!$inventory->exists) {
-                        $inventory->opening_quantity = $mach['quantity'];
+                    // Always increase opening_quantity with new purchases
+                    $inventory->opening_quantity += $mach['quantity'];
+                    
+                    // For quantity, add only if inventory exists, otherwise set to purchased quantity
+                    if ($inventory->exists) {
+                        $inventory->quantity += $mach['quantity'];
+                    } else {
                         $inventory->quantity = $mach['quantity'];
                         $inventory->status = true;
-                    } else {
-                        // For existing inventory, keep opening_quantity as is and add to quantity
-                        $inventory->quantity += $mach['quantity'];
                     }
 
                     $inventory->updated_by = auth()->id();
@@ -195,7 +199,6 @@ class DevicePurchaseController extends Controller
         DB::transaction(function () use ($request, $devicePurchase) {
             $receiptPath = $devicePurchase->receipt;
             if ($request->hasFile('receipt')) {
-                // Delete old receipt if exists
                 if ($receiptPath && file_exists(public_path($receiptPath))) {
                     unlink(public_path($receiptPath));
                 }
@@ -226,36 +229,40 @@ class DevicePurchaseController extends Controller
 
             // Handle accessories update
             if ($request->filled('accessories')) {
-                // First delete existing accessories
-                DevicePurchaseAccessory::where('device_purchase_id', $devicePurchase->id)->delete();
-
                 foreach ($request->accessories as $acc) {
                     $total = $acc['quantity'] * $acc['price'];
-                    DevicePurchaseAccessory::create([
-                        'device_purchase_id' => $devicePurchase->id,
-                        'accessory_id' => $acc['id'],
-                        'branch_id' => $acc['branch_id'],
-                        'quantity' => $acc['quantity'],
-                        'unit_price' => $acc['price'],
-                        'total' => $total,
-                    ]);
+                    
+                    // Find or create accessory purchase record
+                    $accessoryPurchase = DevicePurchaseAccessory::updateOrCreate(
+                        [
+                            'device_purchase_id' => $devicePurchase->id,
+                            'accessory_id' => $acc['id'],
+                            'branch_id' => $acc['branch_id'] ?? $devicePurchase->branch_id,
+                        ],
+                        [
+                            'quantity' => $acc['quantity'],
+                            'unit_price' => $acc['price'],
+                            'total' => $total,
+                        ]
+                    );
 
                     // Update inventory
                     $inventory = Inventory::firstOrNew([
                         'accessory_id' => $acc['id'],
-                        'branch_id' => $acc['branch_id'],
+                        'branch_id' => $acc['branch_id'] ?? $devicePurchase->branch_id,
                         'machinery_id' => null,
                     ]);
 
+                    // Calculate difference from original purchase
+                    $originalQuantity = $currentAccessories[$acc['id']]->quantity ?? 0;
+                    $quantityDifference = $acc['quantity'] - $originalQuantity;
+
+                    // Adjust both quantities
+                    $inventory->opening_quantity += $quantityDifference;
+                    $inventory->quantity += $quantityDifference;
+
                     if (!$inventory->exists) {
-                        $inventory->opening_quantity = $acc['quantity'];
-                        $inventory->quantity = $acc['quantity'];
                         $inventory->status = true;
-                    } else {
-                        // For existing inventory, adjust quantity based on difference
-                        $oldQuantity = $currentAccessories[$acc['id']]->quantity ?? 0;
-                        $quantityDifference = $acc['quantity'] - $oldQuantity;
-                        $inventory->quantity += $quantityDifference;
                     }
 
                     $inventory->updated_by = auth()->id();
@@ -265,42 +272,58 @@ class DevicePurchaseController extends Controller
 
             // Handle machineries update
             if ($request->filled('machineries')) {
-                // First delete existing machineries
-                DevicePurchaseMachinery::where('device_purchase_id', $devicePurchase->id)->delete();
-
                 foreach ($request->machineries as $mach) {
                     $total = $mach['quantity'] * $mach['price'];
-                    DevicePurchaseMachinery::create([
-                        'device_purchase_id' => $devicePurchase->id,
-                        'machinery_id' => $mach['id'],
-                        'branch_id' => $mach['branch_id'],
-                        'quantity' => $mach['quantity'],
-                        'unit_price' => $mach['price'],
-                        'total' => $total,
-                    ]);
+                    
+                    // Find or create machinery purchase record
+                    $machineryPurchase = DevicePurchaseMachinery::updateOrCreate(
+                        [
+                            'device_purchase_id' => $devicePurchase->id,
+                            'machinery_id' => $mach['id'],
+                            'branch_id' => $mach['branch_id'] ?? $devicePurchase->branch_id,
+                        ],
+                        [
+                            'quantity' => $mach['quantity'],
+                            'unit_price' => $mach['price'],
+                            'total' => $total,
+                        ]
+                    );
 
                     // Update inventory
                     $inventory = Inventory::firstOrNew([
                         'machinery_id' => $mach['id'],
-                        'branch_id' => $mach['branch_id'],
+                        'branch_id' => $mach['branch_id'] ?? $devicePurchase->branch_id,
                         'accessory_id' => null,
                     ]);
 
+                    // Calculate difference from original purchase
+                    $originalQuantity = $currentMachineries[$mach['id']]->quantity ?? 0;
+                    $quantityDifference = $mach['quantity'] - $originalQuantity;
+
+                    // Adjust both quantities
+                    $inventory->opening_quantity += $quantityDifference;
+                    $inventory->quantity += $quantityDifference;
+
                     if (!$inventory->exists) {
-                        $inventory->opening_quantity = $mach['quantity'];
-                        $inventory->quantity = $mach['quantity'];
                         $inventory->status = true;
-                    } else {
-                        // For existing inventory, adjust quantity based on difference
-                        $oldQuantity = $currentMachineries[$mach['id']]->quantity ?? 0;
-                        $quantityDifference = $mach['quantity'] - $oldQuantity;
-                        $inventory->quantity += $quantityDifference;
                     }
 
                     $inventory->updated_by = auth()->id();
                     $inventory->save();
                 }
             }
+
+            // Remove any accessories/machineries that were deleted
+            $currentAccessoryIds = collect($request->accessories ?? [])->pluck('id')->toArray();
+            $currentMachineryIds = collect($request->machineries ?? [])->pluck('id')->toArray();
+
+            DevicePurchaseAccessory::where('device_purchase_id', $devicePurchase->id)
+                ->whereNotIn('accessory_id', $currentAccessoryIds)
+                ->delete();
+
+            DevicePurchaseMachinery::where('device_purchase_id', $devicePurchase->id)
+                ->whereNotIn('machinery_id', $currentMachineryIds)
+                ->delete();
         });
 
         return redirect()->route('device-purchases.index')->with('success', 'Device purchase updated successfully.');
@@ -320,7 +343,7 @@ class DevicePurchaseController extends Controller
                     ->first();
 
                 if ($inventory) {
-                    // Only decrease the quantity, keep opening_quantity as historical record
+                    // Only decrease the quantity (keep opening_quantity as historical record)
                     $inventory->quantity -= $accessory->quantity;
 
                     // If quantity would go negative, set to 0 (safety measure)
@@ -328,12 +351,7 @@ class DevicePurchaseController extends Controller
                         $inventory->quantity = 0;
                     }
 
-                    // Delete inventory record if both quantities reach zero
-                    if ($inventory->quantity <= 0 && $inventory->opening_quantity <= 0) {
-                        $inventory->delete();
-                    } else {
-                        $inventory->save();
-                    }
+                    $inventory->save();
                 }
             }
 
@@ -343,7 +361,7 @@ class DevicePurchaseController extends Controller
                     ->first();
 
                 if ($inventory) {
-                    // Only decrease the quantity, keep opening_quantity as historical record
+                    // Only decrease the quantity (keep opening_quantity as historical record)
                     $inventory->quantity -= $machinery->quantity;
 
                     // If quantity would go negative, set to 0 (safety measure)
@@ -351,12 +369,7 @@ class DevicePurchaseController extends Controller
                         $inventory->quantity = 0;
                     }
 
-                    // Delete inventory record if both quantities reach zero
-                    if ($inventory->quantity <= 0 && $inventory->opening_quantity <= 0) {
-                        $inventory->delete();
-                    } else {
-                        $inventory->save();
-                    }
+                    $inventory->save();
                 }
             }
 

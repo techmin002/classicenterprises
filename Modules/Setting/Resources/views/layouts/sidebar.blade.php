@@ -164,41 +164,10 @@
                   <div class="my-3 border-top border-success pt-1">
 
 
-                  <li class="nav-header text-primary"><b>Sales Detail's</b></li>
+                      <li class="nav-header text-primary"><b>Sales Detail's</b></li>
 
 
 
-                  <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
-                      <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
-                          <i class="nav-icon fas fa-image"></i>
-                          <p>
-                              CC Installation
-                              <i class="right fas fa-angle-left"></i>
-                          </p>
-                      </a>
-                      <ul class="nav nav-treeview">
-                          <li class="nav-item">
-                              <a href="{{ route('installation-queue.index', 'classic_customer') }}"
-                                  class="nav-link @if (request()->routeIs('installation-queue.index', 'classic_customer')) active @endif">
-                                  <p>Installation Queue</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('installation.reports', 'classic_customer') }}"
-                                  class="nav-link @if (request()->routeIs('installation.reports', 'classic_customer')) active @endif">
-                                  <p>Installation Reports</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('installation.complete', 'classic_customer') }}"
-                                  class="nav-link @if (request()->routeIs('installation.complete', 'classic_customer')) active @endif">
-                                  <p>Installation Complete</p>
-                              </a>
-                          </li>
-
-                      </ul>
-                  </li>
-                  @can('access_sliders')
                       <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
                               <i class="nav-icon fas fa-image"></i>
@@ -230,466 +199,485 @@
                           </ul>
                       </li>
 
-                      @can('access_sliders')
-                          <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
-                              <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
-                                  <i class="nav-icon fas fa-image"></i>
-                                  <p>
-                                      Retails
-                                      <i class="right fas fa-angle-left"></i>
-                                  </p>
-                              </a>
-                              <ul class="nav nav-treeview">
-                                  <li class="nav-item">
-                                      <a href="{{ route('installation-queue.index', 'retailler') }}"
-                                          class="nav-link @if (request()->routeIs('installation-queue.index', 'retailler')) active @endif">
-                                          <p>Installation Queue</p>
-                                      </a>
-                                  </li>
-                                  <li class="nav-item">
-                                      <a href="{{ route('installation.reports', 'retailler') }}"
-                                          class="nav-link @if (request()->routeIs('installation.reports', 'retailler')) active @endif">
-                                          <p>Installation Reports</p>
-                                      </a>
-                                  </li>
-                                  <li class="nav-item">
-                                      <a href="{{ route('installation.complete', 'retailler') }}"
-                                          class="nav-link @if (request()->routeIs('installation.complete', 'retailler')) active @endif">
-                                          <p>Installation Complete</p>
-                                      </a>
-                                  </li>
 
-                              </ul>
-                          </li>
-                      @endcan
-                      @can('access_sliders')
-                          <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
-                              <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
-                                  <i class="nav-icon fas fa-image"></i>
-                                  <p>
-                                      Wholesale
-                                      <i class="right fas fa-angle-left"></i>
-                                  </p>
-                              </a>
-                              <ul class="nav nav-treeview">
-                                  <li class="nav-item">
-                                      <a href="{{ route('installation-queue.index', 'wholeseller') }}"
-                                          class="nav-link @if (request()->routeIs('installation-queue.index', 'wholeseller')) active @endif">
-                                          <p>Installation Queue</p>
-                                      </a>
-                                  </li>
-                                  <li class="nav-item">
-                                      <a href="{{ route('installation.reports', 'wholeseller') }}"
-                                          class="nav-link @if (request()->routeIs('installation.reports', 'wholeseller')) active @endif">
-                                          <p>Installation Reports</p>
-                                      </a>
-                                  </li>
-                                  <li class="nav-item">
-                                      <a href="{{ route('installation.complete', 'wholeseller') }}"
-                                          class="nav-link @if (request()->routeIs('installation.complete', 'wholeseller')) active @endif">
-                                          <p>Installation Complete</p>
-                                      </a>
-                                  </li>
 
-                              </ul>
-                          </li>
-                      @endcan
-                  </div>
-                  <div class="border-top border-success"></div>
-                  @if (auth()->user()->access_type === 'Admin')
-                  @else
-                      @can('access_branch')
-                          <li class="nav-item {{ request()->routeIs('branches.*') ? 'menu-is-opening menu-open' : '' }}">
-                              <a href="#" class="nav-link" {{ request()->routeIs('branches.*') ? 'active' : '' }}>
-                                  <i class="nav-icon fas fa-store"></i>
-                                  <p>
-                                      Branch
-                                      <i class="right fas fa-angle-left"></i>
-                                  </p>
-                              </a>
-                              <ul class="nav nav-treeview">
+                          @can('access_sliders')
+                              <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                                  <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                                      <i class="nav-icon fas fa-image"></i>
+                                      <p>
+                                          Retails
+                                          <i class="right fas fa-angle-left"></i>
+                                      </p>
+                                  </a>
+                                  <ul class="nav nav-treeview">
+                                      <li class="nav-item">
+                                          <a href="{{ route('installation-queue.index', 'retailler') }}"
+                                              class="nav-link @if (request()->routeIs('installation-queue.index', 'retailler')) active @endif">
+                                              <p>Installation Queue</p>
+                                          </a>
+                                      </li>
+                                      <li class="nav-item">
+                                          <a href="{{ route('installation.reports', 'retailler') }}"
+                                              class="nav-link @if (request()->routeIs('installation.reports', 'retailler')) active @endif">
+                                              <p>Installation Reports</p>
+                                          </a>
+                                      </li>
+                                      <li class="nav-item">
+                                          <a href="{{ route('installation.complete', 'retailler') }}"
+                                              class="nav-link @if (request()->routeIs('installation.complete', 'retailler')) active @endif">
+                                              <p>Installation Complete</p>
+                                          </a>
+                                      </li>
+
+                                      >>>>>>> ARbranch
+                                  </ul>
+                              </li>
+                          @endcan
+                          @can('access_sliders')
+                              <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                                  <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                                      <i class="nav-icon fas fa-image"></i>
+                                      <p>
+                                          Wholesale
+                                          <i class="right fas fa-angle-left"></i>
+                                      </p>
+                                  </a>
+                                  <ul class="nav nav-treeview">
+                                      <li class="nav-item">
+                                          <a href="{{ route('installation-queue.index', 'wholeseller') }}"
+                                              class="nav-link @if (request()->routeIs('installation-queue.index', 'wholeseller')) active @endif">
+                                              <p>Installation Queue</p>
+                                          </a>
+                                      </li>
+                                      <li class="nav-item">
+                                          <a href="{{ route('installation.reports', 'wholeseller') }}"
+                                              class="nav-link @if (request()->routeIs('installation.reports', 'wholeseller')) active @endif">
+                                              <p>Installation Reports</p>
+                                          </a>
+                                      </li>
+                                      <li class="nav-item">
+                                          <a href="{{ route('installation.complete', 'wholeseller') }}"
+                                              class="nav-link @if (request()->routeIs('installation.complete', 'wholeseller')) active @endif">
+                                              <p>Installation Complete</p>
+                                          </a>
+                                      </li>
+
+                                  </ul>
+                              </li>
+                          @endcan
+                      </div>
+                      <div class="border-top border-success"></div>
+                      @if (auth()->user()->access_type === 'Admin')
+                      @else
+                          @can('access_branch')
+                              <li class="nav-item {{ request()->routeIs('branches.*') ? 'menu-is-opening menu-open' : '' }}">
+                                  <a href="#" class="nav-link" {{ request()->routeIs('branches.*') ? 'active' : '' }}>
+                                      <i class="nav-icon fas fa-store"></i>
+                                      <p>
+                                          Branch
+                                          <i class="right fas fa-angle-left"></i>
+                                      </p>
+                                  </a>
+                                  <ul class="nav nav-treeview">
+                                      <li class="nav-item">
+                                          <a href="{{ route('branches.index') }}"
+                                              class="nav-link {{ request()->routeIs('branches.index') ? 'active' : '' }}">
+                                              {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                              <p>Branch</p>
+                                          </a>
+                                      </li>
+
+                                  </ul>
+                              </li>
+                          @endcan
+                      @endif
+                      <li class="nav-item @if (request()->routeIs('attendance.*')) menu-is-opening menu-open @endif">
+                          <a href="#" class="nav-link @if (request()->routeIs('attendance.*')) active @endif">
+                              <i class="nav-icon fas fa-calendar"></i>
+                              <p>
+                                  Attendance
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              @if (auth()->user()->role['name'] === 'Super Admin')
                                   <li class="nav-item">
-                                      <a href="{{ route('branches.index') }}"
-                                          class="nav-link {{ request()->routeIs('branches.index') ? 'active' : '' }}">
+                                      <a href="{{ route('attendance.all') }}"
+                                          class="nav-link @if (request()->routeIs('attendance.all')) active @endif">
                                           {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                          <p>Branch</p>
+                                          <p>Attendance</p>
+                                      </a>
+                                  </li>
+                              @else
+                                  <li class="nav-item">
+                                      <a href="{{ route('attendance.index') }}"
+                                          class="nav-link @if (request()->routeIs('attendance.index')) active @endif">
+                                          {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                          <p>My Attendance</p>
+                                      </a>
+                                  </li>
+                              @endif
+                              <li class="nav-item">
+                                  <a href="{{ route('attendance.checkin') }}"
+                                      class="nav-link @if (request()->routeIs('attendance.checkin')) active @endif">
+
+                                      <p>Check-In Request</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('attendance.checkout') }}"
+                                      class="nav-link @if (request()->routeIs('attendance.checkout')) active @endif">
+
+                                      <p>Check-Out Request</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                      <li class="nav-item @if (request()->routeIs('setsalary.*')) menu-is-opening menu-open @endif">
+                          <a href="#" class="nav-link @if (request()->routeIs('setsalary.*')) active @endif">
+                              <i class="nav-icon fas fa-receipt"></i>
+                              <p>
+                                  Payroll
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('setsalary.index') }}"
+                                      class="nav-link @if (request()->routeIs('setsalary.index')) active @endif">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Set Salary</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('setsalary.payslip.index') }}"
+                                      class="nav-link @if (request()->routeIs('setsalary.payslip.index')) active @endif">
+
+                                      <p>Payslip</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+
+                      @can('access_sliders')
+                          <li class="nav-item {{ request()->routeIs('sliders.*') ? 'menu-is-opening menu-open' : '' }}">
+                              <a href="#" class="nav-link" {{ request()->routeIs('sliders.*') ? 'active' : '' }}>
+                                  <i class="nav-icon fas fa-image"></i>
+                                  <p>
+                                      Sliders
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('sliders.index') }}"
+                                          class="nav-link {{ request()->routeIs('sliders.index') ? 'active' : '' }}">
+                                          {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                          <p>Sliders</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('sliders.create') }}"
+                                          class="nav-link {{ request()->routeIs('sliders.create') ? 'active' : '' }}">
+                                          {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                          <p>Create Sliders</p>
+                                      </a>
+                                  </li>
+                              </ul>
+                          </li>
+                      @endcan
+                      @can('access_sliders')
+                          <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
+                              <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
+                                  <i class="nav-icon fas fa-image"></i>
+                                  <p>
+                                      Product Mgnt
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('products-categories.index') }}"
+                                          class="nav-link @if (request()->routeIs('products-categories.index')) active @endif">
+                                          <p>Categories</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('products-brands.index') }}"
+                                          class="nav-link @if (request()->routeIs('products-brands.index')) active @endif">
+                                          <p>Brands</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('products-machineries.index') }}"
+                                          class="nav-link @if (request()->routeIs('products-machineries.index')) active @endif">
+                                          <p>Machineries</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('products-accessories.index') }}"
+                                          class="nav-link @if (request()->routeIs('products-accessories.index')) active @endif">
+                                          <p>Accessories</p>
+                                      </a>
+                                  </li>
+                              </ul>
+                          </li>
+                      @endcan
+                      <li
+                          class="nav-item {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'menu-is-opening menu-open' : '' }}">
+                          <a href="#"
+                              class="nav-link {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'active' : '' }}">
+                              <i class="nav-icon fas fa-boxes"></i>
+                              <p>
+                                  Inventory
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('suppliers.index') }}"
+                                      class="nav-link {{ request()->routeIs('suppliers.index') ? 'active' : '' }}">
+                                      <p>Suppliers</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('device-purchases.index') }}"
+                                      class="nav-link {{ request()->routeIs('device-purchases.index') ? 'active' : '' }}">
+                                      <p>Device Purchases</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('inventries') }}"
+                                      class="nav-link {{ request()->routeIs('inventries') ? 'active' : '' }}">
+                                      <p>Inventries</p>
+                                  </a>
+                              </li>
+
+                              <li class="nav-item">
+                                  <a href="{{ route('sales.index') }}"
+                                      class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
+                                      <p>Sales</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('stock-transfers.index') }}"
+                                      class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
+                                      <p>Stock Transfer</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                      @can('access_sliders')
+                          <li class="nav-item @if (request()->routeIs('services.*')) menu-is-opening menu-open @endif">
+                              <a href="#" class="nav-link @if (request()->routeIs('services.*')) active @endif">
+                                  <i class="nav-icon fas fa-image"></i>
+                                  <p>
+                                      Services
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('services_category.index') }}"
+                                          class="nav-link @if (request()->routeIs('services_category.index')) active @endif">
+                                          <p>Category</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('services.index') }}"
+                                          class="nav-link @if (request()->routeIs('services.index')) active @endif">
+                                          <p>Services</p>
+                                      </a>
+                                  </li>
+                              </ul>
+                          </li>
+                      @endcan
+                      @can('access_blogs')
+                          <li class="nav-item {{ request()->routeIs('blogs.*') ? 'menu-is-opening menu-open' : '' }}">
+                              <a href="#" class="nav-link" {{ request()->routeIs('blogs.*') ? 'active' : '' }}>
+                                  <i class="nav-icon fas fa-newspaper"></i>
+                                  <p>
+                                      Blogs
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('blogs.index') }}"
+                                          class="nav-link {{ request()->routeIs('blogs.index') ? 'active' : '' }}">
+                                          {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                          <p>Blog</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('blogs.create') }}"
+                                          class="nav-link {{ request()->routeIs('blogs.create') ? 'active' : '' }}">
+                                          {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                          <p>Create Blogs</p>
+                                      </a>
+                                  </li>
+                              </ul>
+                          </li>
+                      @endcan
+                      @can('access_blogs')
+                          <li class="nav-item {{ request()->routeIs('expenses.*') ? 'menu-is-opening menu-open' : '' }}">
+                              <a href="#" class="nav-link" {{ request()->routeIs('expenses.*') ? 'active' : '' }}>
+                                  <i class="nav-icon fas fa-newspaper"></i>
+                                  <p>
+                                      Expenses
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('expenses-categories.index') }}"
+                                          class="nav-link {{ request()->routeIs('expenses-categories.index') ? 'active' : '' }}">
+                                          {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                          <p>Category</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('expenses.index') }}"
+                                          class="nav-link {{ request()->routeIs('expenses.index') ? 'active' : '' }}">
+                                          {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                          <p>Expenses</p>
                                       </a>
                                   </li>
 
                               </ul>
                           </li>
                       @endcan
-                  @endif
-                  <li class="nav-item @if (request()->routeIs('attendance.*')) menu-is-opening menu-open @endif">
-                      <a href="#" class="nav-link @if (request()->routeIs('attendance.*')) active @endif">
-                          <i class="nav-icon fas fa-calendar"></i>
-                          <p>
-                              Attendance
-                              <i class="right fas fa-angle-left"></i>
-                          </p>
-                      </a>
-                      <ul class="nav nav-treeview">
-                          @if (auth()->user()->role['name'] === 'Super Admin')
-                              <li class="nav-item">
-                                  <a href="{{ route('attendance.all') }}"
-                                      class="nav-link @if (request()->routeIs('attendance.all')) active @endif">
-                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Attendance</p>
-                                  </a>
-                              </li>
-                          @else
-                              <li class="nav-item">
-                                  <a href="{{ route('attendance.index') }}"
-                                      class="nav-link @if (request()->routeIs('attendance.index')) active @endif">
-                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>My Attendance</p>
-                                  </a>
-                              </li>
-                          @endif
-                          <li class="nav-item">
-                              <a href="{{ route('attendance.checkin') }}"
-                                  class="nav-link @if (request()->routeIs('attendance.checkin')) active @endif">
-
-                                  <p>Check-In Request</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('attendance.checkout') }}"
-                                  class="nav-link @if (request()->routeIs('attendance.checkout')) active @endif">
-
-                                  <p>Check-Out Request</p>
-                              </a>
-                          </li>
-                      </ul>
-                  </li>
-                  <li class="nav-item @if (request()->routeIs('setsalary.*')) menu-is-opening menu-open @endif">
-                      <a href="#" class="nav-link @if (request()->routeIs('setsalary.*')) active @endif">
-                          <i class="nav-icon fas fa-receipt"></i>
-                          <p>
-                              Payroll
-                              <i class="right fas fa-angle-left"></i>
-                          </p>
-                      </a>
-                      <ul class="nav nav-treeview">
-                          <li class="nav-item">
-                              <a href="{{ route('setsalary.index') }}"
-                                  class="nav-link @if (request()->routeIs('setsalary.index')) active @endif">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Set Salary</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('setsalary.payslip.index') }}"
-                                  class="nav-link @if (request()->routeIs('setsalary.payslip.index')) active @endif">
-
-                                  <p>Payslip</p>
-                              </a>
-                          </li>
-                      </ul>
-                  </li>
-
-                  @can('access_sliders')
-                      <li class="nav-item {{ request()->routeIs('sliders.*') ? 'menu-is-opening menu-open' : '' }}">
-                          <a href="#" class="nav-link" {{ request()->routeIs('sliders.*') ? 'active' : '' }}>
-                              <i class="nav-icon fas fa-image"></i>
-                              <p>
-                                  Sliders
-                                  <i class="right fas fa-angle-left"></i>
-                              </p>
-                          </a>
-                          <ul class="nav nav-treeview">
-                              <li class="nav-item">
-                                  <a href="{{ route('sliders.index') }}"
-                                      class="nav-link {{ request()->routeIs('sliders.index') ? 'active' : '' }}">
-                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Sliders</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('sliders.create') }}"
-                                      class="nav-link {{ request()->routeIs('sliders.create') ? 'active' : '' }}">
-                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Create Sliders</p>
-                                  </a>
-                              </li>
-                          </ul>
-                      </li>
-                  @endcan
-                  @can('access_sliders')
-                      <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
-                          <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
-                              <i class="nav-icon fas fa-image"></i>
-                              <p>
-                                  Product Mgnt
-                                  <i class="right fas fa-angle-left"></i>
-                              </p>
-                          </a>
-                          <ul class="nav nav-treeview">
-                              <li class="nav-item">
-                                  <a href="{{ route('products-categories.index') }}"
-                                      class="nav-link @if (request()->routeIs('products-categories.index')) active @endif">
-                                      <p>Categories</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('products-brands.index') }}"
-                                      class="nav-link @if (request()->routeIs('products-brands.index')) active @endif">
-                                      <p>Brands</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('products-machineries.index') }}"
-                                      class="nav-link @if (request()->routeIs('products-machineries.index')) active @endif">
-                                      <p>Machineries</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('products-accessories.index') }}"
-                                      class="nav-link @if (request()->routeIs('products-accessories.index')) active @endif">
-                                      <p>Accessories</p>
-                                  </a>
-                              </li>
-                          </ul>
-                      </li>
-                  @endcan
-                  <li class="nav-item {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-boxes"></i>
-                        <p>
-                            Inventory
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('suppliers.index') }}"
-                                class="nav-link {{ request()->routeIs('suppliers.index') ? 'active' : '' }}">
-                                <p>Suppliers</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('device-purchases.index') }}"
-                                class="nav-link {{ request()->routeIs('device-purchases.index') ? 'active' : '' }}">
-                                <p>Device Purchases</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('inventries') }}"
-                                class="nav-link {{ request()->routeIs('inventries') ? 'active' : '' }}">
-                                <p>Inventries</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('sales.index') }}"
-                                class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
-                                <p>Sales</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('stock-transfers.index') }}"
-                                class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
-                                <p>Stock Transfer</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                  @can('access_sliders')
-                      <li class="nav-item @if (request()->routeIs('services.*')) menu-is-opening menu-open @endif">
-                          <a href="#" class="nav-link @if (request()->routeIs('services.*')) active @endif">
-                              <i class="nav-icon fas fa-image"></i>
-                              <p>
-                                  Services
-                                  <i class="right fas fa-angle-left"></i>
-                              </p>
-                          </a>
-                          <ul class="nav nav-treeview">
-                              <li class="nav-item">
-                                  <a href="{{ route('services_category.index') }}"
-                                      class="nav-link @if (request()->routeIs('services_category.index')) active @endif">
-                                      <p>Category</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('services.index') }}"
-                                      class="nav-link @if (request()->routeIs('services.index')) active @endif">
-                                      <p>Services</p>
-                                  </a>
-                              </li>
-                          </ul>
-                      </li>
-                  @endcan
-                  @can('access_blogs')
-                      <li class="nav-item {{ request()->routeIs('blogs.*') ? 'menu-is-opening menu-open' : '' }}">
-                          <a href="#" class="nav-link" {{ request()->routeIs('blogs.*') ? 'active' : '' }}>
+                      {{-- @can('access_blogs') --}}
+                      <li class="nav-item {{ request()->routeIs('pettycash.*') ? 'menu-is-opening menu-open' : '' }}">
+                          <a href="#" class="nav-link" {{ request()->routeIs('pettycash.*') ? 'active' : '' }}>
                               <i class="nav-icon fas fa-newspaper"></i>
                               <p>
-                                  Blogs
+                                  Petty Cash
                                   <i class="right fas fa-angle-left"></i>
                               </p>
                           </a>
                           <ul class="nav nav-treeview">
                               <li class="nav-item">
-                                  <a href="{{ route('blogs.index') }}"
-                                      class="nav-link {{ request()->routeIs('blogs.index') ? 'active' : '' }}">
+                                  <a href="{{ route('pettycash-addcash.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-addcash.index') ? 'active' : '' }}">
                                       {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Blog</p>
+                                      <p>Cash Add</p>
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('blogs.create') }}"
-                                      class="nav-link {{ request()->routeIs('blogs.create') ? 'active' : '' }}">
+                                  <a href="{{ route('pettycash-request.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
                                       {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Create Blogs</p>
+                                      <p>Cash Request </p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('pettycash-transfer.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-transfer.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Cash Transfer </p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('pettycash-transaction.index') }}"
+                                      class="nav-link {{ request()->routeIs('pettycash-transaction.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Petty Cash transaction </p>
                                   </a>
                               </li>
                           </ul>
                       </li>
-                  @endcan
-                  @can('access_blogs')
-                      <li class="nav-item {{ request()->routeIs('expenses.*') ? 'menu-is-opening menu-open' : '' }}">
-                          <a href="#" class="nav-link" {{ request()->routeIs('expenses.*') ? 'active' : '' }}>
+                      {{-- @endcan --}}
+                      {{-- @can('access_blogs') --}}
+                      <li class="nav-item {{ request()->routeIs('PetrolMGNT.*') ? 'menu-is-opening menu-open' : '' }}">
+                          <a href="#" class="nav-link" {{ request()->routeIs('PetrolMGNT.*') ? 'active' : '' }}>
                               <i class="nav-icon fas fa-newspaper"></i>
                               <p>
-                                  Expenses
+                                  Vehical MGNT
                                   <i class="right fas fa-angle-left"></i>
                               </p>
                           </a>
                           <ul class="nav nav-treeview">
                               <li class="nav-item">
-                                  <a href="{{ route('expenses-categories.index') }}"
-                                      class="nav-link {{ request()->routeIs('expenses-categories.index') ? 'active' : '' }}">
+                                  <a href="{{ route('bike.index') }}"
+                                      class="nav-link {{ request()->routeIs('bike.index') ? 'active' : '' }}">
                                       {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Category</p>
+                                      <p>Bike</p>
                                   </a>
                               </li>
                               <li class="nav-item">
-                                  <a href="{{ route('expenses.index') }}"
-                                      class="nav-link {{ request()->routeIs('expenses.index') ? 'active' : '' }}">
+                                  <a href="{{ route('petrol.index') }}"
+                                      class="nav-link {{ request()->routeIs('petrol.index') ? 'active' : '' }}">
                                       {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Expenses</p>
+                                      <p>Petrol </p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('service.index') }}"
+                                      class="nav-link {{ request()->routeIs('service.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Service</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
+                      <li class="nav-item {{ request()->routeIs('finance.*') ? 'menu-is-opening menu-open' : '' }}">
+                          <a href="#" class="nav-link" {{ request()->routeIs('finance.*') ? 'active' : '' }}>
+                              <i class="nav-icon fas fa-image"></i>
+                              <p>
+                                  Finance
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('firstbill.index') }}"
+                                      class="nav-link {{ request()->routeIs('firstbill.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>First Bill</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('emiPayment.index') }}"
+                                      class="nav-link {{ request()->routeIs('emiPayment.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>EMI Payment</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('payment-verification.index') }}"
+                                      class="nav-link {{ request()->routeIs('payment-verification.index') ? 'active' : '' }}
+                                   ">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Field Payment Verification</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
+                                  <a href="{{ route('finance.index') }}"
+                                      class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Payment Entry</p>
                                   </a>
                               </li>
 
+                              <li class="nav-item">
+                                  <a href="{{ route('daily.index') }}"
+                                      class="nav-link {{ request()->routeIs('daily.index') ? 'active' : '' }}">
+                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                      <p>Daily Collection</p>
+                                  </a>
+                              </li>
                           </ul>
                       </li>
-                  @endcan
-                  {{-- @can('access_blogs') --}}
-                  <li class="nav-item {{ request()->routeIs('pettycash.*') ? 'menu-is-opening menu-open' : '' }}">
-                      <a href="#" class="nav-link" {{ request()->routeIs('pettycash.*') ? 'active' : '' }}>
-                          <i class="nav-icon fas fa-newspaper"></i>
-                          <p>
-                              Petty Cash
-                              <i class="right fas fa-angle-left"></i>
-                          </p>
+                  <li class="nav-item">
+                      <a href="{{ route('emi.system.index') }}"
+                          class="nav-link {{ request()->routeIs('emi.system.*') ? 'active' : '' }}">
+                          <i class="nav-icon fas fa-money-bill-wave"></i>
+                          <p>EMI System</p>
                       </a>
-                      <ul class="nav nav-treeview">
-                          <li class="nav-item">
-                              <a href="{{ route('pettycash-addcash.index') }}"
-                                  class="nav-link {{ request()->routeIs('pettycash-addcash.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Cash Add</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('pettycash-request.index') }}"
-                                  class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Cash Request </p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('pettycash-transfer.index') }}"
-                                  class="nav-link {{ request()->routeIs('pettycash-transfer.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Cash Transfer </p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('pettycash-transaction.index') }}"
-                                  class="nav-link {{ request()->routeIs('pettycash-transaction.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Petty Cash transaction </p>
-                              </a>
-                          </li>
-                      </ul>
                   </li>
                   {{-- @endcan --}}
-                  {{-- @can('access_blogs') --}}
-                  <li class="nav-item {{ request()->routeIs('PetrolMGNT.*') ? 'menu-is-opening menu-open' : '' }}">
-                      <a href="#" class="nav-link" {{ request()->routeIs('PetrolMGNT.*') ? 'active' : '' }}>
-                          <i class="nav-icon fas fa-newspaper"></i>
-                          <p>
-                              Vehical MGNT
-                              <i class="right fas fa-angle-left"></i>
-                          </p>
-                      </a>
-                      <ul class="nav nav-treeview">
-                          <li class="nav-item">
-                              <a href="{{ route('bike.index') }}"
-                                  class="nav-link {{ request()->routeIs('bike.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Bike</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('petrol.index') }}"
-                                  class="nav-link {{ request()->routeIs('petrol.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Petrol </p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('service.index') }}"
-                                  class="nav-link {{ request()->routeIs('service.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Service</p>
-                              </a>
-                          </li>
-                      </ul>
-                  </li>
-                  <li class="nav-item {{ request()->routeIs('finance.*') ? 'menu-is-opening menu-open' : '' }}">
-                      <a href="#" class="nav-link" {{ request()->routeIs('finance.*') ? 'active' : '' }}>
-                          <i class="nav-icon fas fa-image"></i>
-                          <p>
-                              Finance
-                              <i class="right fas fa-angle-left"></i>
-                          </p>
-                      </a>
-                      <ul class="nav nav-treeview">
-                          <li class="nav-item">
-                              <a href="{{ route('firstbill.index') }}"
-                                  class="nav-link {{ request()->routeIs('firstbill.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>First Bill</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('payment-verification.index') }}"
-                                  class="nav-link {{ request()->routeIs('payment-verification.index') ? 'active' : '' }}
-                                   ">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Field Payment Verification</p>
-                              </a>
-                          </li>
-                          <li class="nav-item">
-                              <a href="{{ route('finance.index') }}"
-                                  class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Payment Entry</p>
-                              </a>
-                          </li>
-
-                          <li class="nav-item">
-                              <a href="{{ route('daily.index') }}"
-                                  class="nav-link {{ request()->routeIs('daily.index') ? 'active' : '' }}">
-                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                  <p>Daily Collection</p>
-                              </a>
-                          </li>
-                      </ul>
-                  </li>
-                  @endcan
                   <!-- Support Dashboard Section -->
                   <div class="my-3 border-top border-success pt-1">
                       <li class="nav-header text-primary">

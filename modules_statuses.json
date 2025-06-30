@@ -20,5 +20,6 @@
     "PetrolMGNT": true,
     "SupportDashboard": true,
     "Finance": true,
-    "Inventory": true
+    "Inventory": true,
+    "EMISystem": true
 }
