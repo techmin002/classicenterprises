@@ -21,5 +21,6 @@
     "SupportDashboard": true,
     "Finance": true,
     "Inventory": true,
-    "EMISystem": true
+    "EMISystem": true,
+    "OutSiderSupportDashboard": true
 }

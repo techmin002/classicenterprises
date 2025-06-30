@@ -3,10 +3,12 @@
 namespace Modules\SupportDashboard\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Modules\Finance\Entities\PaymentVerification;
 use Modules\Lead\Entities\Customer;
 use Modules\Product\Entities\Accessory;
 use Modules\SupportDashboard\Entities\Task;
@@ -59,8 +61,14 @@ class TaskController extends Controller
      */
     public function show()
     {
-        $data = Task::with('customer.lead', 'customer.products')->get();
-        return view('supportdashboard::queue.index', compact('data'));
+        $data = Task::with(['customer.lead', 'customer.products', 'customer.branch'])
+            ->where('status', 'create')
+            ->get();
+
+        // All users grouped by branch_id
+        $users = User::all()->groupBy('branch_id');
+        // dd($users);
+        return view('supportdashboard::queue.index', compact('data', 'users'));
     }
 
     public function assign()
@@ -143,7 +151,7 @@ class TaskController extends Controller
         // dd($request->all()); // confirm all inputs are received correctly
 
         $data->service_type =  $request->input('service_type');
-        $data->service_charge = $request->service_method === 'paid' ? ($request->service_charge ?? 0) : 'free';
+        $data->service_charge = $request->service_method === 'paid' ? ($request->service_charge ?? 0) : 0;
         $data->payment_method = $request->paymentTaken === 'yes' ? $request->payment_method : null;
         $data->paid_amount = $request->paymentTaken === 'yes' ? ($request->paid_amount ?? 0) : 0;
         $data->message = $request->message ?? null;
@@ -151,6 +159,25 @@ class TaskController extends Controller
         $data->status = 'complete';
         $data->save();
 
+
+        // ✅ Insert into PaymentVerification
+        if ($request->service_method === 'paid') {
+            $verificationData = [
+                'customer_id'       => $data->customer_id ?? null,
+                'lead_id'           => $data->customer->lead_id ?? null,
+                'branch_id'         => $data->customer->branch_id ?? null,
+                'total_amount'      => $request->total_amount ?? 0,
+                'paid_amount'       => $request->paid_amount ?? 0,
+                'remaining_amount'  => ($request->total_amount ?? 0) - ($request->paid_amount ?? 0),
+                'payment_method'    => $request->paymentTaken === 'yes' ? $request->payment_method : null,
+                'payment_date'      => now(),
+                'status'            => 'on',
+                'message'           => $request->message ?? null,
+                'receipt'           => null,
+                'created_by'        => auth()->name,
+            ];
+            PaymentVerification::create($verificationData);
+        }
 
         // Store accessories
         if ($request->has('accessories')) {
@@ -165,6 +192,8 @@ class TaskController extends Controller
                 ]);
             }
         }
+
+
 
         return redirect()->route('supportdashboard-task.complete')->with('success', 'Task Completed');
     }

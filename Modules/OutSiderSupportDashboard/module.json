@@ -1,0 +1,11 @@
+{
+    "name": "OutSiderSupportDashboard",
+    "alias": "outsidersupportdashboard",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\OutSiderSupportDashboard\\Providers\\OutSiderSupportDashboardServiceProvider"
+    ],
+    "files": []
+}

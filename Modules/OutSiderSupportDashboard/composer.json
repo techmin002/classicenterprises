@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/outsidersupportdashboard",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\OutSiderSupportDashboard\\": "",
+            "Modules\\OutSiderSupportDashboard\\App\\": "app/",
+            "Modules\\OutSiderSupportDashboard\\Database\\Factories\\": "database/factories/",
+            "Modules\\OutSiderSupportDashboard\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\OutSiderSupportDashboard\\Tests\\": "tests/"
+        }
+    }
+}

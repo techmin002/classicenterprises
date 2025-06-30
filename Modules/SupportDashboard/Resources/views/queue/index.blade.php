@@ -75,9 +75,11 @@
                                                 <td>{{ $value->priority }}</td>
 
                                                 <td>
-                                                    <a href="" class="btn btn-success btn-xs w-75" data-toggle="modal"
-                                                        data-target="#exampleModal{{ $value->id }}">Action</a>
-
+                                                    @can('edit_ticket')
+                                                        <a href="" class="btn btn-success btn-xs w-75"
+                                                            data-toggle="modal"
+                                                            data-target="#exampleModal{{ $value->id }}">Action</a>
+                                                    @endcan
                                                     {{-- modal start --}}
                                                     <div class="modal fade" id="exampleModal{{ $value->id }}"
                                                         tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -142,15 +144,25 @@
                                                                             class="form-group mt-2 assign-section d-none">
                                                                             <label for="assign_to"
                                                                                 class="font-weight-bold">Select User</label>
-                                                                            <select name="assign_to" id="assign_to"
+
+                                                                            @php
+                                                                                $branchId =
+                                                                                    $value->customer->branch_id ?? null;
+                                                                                $branchUsers = $users[$branchId] ?? [];
+                                                                            @endphp
+
+                                                                            <select name="assign_to"
+                                                                                id="assign_to_{{ $value->id }}"
                                                                                 class="form-control">
                                                                                 <option value="" disabled selected>
                                                                                     Select User</option>
-                                                                                <option value="a">A</option>
-                                                                                <option value="b">B</option>
-                                                                                <option value="c">C</option>
+                                                                                @foreach ($branchUsers as $user)
+                                                                                    <option value="{{ $user->name }}">
+                                                                                        {{ $user->name }}</option>
+                                                                                @endforeach
                                                                             </select>
                                                                         </div>
+
                                                                         <!-- Message -->
                                                                         <div class="form-group mt-3">
                                                                             <label for="message"
@@ -175,7 +187,8 @@
                                                     </div>
                                                     {{-- modal end --}}
 
-                                                    <a href="" class="btn btn-primary btn-xs w-75 mt-2" data-toggle="modal"
+                                                    <a href="" class="btn btn-primary btn-xs w-75 mt-2"
+                                                        data-toggle="modal"
                                                         data-target="#exampleModal1{{ $value->id }}">Note</a>
 
                                                     {{-- modal start --}}

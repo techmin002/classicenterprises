@@ -35,14 +35,15 @@
                         <!-- Card -->
                         <div class="card">
                             <div class="card-header">
-                                @if (Auth::user()->role->name === 'Super Admin')
+                                @can('create_pettycash')
                                     <h3 class="card-title float-right">
-                                        <a class="btn btn-info text-white" data-toggle="modal" data-target="#exampleModalCenter">
+                                        <a class="btn btn-info text-white" data-toggle="modal"
+                                            data-target="#exampleModalCenter">
                                             <i class="fa fa-plus"></i> Create
                                         </a>
                                     </h3>
                                     @include('pettycash::cash_add.create')
-                                @endif
+                                @endcan
                             </div>
 
                             <div class="card-body">
@@ -84,25 +85,29 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a data-toggle="modal" data-target="#editCategory{{ $value->id }}"
-                                                        class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                    @can('edit_pettycash')
+                                                        <a data-toggle="modal" data-target="#editCategory{{ $value->id }}"
+                                                            class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    @endcan
                                                     @include('pettycash::cash_add.edit')
-
-                                                    <button id="delete" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete"
-                                                        onclick="event.preventDefault();
+                                                    @can('delete_pettycash')
+                                                        <button id="delete" class="btn btn-danger btn-sm"
+                                                            data-toggle="tooltip" title="Delete"
+                                                            onclick="event.preventDefault();
                                                             if (confirm('Are you sure? It will delete the data permanently!')) {
                                                                 document.getElementById('destroy{{ $value->id }}').submit();
                                                             }">
-                                                        <i class="fa fa-trash"></i>
-                                                        <form id="destroy{{ $value->id }}" class="d-none"
-                                                            action="{{ route('pettycash-addcash.destroy', $value->id) }}"
-                                                            method="POST">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                        </form>
-                                                    </button>
+                                                            <i class="fa fa-trash"></i>
+                                                            <form id="destroy{{ $value->id }}" class="d-none"
+                                                                action="{{ route('pettycash-addcash.destroy', $value->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                            </form>
+                                                        </button>
+                                                    @endcan
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -135,7 +140,7 @@
     </div>
 
     <script>
-        $(function () {
+        $(function() {
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
