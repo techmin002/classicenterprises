@@ -77,34 +77,142 @@
                                         </td>
                                         <td class="text-center">
                                             @if (Auth::user()->role->name === 'Super Admin')
-                                                {{-- Allow Super Admin to take action again --}}
-                                                <form action="{{ route('stock-issue.accept', $tool->id) }}" method="POST"
-                                                    style="display:inline-block; margin-left: 5px;">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-success"
-                                                        onclick="return confirm('Are you sure you want to accept ')">
+                                                {{-- Only super admin can see buttons --}}
+                                                @if ($tool->status == 'pending')
+                                                    <button type="button" class="btn btn-sm btn-success"
+                                                        data-toggle="modal" data-target="#acceptModal{{ $tool->id }}">
                                                         Accept
                                                     </button>
-                                                </form>
+                                                    <!-- Accept Modal -->
+                                                    <div class="modal fade" id="acceptModal{{ $tool->id }}"
+                                                        tabindex="-1" role="dialog"
+                                                        aria-labelledby="acceptModalLabel{{ $tool->id }}"
+                                                        aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <form action="{{ route('stock-issue.accept', $tool->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                <div class="modal-content">
 
-                                                <form action="{{ route('stock-issue.reject', $tool->id) }}" method="POST"
-                                                    style="display:inline-block; margin-left: 5px;">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('Are you sure you want to reject ')">
+                                                                    <!-- Modal Header -->
+                                                                    <div class="modal-header bg-success text-white">
+                                                                        <h5 class="modal-title">Accept Request</h5>
+                                                                        <button type="button" class="close text-white"
+                                                                            data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+
+                                                                    <!-- 👇 MESSAGE FIELD RIGHT AFTER HEADER -->
+                                                                    <div class="px-4 pt-3">
+                                                                        <label for="accept_message"><strong>Enter
+                                                                                Message:</strong></label>
+                                                                        <textarea name="message" class="form-control" id="accept_message" rows="3" required></textarea>
+                                                                    </div>
+
+                                                                    <!-- Footer Buttons -->
+                                                                    <div class="modal-footer">
+                                                                        <button type="button"
+                                                                            class="btn btn-secondary btn-sm"
+                                                                            data-dismiss="modal">Cancel</button>
+                                                                        <button type="submit"
+                                                                            class="btn btn-success btn-sm">Confirm
+                                                                            Accept</button>
+                                                                    </div>
+
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+
+                                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+                                                        data-target="#rejectModal{{ $tool->id }}">
                                                         Reject
                                                     </button>
-                                                </form>
+                                                    <!-- Reject Modal -->
+                                                    <div class="modal fade" id="rejectModal{{ $tool->id }}"
+                                                        tabindex="-1" role="dialog"
+                                                        aria-labelledby="rejectModalLabel{{ $tool->id }}"
+                                                        aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <form action="{{ route('stock-issue.reject', $tool->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header bg-danger text-white">
+                                                                        <h5 class="modal-title">Reject Request</h5>
+                                                                        <button type="button" class="close text-white"
+                                                                            data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <label for="reject_message">Enter reason:</label>
+                                                                        <textarea name="message" class="form-control" id="reject_message" rows="3" required></textarea>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button"
+                                                                            class="btn btn-secondary btn-sm"
+                                                                            data-dismiss="modal">Cancel</button>
+                                                                        <button type="submit"
+                                                                            class="btn btn-danger btn-sm">Confirm
+                                                                            Reject</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                @elseif ($tool->status == 'accepted')
+                                                    <span type="button" class="badge badge-success" data-toggle="modal"
+                                                        data-target="#Modal{{ $tool->id }}">
+                                                        Note
+                                                    </span>
+                                                @elseif ($tool->status == 'rejected')
+                                                    <span class="badge badge-danger" data-toggle="modal"
+                                                        data-target="#Modal{{ $tool->id }}">
+                                                        Note
+                                                    </span>
+                                                @endif
                                             @else
                                                 {{-- Other users see only label --}}
                                                 @if ($tool->status == 'pending')
                                                     <span class="badge badge-warning">Pending</span>
                                                 @elseif ($tool->status == 'accepted')
-                                                    <span class="badge badge-success">Accepted</span>
+                                                    <span class="badge badge-success" data-toggle="modal"
+                                                        data-target="#Modal{{ $tool->id }}">
+                                                        Note
+                                                    </span>
                                                 @elseif ($tool->status == 'rejected')
-                                                    <span class="badge badge-danger">Rejected</span>
+                                                    <span class="badge badge-danger" data-toggle="modal"
+                                                        data-target="#Modal{{ $tool->id }}">
+                                                        Note
+                                                    </span>
                                                 @endif
                                             @endif
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="Modal{{ $tool->id }}" tabindex="-1" role="dialog"
+                                                aria-labelledby="ModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header text-dark">
+                                                            <h4 class="modal-title" id="ModalLabel">
+                                                                <strong>Note:</strong>
+                                                            </h4>
+                                                            <button class="close text-dark" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body text-dark">
+                                                            <h5>{{ $tool->message }}</p>.
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary btn-sm"
+                                                                data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

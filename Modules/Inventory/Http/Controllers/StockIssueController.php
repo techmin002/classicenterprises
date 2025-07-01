@@ -132,20 +132,24 @@ class StockIssueController extends Controller
         //
     }
 
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
-        $request = StockIssue::findOrFail($id);
-        $request->status = 'rejected';
-        $request->save();
-
-        return redirect()->back()->with('success', 'Request rejected.');
+        $stockIssue = StockIssue::findOrFail($id);
+        $stockIssue->status = 'rejected';
+        if ($request->has('message')) {
+            $stockIssue->message = $request->message;
+        }
+        $stockIssue->save();
+        return redirect()->back()->with('success', 'Request Rejected.');
     }
-    public function accept($id)
+    public function accept(Request $request, $id)
     {
-        $request = StockIssue::findOrFail($id);
-        $request->status = 'accepted';
-        $request->save();
-
-        return redirect()->back()->with('success', 'Request rejected.');
+        $stockIssue = StockIssue::findOrFail($id);
+        $stockIssue->status = 'accepted';
+        if ($request->has('message')) {
+            $stockIssue->message = $request->message;
+        }
+        $stockIssue->save();
+        return redirect()->back()->with('success', 'Request Accepted.');
     }
 }
