@@ -1,11 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Inventory\Entities\StockIssue;
 use Modules\Inventory\Http\Controllers\InventoryController;
 use Modules\Inventory\Http\Controllers\SupplierController;
 use Modules\Inventory\Http\Controllers\DevicePurchaseController;
 use Modules\Inventory\Http\Controllers\SalesController;
 use Modules\Inventory\Http\Controllers\StockController;
+use Modules\Inventory\Http\Controllers\StockIssueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,4 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Stock Transfer
     Route::resource('stock-transfers', StockController::class)->names('stock-transfers');
 
+    Route::resource('stock-issue', StockIssueController::class)->names('stock-issue');
+    Route::post('stock-issue/accept/{id}', [StockIssueController::class, 'accept'])->name('stock-issue.accept');
+    Route::post('stock-issue/reject/{id}', [StockIssueController::class, 'reject'])->name('stock-issue.reject');
 });

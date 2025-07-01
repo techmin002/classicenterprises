@@ -421,6 +421,12 @@
                                           <p>Accessories</p>
                                       </a>
                                   </li>
+                                  <li class="nav-item">
+                                  <a href="{{ route('technicaltools.index') }}"
+                                      class="nav-link {{ request()->routeIs('technicaltools.index') ? 'active' : '' }}">
+                                      <p>Technical Tools</p>
+                                  </a>
+                              </li>
                               </ul>
                           </li>
                       @endcan
@@ -464,6 +470,13 @@
                                   <a href="{{ route('stock-transfers.index') }}"
                                       class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
                                       <p>Stock Transfer</p>
+                                  </a>
+                              </li>
+
+                              <li class="nav-item">
+                                  <a href="{{ route('stock-issue.index') }}"
+                                      class="nav-link {{ request()->routeIs('stock-issue.index') ? 'active' : '' }}">
+                                      <p>stock issue</p>
                                   </a>
                               </li>
                           </ul>

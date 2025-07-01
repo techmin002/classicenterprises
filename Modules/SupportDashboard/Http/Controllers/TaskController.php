@@ -174,7 +174,7 @@ class TaskController extends Controller
                 'status'            => 'on',
                 'message'           => $request->message ?? null,
                 'receipt'           => null,
-                'created_by'        => auth()->name,
+                'created_by'        => auth()->user()->name,
             ];
             PaymentVerification::create($verificationData);
         }
