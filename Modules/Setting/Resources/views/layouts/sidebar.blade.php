@@ -222,7 +222,6 @@
                                       </a>
                                   </li>
 
-                                  >>>>>>> ARbranch
                               </ul>
                           </li>
                       @endcan
