@@ -870,46 +870,60 @@
                   {{-- Finance --}}
                   @can('access_finance')
                       <li class="nav-item {{ request()->routeIs('finance.*') ? 'menu-is-opening menu-open' : '' }}">
-                          <a href="#" class="nav-link" {{ request()->routeIs('finance.*') ? 'active' : '' }}>
-                              <i class="nav-icon fas fa-image"></i>
-                              <p>
-                                  Finance
-                                  <i class="right fas fa-angle-left"></i>
-                              </p>
-                          </a>
-                          <ul class="nav nav-treeview">
-                              <li class="nav-item">
-                                  <a href="{{ route('firstbill.index') }}"
-                                      class="nav-link {{ request()->routeIs('firstbill.index') ? 'active' : '' }}">
-                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>First Bill</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('payment-verification.index') }}"
-                                      class="nav-link {{ request()->routeIs('payment-verification.index') ? 'active' : '' }}
+                      <a href="#" class="nav-link" {{ request()->routeIs('finance.*') ? 'active' : '' }}>
+                          <i class="nav-icon fas fa-image"></i>
+                          <p>
+                              Finance
+                              <i class="right fas fa-angle-left"></i>
+                          </p>
+                      </a>
+                      <ul class="nav nav-treeview">
+                          <li class="nav-item">
+                              <a href="{{ route('firstbill.index') }}"
+                                  class="nav-link {{ request()->routeIs('firstbill.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>First Bill</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('emiPayment.index') }}"
+                                  class="nav-link {{ request()->routeIs('emiPayment.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>EMI Payment</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('payment-verification.index') }}"
+                                  class="nav-link {{ request()->routeIs('payment-verification.index') ? 'active' : '' }}
                                    ">
-                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Field Payment Verification</p>
-                                  </a>
-                              </li>
-                              <li class="nav-item">
-                                  <a href="{{ route('finance.index') }}"
-                                      class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
-                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Payment Entry</p>
-                                  </a>
-                              </li>
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Field Payment Verification</p>
+                              </a>
+                          </li>
+                          <li class="nav-item">
+                              <a href="{{ route('finance.index') }}"
+                                  class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Payment Entry</p>
+                              </a>
+                          </li>
 
-                              <li class="nav-item">
-                                  <a href="{{ route('daily.index') }}"
-                                      class="nav-link {{ request()->routeIs('daily.index') ? 'active' : '' }}">
-                                      {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Daily Collection</p>
-                                  </a>
-                              </li>
-                          </ul>
-                      </li>
+                          <li class="nav-item">
+                              <a href="{{ route('daily.index') }}"
+                                  class="nav-link {{ request()->routeIs('daily.index') ? 'active' : '' }}">
+                                  {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                  <p>Daily Collection</p>
+                              </a>
+                          </li>
+                      </ul>
+                  </li>
+                  <li class="nav-item">
+                      <a href="{{ route('emi.system.index') }}"
+                          class="nav-link {{ request()->routeIs('emi.system.*') ? 'active' : '' }}">
+                          <i class="nav-icon fas fa-money-bill-wave"></i>
+                          <p>EMI System</p>
+                      </a>
+                  </li>
                   @endcan
                   <!--Support Dashboard Section -->
                   @can('access_ticket')

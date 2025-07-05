@@ -263,6 +263,13 @@ class CustomerInstallationController extends Controller
      */
     private function processEmiPayment($request, $customer, $lead)
     {
+        if ($request->hasFile('document'))
+        {
+            $imageName = time().'.'.$request->document->extension();
+
+            $request->document->move(public_path('upload/images/emi_documents'), $imageName);
+
+        }
         EmiCustomer::create([
             'customer_id' => $customer->id,
             'emi_plan_id' => $request->emi_id,
@@ -270,9 +277,7 @@ class CustomerInstallationController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'monthly_pay' => $request->monthly_pay,
-            'document' => $request->hasFile('document')
-                ? $request->file('document')->store('emi_documents', 'public')
-                : null,
+            'document' => $imageName ?? null,
             'status' => $request->status ?? 1,
         ]);
 
