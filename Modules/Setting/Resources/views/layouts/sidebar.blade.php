@@ -178,6 +178,12 @@
                                   </a>
                               </li>
                               <li class="nav-item">
+                                  <a href="{{ route('installation-assign.index', 'classic_customer') }}"
+                                      class="nav-link @if (request()->routeIs('installation-assign.index', 'classic_customer')) active @endif">
+                                      <p>Installation Assign</p>
+                                  </a>
+                              </li>
+                              <li class="nav-item">
                                   <a href="{{ route('installation.reports', 'classic_customer') }}"
                                       class="nav-link @if (request()->routeIs('installation.reports', 'classic_customer')) active @endif">
                                       <p>Installation Reports</p>
@@ -210,6 +216,12 @@
                                       </a>
                                   </li>
                                   <li class="nav-item">
+                                      <a href="{{ route('installation-assign.index', 'retailler') }}"
+                                          class="nav-link @if (request()->routeIs('installation-assign.index', 'retailler')) active @endif">
+                                          <p>Installation Assign</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
                                       <a href="{{ route('installation.reports', 'retailler') }}"
                                           class="nav-link @if (request()->routeIs('installation.reports', 'retailler')) active @endif">
                                           <p>Installation Reports</p>
@@ -221,8 +233,6 @@
                                           <p>Installation Complete</p>
                                       </a>
                                   </li>
-
-                                  >>>>>>> ARbranch
                               </ul>
                           </li>
                       @endcan
@@ -240,6 +250,12 @@
                                       <a href="{{ route('installation-queue.index', 'wholeseller') }}"
                                           class="nav-link @if (request()->routeIs('installation-queue.index', 'wholeseller')) active @endif">
                                           <p>Installation Queue</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-assign.index', 'wholeseller') }}"
+                                          class="nav-link @if (request()->routeIs('installation-assign.index', 'wholeseller')) active @endif">
+                                          <p>Installation Assign</p>
                                       </a>
                                   </li>
                                   <li class="nav-item">
@@ -806,7 +822,7 @@
                                   <a href="{{ route('pettycash-addcash.index') }}"
                                       class="nav-link {{ request()->routeIs('pettycash-addcash.index') ? 'active' : '' }}">
                                       {{-- <i class="far fa-circle nav-icon"></i> --}}
-                                      <p>Cash Add</p>
+                                      <p>Petty Cash</p>
                                   </a>
                               </li>
                               <li class="nav-item">

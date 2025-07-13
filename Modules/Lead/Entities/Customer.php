@@ -15,7 +15,7 @@ class Customer extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $table='customers';
+    protected $table = 'customers';
     protected $fillable = [
         'lead_id',
         'branch_id',
@@ -29,14 +29,15 @@ class Customer extends Model
         'install_date',
         'converted_by'
     ];
-    public function lead(){
+    public function lead()
+    {
         return $this->belongsTo(Lead::class);
     }
     public function payments()
     {
         return $this->hasMany(CustomerPayment::class);
     }
-    protected static function newFactory(): CustomerFactory
+    protected static function newFactory()
     {
         //return CustomerFactory::new();
     }
@@ -54,8 +55,11 @@ class Customer extends Model
     }
 
     public function emiCustomer()
-{
-    return $this->hasOne(EmiCustomer::class);
-}
-
+    {
+        return $this->hasOne(EmiCustomer::class);
+    }
+    public function assignLead()
+    {
+        return $this->belongsTo(Lead::class, 'assign_to');
+    }
 }

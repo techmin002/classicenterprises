@@ -57,7 +57,7 @@ class PettyCashAddController extends Controller
             'title' => $request->title,
             'amount' => $request->amount,
             'date' => $request->date,
-            'month' => $request->month,
+            // 'month' => $request->month,
             'lm_remaining_cash' => $request->lm_remaining_cash, //last month remaining cash
             'total_amount' => $total_amount,
             'remaining_cash' => $total_amount,
@@ -109,7 +109,8 @@ class PettyCashAddController extends Controller
             'title' => $request->title,
             'amount' => $request->amount,
             'date' => $request->date,
-            'month' => $request->month,
+            // 'month' => $request->month,
+            'year' => $request->year,
             'lm_remaining_cash' => $request->lm_remaining_cash,
             'total_amount' => $new_total_amount,
             'remaining_cash' => $new_remaining_cash,

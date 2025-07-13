@@ -68,19 +68,21 @@
                                                 <td>
 
 
-                                                        <button id="delete" class="btn btn-danger btn-sm" disabled
-                                                            onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
-                                                            <i class="fa fa-trash"></i>
-                                                            <form id="destroy{{ $exp->id }}" class="d-none"
-                                                                action="{{ route('leads.destroy', $exp->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('delete')
-                                                            </form>
-                                                        </button>
-                                                        <a type="button" href="{{ route('installation-create.create',$exp->id) }}" class="btn btn-secondary btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
+                                                    <button id="delete" class="btn btn-danger btn-sm" disabled
+                                                        onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
+                                                        <i class="fa fa-trash"></i>
+                                                        <form id="destroy{{ $exp->id }}" class="d-none"
+                                                            action="{{ route('leads.destroy', $exp->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('delete')
+                                                        </form>
+                                                    </button>
+                                                    {{-- <a type="button" href="{{ route('installation-create.create',$exp->id) }}" class="btn btn-secondary btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
                                                             <i class="fa fa-user-plus"></i>
-                                                        </a>
+                                                        </a> --}}
+                                                    <a data-toggle="modal" data-target="#editCategory{{ $exp->id }}"
+                                                        class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                                    @include('lead::installation.assign_action')
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -114,9 +116,8 @@
         <!-- /.content -->
     </div>
     <script>
-       $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
     </script>
 @endsection
-

@@ -48,22 +48,20 @@ class PettyCashRequestController extends Controller
             'title' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'date' => 'required|date',
-            'month' => 'required|string',
             'description' => 'nullable|string',
         ]);
 
-        // dd(Auth::user()->branch_id);
         PettyCashRequest::create([
             'branch_id' => Auth::user()->branch_id,
             'title' => $validated['title'],
             'amount' => $validated['amount'],
             'date' => $validated['date'],
-            'month' => $validated['month'],
-            'description' => $validated['description'] ?? null
+            'description' => $validated['description'] ?? null,
         ]);
 
         return redirect()->route('pettycash-request.index')->with('success', 'Request submitted!');
     }
+
 
 
     /**
@@ -93,7 +91,6 @@ class PettyCashRequestController extends Controller
             'title' => $request->input('title'),
             'amount' => $request->input('amount'),
             'date' => $request->input('date'),
-            'month' => $request->input('month'),
             'description' => $request->input('description') ?? null,
         ]);
 

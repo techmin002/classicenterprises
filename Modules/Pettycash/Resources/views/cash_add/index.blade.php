@@ -52,9 +52,9 @@
                                         <tr>
                                             <th class="text-center">S.N</th>
                                             <th class="text-center">Title</th>
-                                            <th class="text-center">Amount</th>
-                                            <th class="text-center">Date</th>
-                                            <th class="text-center">Month</th>
+                                            <th class="text-center">Add Amount</th>
+                                            <th class="text-center">Date (Month)</th>
+                                            {{-- <th class="text-center">Month</th> --}}
                                             <th class="text-center">Last Month Remaining Amount</th>
                                             <th class="text-center">Total Amount</th>
                                             <th class="text-center">Remaining Amount</th>
@@ -69,8 +69,10 @@
                                                 <td class="text-center">{{ $loop->iteration }}</td>
                                                 <td class="text-center">{{ $value->title }}</td>
                                                 <td class="text-center">{{ $value->amount }}</td>
-                                                <td class="text-center">{{ $value->date }}</td>
-                                                <td class="text-center">{{ $value->month_name }}</td>
+                                                <td class="text-center">
+                                                    {{ \Carbon\Carbon::parse($value->date)->format('F Y') }}
+                                                </td>
+                                                {{-- <td class="text-center">{{ $value->month_name }}</td> --}}
                                                 <td class="text-center">{{ $value->lm_remaining_cash }}</td>
                                                 <td class="text-center">{{ $value->total_amount }}</td>
                                                 <td class="text-center">{{ $value->remaining_cash }}</td>
@@ -116,9 +118,9 @@
                                         <tr>
                                             <th class="text-center">S.N</th>
                                             <th class="text-center">Title</th>
-                                            <th class="text-center">Amount</th>
-                                            <th class="text-center">Date</th>
-                                            <th class="text-center">Month</th>
+                                            <th class="text-center">Add Amount</th>
+                                            <th class="text-center">Date (Month)</th>
+                                            {{-- <th class="text-center">Month</th> --}}
                                             <th class="text-center">Last Month Remaining Amount</th>
                                             <th class="text-center">Total Amount</th>
                                             <th class="text-center">Remaining Amount</th>

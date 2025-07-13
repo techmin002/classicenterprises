@@ -1,3 +1,8 @@
+@php
+    use Carbon\Carbon;
+    $monthYear = Carbon::parse($req->date)->format('F Y'); // e.g., "July 2025"
+    $dateOnly = Carbon::parse($req->date)->format('Y-m-d'); // original full date for hidden field
+@endphp
 <div class="modal fade" id="exampleModalCentercashtransfer{{ $req->id }}" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -5,20 +10,29 @@
             <div class="modal-header justify-content-center" style="background-color: #0837a4; color: #ffff;">
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Transfer Petty Cash </h1>
             </div>
-            <form action="{{ route('petty-cash-transfer.store',$req->id) }}" method="post"
+            <form action="{{ route('petty-cash-transfer.store', $req->id) }}" method="post"
                 enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="container">
                         <div class="row gy-3">
-                            <div class="col-lg-6">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label12">Amount</label>
-                                    <input class="form-control" placeholder="Enter Amount" type="number"
-                                        name="amount" value="{{ $req->amount}}" readonly>
+                                    <input class="form-control" placeholder="Enter Amount" type="number" name="amount"
+                                        value="{{ $req->amount }}" readonly>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label12">Date (Month)</label>
+                                    <input class="form-control" type="text" name="month_display"
+                                        value="{{ $monthYear }}" readonly>
+                                    <!-- Hidden field for actual date (used for backend month/year comparison) -->
+                                    <input type="hidden" name="month_compare_date" value="{{ $dateOnly }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label12">Date</label>
                                     <input class="form-control" placeholder="Select date" type="date" name="date">

@@ -44,6 +44,7 @@
                                         <tr>
                                             <th class="text-center">S.N</th>
                                             <th class="text-center">Date</th>
+                                            <th class="text-center">Month</th>
                                             <th class="text-center">Type</th>
                                             <th class="text-center">Amount</th>
                                             <th class="text-center">Total Before</th>
@@ -57,10 +58,13 @@
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
                                                 <td class="text-center">{{ $value->created_at->format('d-m-Y H:i') }}</td>
+                                                <td class="text-center">{{ $value->created_at->format('M Y') }}</td>
                                                 <td class="text-center">{{ ucfirst($value->type) }}</td>
                                                 <td class="text-center">₹{{ number_format($value->amount, 2) }}</td>
-                                                <td class="text-center">₹{{ number_format($value->total_cash_before, 2) }}</td>
-                                                <td class="text-center">₹{{ number_format($value->remaining_cash_after, 2) }}</td>
+                                                <td class="text-center">₹{{ number_format($value->total_cash_before, 2) }}
+                                                </td>
+                                                <td class="text-center">
+                                                    ₹{{ number_format($value->remaining_cash_after, 2) }}</td>
                                                 <td class="text-center">{{ $value->message }}</td>
                                             </tr>
                                         @endforeach
@@ -70,6 +74,7 @@
                                         <tr>
                                             <th class="text-center">S.N</th>
                                             <th class="text-center">Date</th>
+                                            <th class="text-center">Month</th>
                                             <th class="text-center">Type</th>
                                             <th class="text-center">Amount</th>
                                             <th class="text-center">Total Before</th>

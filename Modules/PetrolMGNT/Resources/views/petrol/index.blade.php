@@ -36,6 +36,12 @@
                         <div class="card">
                             @can('create_vehicle')
                                 <div class="card-header">
+                                    @if (Auth::user()->role->name === 'Super Admin')
+                                        <h3 class="card-title"><a class="btn btn-primary text-white" data-toggle="modal"
+                                                data-target="#petrolpump"><i class="fa fa-plus"></i>
+                                                Add PetrolPump</a> </h3>
+                                        @include('petrolmgnt::petrol.addpetrolpump')
+                                    @endif
                                     <h3 class="card-title float-right"><a class="btn btn-primary text-white" data-toggle="modal"
                                             data-target="#exampleModalCenter"><i class="fa fa-plus"></i>
                                             Create</a> </h3>
@@ -51,14 +57,9 @@
                                             <th class="text-center">S.N</th>
                                             <th class="text-center">Branch Name</th>
                                             <th class="text-center">Bike Name</th>
-                                            {{-- <th class="text-center">Model No</th> --}}
                                             <th class="text-center">Bike Number</th>
-                                            <th class="text-center">Amount</th>
-                                            <th class="text-center">Mode</th>
-                                            <th class="text-center">Receipt</th>
-                                            <th class="text-center">Date</th>
-                                            <th class="text-center">KM</th>
                                             <th class="text-center">Message</th>
+                                            <th class="text-center">Details</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -67,21 +68,14 @@
                                         @foreach ($petrol as $value)
                                             <tr>
                                                 <td class="text-center">{{ $loop->iteration }}</td>
-                                                <td class="text-center">{{ $value->bike->branch->name ?? 'N/A' }}
-                                                </td>
-
+                                                <td class="text-center">{{ $value->bike->branch->name ?? 'N/A' }}</td>
                                                 <td class="text-center">{{ $value->bike->name }}</td>
-                                                {{-- <td class="text-center">{{ $value->bike->model }}</td> --}}
                                                 <td class="text-center">{{ $value->bike->bikenumber }}</td>
-                                                <td class="text-center">{{ $value->amount }}</td>
-                                                <td class="text-center">{{ $value->mode }}</td>
-                                                <td class="text-center">
-                                                    <a href="{{ asset('upload/images/petrol-receipt/' . $value->image) }}"
-                                                        target="_blank" alt="">View Receipt</a>
-                                                </td>
-                                                <td class="text-center">{{ $value->date }}</td>
-                                                <td class="text-center">{{ $value->km }}</td>
                                                 <td class="text-center">{{ $value->message }}</td>
+                                                <td><a class="btn btn-primary text-white" data-toggle="modal"
+                                                        data-target="#details{{ $value->id }}">Details</a>
+                                                    @include('petrolmgnt::petrol.details')
+                                                </td>
                                                 <td class="text-center">
                                                     @if ($value->status == 'on')
                                                         <a href="{{ route('petrol.status', $value->id) }}"
@@ -124,14 +118,9 @@
                                             <th class="text-center">S.N</th>
                                             <th class="text-center">Branch Name</th>
                                             <th class="text-center">Bike Name</th>
-                                            {{-- <th class="text-center">Model No</th> --}}
                                             <th class="text-center">Bike Number</th>
-                                            <th class="text-center">Amount</th>
-                                            <th class="text-center">Mode</th>
-                                            <th class="text-center">Receipt</th>
-                                            <th class="text-center">Date</th>
-                                            <th class="text-center">KM</th>
                                             <th class="text-center">Message</th>
+                                            <th class="text-center">Details</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
                                         </tr>

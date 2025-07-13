@@ -5,6 +5,8 @@ use Modules\PetrolMGNT\Http\Controllers\BikeController;
 use Modules\PetrolMGNT\Http\Controllers\PetrolController;
 use Modules\PetrolMGNT\Http\Controllers\PetrolMGNTController;
 use Modules\PetrolMGNT\Http\Controllers\BikeServiceController;
+use Modules\PetrolMGNT\Http\Controllers\PetrolPumpController;
+use Modules\PetrolMGNT\Http\Controllers\ServiceCenterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +33,10 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('service/status/{id}', [BikeServiceController::class, 'status'])->name('service.status');
     Route::get('bike-service/status/{id}', [BikeServiceController::class, 'status'])->name('bike-service.status');
     Route::get('/get-bikes-by-branch', [BikeServiceController::class, 'getBikesByBranch'])->name('get.bikes.by.branch');
+
+    Route::resource('petrolpump', PetrolPumpController::class);
+    Route::get('petrolpump/status/{id}', [PetrolPumpController::class, 'status'])->name('petrolpump.status');
+
+    Route::resource('servicecenter', ServiceCenterController::class);
+    Route::get('servicecenter/status/{id}', [ServiceCenterController::class, 'status'])->name('servicecenter.status');
 });

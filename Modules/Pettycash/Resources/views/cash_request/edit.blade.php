@@ -29,12 +29,12 @@
                         </div>
                         <div class="col-lg-12">
                             <div class="form-group">
-                                <label class="form-label12">Date</label>
+                                <label class="form-label12">Date (Month)</label>
                                 <input class="form-control" placeholder="Select date" type="date" name="date"
                                     value="{{ $req->date }}">
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        {{-- <div class="col-lg-12">
                             <div class="form-group">
                                 <label class="form-label12">Month</label>
                                 <select class="form-control" name="month">
@@ -61,7 +61,7 @@
                                 </select>
 
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="form-label12">Description</label>

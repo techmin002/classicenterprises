@@ -67,20 +67,35 @@ class PettyCashTransferController extends Controller
         $cashRequest->status = 'approved';
         $cashRequest->save();
 
-        // 3. Add amount to petty cash of that branch for that month
-        $month = $cashRequest->month;
+        // 3. Extract month & year from the display date field (provided as hidden)
+        $monthCompareDate = $request->month_compare_date ?? $validated['date'];
+        $dateObj = \Carbon\Carbon::parse($monthCompareDate);
+        $month = $dateObj->format('m');
+        $year = $dateObj->format('Y');
 
-        $pettyCash = PettyCashAdd::firstOrCreate(
-            ['branch_id' => $validated['branch_id'], 'month' => $month],
-            ['total_amount' => 0, 'remaining_cash' => 0]
-        );
+        // 4. Update PettyCashAdd for that branch + month/year
+        $pettyCash = PettyCashAdd::where('branch_id', $validated['branch_id'])
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->first();
 
-        $pettyCash->total_amount += $validated['amount'];
-        $pettyCash->remaining_cash += $validated['amount'];
-        $pettyCash->save();
+        if ($pettyCash) {
+            $pettyCash->total_amount += $validated['amount'];
+            $pettyCash->remaining_cash += $validated['amount'];
+            $pettyCash->save();
+        } else {
+            // If entry not exists, create a new one with provided date
+            PettyCashAdd::create([
+                'branch_id' => $validated['branch_id'],
+                'date' => $monthCompareDate,
+                'total_amount' => $validated['amount'],
+                'remaining_cash' => $validated['amount'],
+            ]);
+        }
 
         return redirect()->route('pettycash-transfer.index')->with('success', 'Transfer successful and petty cash updated.');
     }
+
 
     /**
      * Show the specified resource.

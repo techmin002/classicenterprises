@@ -20,27 +20,12 @@
                                 <input class="form-control" placeholder="Enter Amount" type="number" name="amount" required>
                             </div>
 
-                            <div class="col-lg-6">
-                                <label class="form-label12">Date</label>
+                            <div class="col-lg-6 mt-3">
+                                <label class="form-label12">Date (Month)</label>
                                 <input class="form-control" type="date" name="date" required>
                             </div>
 
-                            <div class="col-lg-6">
-                                <label class="form-label12">Month</label>
-                                <select class="form-control" name="month" required>
-                                    <option value="" selected disabled>Select Month</option>
-                                    @foreach ([
-                                        '01' => 'January', '02' => 'February', '03' => 'March',
-                                        '04' => 'April', '05' => 'May', '06' => 'June',
-                                        '07' => 'July', '08' => 'August', '09' => 'September',
-                                        '10' => 'October', '11' => 'November', '12' => 'December',
-                                    ] as $key => $month)
-                                        <option value="{{ $key }}">{{ $month }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-lg-12">
+                            <div class="col-lg-12 mt-3">
                                 <label class="form-label12">Description</label>
                                 <textarea name="description" class="form-control" required></textarea>
                             </div>

@@ -61,7 +61,7 @@
                                     value="{{ $value->lm_remaining_cash }}" required>
                             </div>
                         </div>
-                        <div class="col-lg-12">
+                        {{-- <div class="col-lg-12">
                             <div class="form-group">
                                 <label class="form-label12">Month</label>
                                 <select class="form-control" name="month">
@@ -88,7 +88,7 @@
                                 </select>
 
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="col-md-12 mt-2">
                             <!-- Bootstrap Switch -->

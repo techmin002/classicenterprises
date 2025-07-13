@@ -7,32 +7,39 @@ use Illuminate\Http\Request;
 use Modules\Branch\Entities\Branch;
 use Modules\PetrolMGNT\Entities\Bike;
 use Modules\PetrolMGNT\Entities\Petrol;
+use Modules\PetrolMGNT\Entities\PetrolPump;
 use Modules\Pettycash\Entities\PettyCashAdd;
 use Modules\Pettycash\Entities\PettyCashTransaction;
 
 class PetrolController extends Controller
 {
     public function index()
-    {
-        $user = auth()->user();
-        $branches = Branch::where('status', 'on')->get();
+{
+    $user = auth()->user();
+    $branches = Branch::where('status', 'on')->get();
+    $petrolPumps = PetrolPump::all();
 
-        if ($user->role->name === 'Super Admin') {
-            $petrol = Petrol::with('bike.branch')->latest()->get();
-            $bike = Bike::with('branch')->where('status', 'on')->get();
-        } else {
-            $petrol = Petrol::whereHas('bike', function ($query) use ($user) {
-                $query->where('branch_id', $user->branch_id);
-            })->with('bike.branch')->latest()->get();
-
-            $bike = Bike::with('branch')
-                ->where('status', 'on')
-                ->where('branch_id', $user->branch_id)
-                ->get();
-        }
-
-        return view('petrolmgnt::petrol.index', compact('petrol', 'bike', 'branches'));
+    if ($user->role->name === 'Super Admin') {
+        $bike = Bike::with('branch')->where('status', 'on')->get();
+    } else {
+        $bike = Bike::with('branch')
+            ->where('status', 'on')
+            ->where('branch_id', $user->branch_id)
+            ->get();
     }
+
+    $petrol = Petrol::with('bike.branch')
+        ->when($user->role->name !== 'Super Admin', function ($query) use ($user) {
+            $query->whereHas('bike', function ($q) use ($user) {
+                $q->where('branch_id', $user->branch_id);
+            });
+        })
+        ->latest()
+        ->get();
+
+    return view('petrolmgnt::petrol.index', compact('petrol', 'bike', 'branches', 'petrolPumps'));
+}
+
 
     public function create()
     {
@@ -42,7 +49,7 @@ class PetrolController extends Controller
     public function store(Request $request)
     {
         $image = '';
-        if ($request->image) {
+        if ($request->hasFile('image')) {
             $image = time() . '.' . $request->image->extension();
             $request->image->move(public_path('upload/images/petrol-receipt'), $image);
         }
@@ -60,41 +67,69 @@ class PetrolController extends Controller
             return back()->with('error', 'Branch ID not found!');
         }
 
-        if ($request->mode === 'petty cash') {
-            $pettyCash = PettyCashAdd::where('branch_id', $branchId)->first();
+        // Get selected date's month and year
+        $selectedDate = \Carbon\Carbon::parse($request->date);
+        $selectedMonth = $selectedDate->format('m'); // e.g. "07"
+        $selectedYear = $selectedDate->format('Y');
+
+        $pettyCash = null;
+        $before = null;
+        $after = null;
+
+        if ($request->payment_type === 'payment' && $request->mode === 'petty cash') {
+            // Fetch petty cash entry for that branch and month (using DATE field now)
+            $pettyCash = PettyCashAdd::where('branch_id', $branchId)
+                ->whereMonth('date', $selectedMonth)
+                ->whereYear('date', $selectedYear)
+                ->first();
 
             if (!$pettyCash) {
-                return back()->with('error', 'Petty cash record not found for this branch!');
+                return back()->with('error', 'No petty cash found for this branch and selected month!');
             }
 
             if ((float)$request->amount > (float)$pettyCash->remaining_cash) {
-                return back()->with('error', 'Insufficient petty cash funds!');
+                return back()->with('error', 'Insufficient petty cash balance!');
             }
+
+            $before = $pettyCash->remaining_cash;
+            $after = $before - (float)$request->amount;
         }
 
+
+        // Create petrol entry
         $petrol = new Petrol();
         $petrol->bike_id = $request->bike_id;
         $petrol->amount = $request->amount;
         $petrol->date = $request->date;
-        $petrol->mode = $request->mode;
-        $petrol->image = $image;
         $petrol->km = $request->km;
         $petrol->message = $request->message;
-        $petrol->created_by = $user->id;
+        $petrol->image = $image;
         $petrol->status = $request->status;
+        $petrol->created_by = $user->id;
+
+        $petrol->payment_type = $request->payment_type;
+
+        if ($request->payment_type === 'payment') {
+            $petrol->mode = $request->mode;
+            $petrol->cheque_number = $request->mode === 'cheque' ? $request->cheque_number : null;
+            $petrol->petrol_pump = null;
+        } elseif ($request->payment_type === 'token') {
+            $petrol->mode = 'token';
+            $petrol->cheque_number = null;
+            $petrol->petrol_pump = $request->petrol_pump;
+        }
+
         $petrol->save();
 
-        if ($request->mode === 'petty cash') {
-            $before = $pettyCash->remaining_cash;
-            $after = $before - (float)$petrol->amount;
-
+        // Deduct petty cash and log transaction
+        if ($request->payment_type === 'payment' && $request->mode === 'petty cash') {
             $pettyCash->remaining_cash = $after;
             $pettyCash->save();
 
             PettyCashTransaction::create([
                 'branch_id' => $branchId,
                 'type' => 'petrol',
-                'amount' => $petrol->amount,
+                'amount' => $request->amount,
                 'total_cash_before' => $before,
                 'remaining_cash_after' => $after,
                 'message' => 'Petrol entry for bike: ' . $bike->bikenumber,
@@ -105,6 +140,7 @@ class PetrolController extends Controller
 
         return back()->with('success', 'Petrol For Bike Added Successfully');
     }
+
 
     public function show($id)
     {
@@ -122,9 +158,14 @@ class PetrolController extends Controller
 
         $oldAmount = $petrol->amount;
         $oldMode = $petrol->mode;
+        $oldPaymentType = $petrol->payment_type;
 
         $user = auth()->user();
         $bike = Bike::with('branch')->find($request->bike_id);
+
+        if (!$bike) {
+            return back()->with('error', 'Bike not found!');
+        }
 
         $branchId = $user->branch_id ?? $bike->branch_id;
 
@@ -133,68 +174,92 @@ class PetrolController extends Controller
         }
 
         $image = $petrol->image;
-        if ($request->image) {
+        if ($request->hasFile('image')) {
             $image = time() . '.' . $request->image->extension();
             $request->image->move(public_path('upload/images/petrol-receipt'), $image);
         }
 
-        $pettyCash = PettyCashAdd::where('branch_id', $branchId)->first();
-        if (!$pettyCash) {
-            return back()->with('error', 'Petty cash record not found for this branch!');
+        // Get selected date month & year
+        $serviceDate = \Carbon\Carbon::parse($request->date);
+        $selectedMonth = $serviceDate->format('m');
+        $selectedYear = $serviceDate->format('Y');
+
+        // Restore old petty cash if applicable
+        if ($oldPaymentType === 'payment' && $oldMode === 'petty cash') {
+            $oldPettyCash = PettyCashAdd::where('branch_id', $branchId)
+                ->whereMonth('date', $serviceDate->format('m'))
+                ->whereYear('date', $serviceDate->format('Y'))
+                ->first();
+
+            if ($oldPettyCash) {
+                $oldPettyCash->remaining_cash += (float)$oldAmount;
+                $oldPettyCash->save();
+            }
         }
 
-        if ($oldMode === 'petty cash') {
-            $pettyCash->remaining_cash += (float)$oldAmount;
-            $pettyCash->save();
-        }
+        // Fetch new petty cash if mode is petty cash
+        $pettyCash = null;
+        $before = null;
+        $after = null;
 
-        if ($request->mode === 'petty cash' && (float)$request->amount > (float)$pettyCash->remaining_cash) {
-            return back()->with('error', 'Insufficient petty cash funds!');
-        }
+        if ($request->payment_type === 'payment' && $request->mode === 'petty cash') {
+            $pettyCash = PettyCashAdd::where('branch_id', $branchId)
+                ->whereMonth('date', $selectedMonth)
+                ->whereYear('date', $selectedYear)
+                ->first();
 
-        $petrol->update([
-            'bike_id' => $request->bike_id,
-            'amount' => $request->amount,
-            'date' => $request->date,
-            'mode' => $request->mode,
-            'image' => $image,
-            'km' => $request->km,
-            'message' => $request->message,
-            'status' => $request->status,
-            'created_by' => $user->id,
-        ]);
+            if (!$pettyCash) {
+                return back()->with('error', 'No petty cash found for this branch and selected month!');
+            }
 
-        if ($request->mode === 'petty cash') {
+            if ((float)$request->amount > (float)$pettyCash->remaining_cash) {
+                return back()->with('error', 'Insufficient petty cash balance!');
+            }
+
             $before = $pettyCash->remaining_cash;
             $after = $before - (float)$request->amount;
 
             $pettyCash->remaining_cash = $after;
             $pettyCash->save();
+        }
 
-            $transaction = PettyCashTransaction::where('reference_id', $petrol->id)
-                ->where('type', 'petrol')
-                ->first();
+        // Update petrol
+        $petrol->bike_id = $request->bike_id;
+        $petrol->amount = $request->amount;
+        $petrol->date = $request->date;
+        $petrol->km = $request->km;
+        $petrol->message = $request->message;
+        $petrol->image = $image;
+        $petrol->status = $request->status;
+        $petrol->created_by = $user->id;
+        $petrol->payment_type = $request->payment_type;
 
-            if ($transaction) {
-                $transaction->update([
-                    'amount' => $request->amount,
-                    'total_cash_before' => $before,
-                    'remaining_cash_after' => $after,
-                    'message' => 'Petrol entry for bike: ' . optional($bike)->bikenumber,
-                    'created_by' => $user->id,
-                ]);
-            } else {
-                PettyCashTransaction::create([
+        if ($request->payment_type === 'payment') {
+            $petrol->mode = $request->mode;
+            $petrol->cheque_number = $request->mode === 'cheque' ? $request->cheque_number : null;
+            $petrol->petrol_pump = null;
+        } elseif ($request->payment_type === 'token') {
+            $petrol->mode = 'token';
+            $petrol->cheque_number = null;
+            $petrol->petrol_pump = $request->petrol_pump;
+        }
+
+        $petrol->save();
+
+        // Petty cash transaction update
+        if ($request->payment_type === 'payment' && $request->mode === 'petty cash') {
+            PettyCashTransaction::updateOrCreate(
+                ['reference_id' => $petrol->id, 'type' => 'petrol'],
+                [
                     'branch_id' => $branchId,
-                    'type' => 'petrol',
                     'amount' => $request->amount,
                     'total_cash_before' => $before,
                     'remaining_cash_after' => $after,
-                    'message' => 'Petrol entry for bike: ' . optional($bike)->bikenumber,
+                    'message' => 'Updated petrol entry for bike: ' . optional($bike)->bikenumber,
                     'reference_id' => $petrol->id,
                     'created_by' => $user->id,
-                ]);
-            }
+                ]
+            );
         } else {
             PettyCashTransaction::where('reference_id', $petrol->id)
                 ->where('type', 'petrol')
@@ -203,6 +268,9 @@ class PetrolController extends Controller
 
         return back()->with('success', 'Petrol For Bike Updated Successfully');
     }
+
+
+
 
     public function destroy($id)
     {

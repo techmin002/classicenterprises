@@ -18,7 +18,6 @@ class PettyCashAdd extends Model
         'title',
         'amount',
         'date',
-        'month',
         'lm_remaining_cash',
         'total_amount',
         'remaining_cash',
@@ -28,7 +27,7 @@ class PettyCashAdd extends Model
         'status'
     ];
 
-    protected static function newFactory(): PettyCashFactory
+    protected static function newFactory()
     {
         //return PettyCashFactory::new();
     }
@@ -53,5 +52,17 @@ class PettyCashAdd extends Model
             '12' => 'December',
         ];
         return $months[$this->month] ?? 'N/A';
+    }
+
+    public static function getValidPettyCash($branchId, $date)
+    {
+        $parsedDate = \Carbon\Carbon::parse($date);
+        $month = $parsedDate->format('m');
+        $year = $parsedDate->format('Y');
+
+        return self::where('branch_id', $branchId)
+            ->where('month', $month)
+            ->whereYear('date', $year)
+            ->first();
     }
 }

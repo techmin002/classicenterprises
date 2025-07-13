@@ -42,7 +42,7 @@
                                 <input type="number" class="form-control" name="lm_remaining_cash" required>
                             </div>
 
-                            <div class="mt-3 col-lg-6">
+                            {{-- <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Month</label>
                                 <select class="form-control" name="month">
                                     <option value="" selected disabled>Select Month</option>
@@ -63,7 +63,7 @@
                                         <option value="{{ $key }}">{{ $month }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <div class="mt-3 col-md-12">
                                 <label class="form-label12">Publish</label>

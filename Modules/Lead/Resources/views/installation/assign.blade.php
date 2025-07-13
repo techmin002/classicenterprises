@@ -1,10 +1,10 @@
 @extends('setting::layouts.master')
 
-@section('title', "$saleType  Installation Complete")
+@section('title', " $saleType Installation Assign")
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active">{{ $saleType }} Installation Complete</li>
+        <li class="breadcrumb-item active">{{ $saleType }} Installation Assign</li>
     </ol>
 @endsection
 
@@ -15,12 +15,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>{{ $saleType }} Installation Complete</h1>
+                        <h1>{{ $saleType }} Installation Assign</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">{{ $saleType }} Installation Complete</li>
+                            <li class="breadcrumb-item active">{{ $saleType }} Installation Assign</li>
                         </ol>
                     </div>
                 </div>
@@ -50,6 +50,8 @@
                                             <th class="text-center">Paid</th>
                                             <th class="text-center">Total</th>
                                             <th class="text-center">Due</th>
+                                            <th class="text-center">Assign To</th>
+                                            <th class="text-center">Message</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -64,15 +66,27 @@
                                                 <td class="text-center">Rs.{{ $exp->paid_amount ?? '0' }}</td>
                                                 <td class="text-center">Rs.{{ $exp->total_amount }}</td>
                                                 <td class="text-center">Rs.{{ $exp->due_amount }}</td>
-
+                                                <td class="text-center">{{ $exp->assignLead->name ?? '-' }}</td>
+                                                <td class="text-center">{{ $exp->message }}</td>
                                                 <td>
-                                                    <a type="button" href="{{ route('customer.payment.details',$exp->id) }}" class="btn btn-primary btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
-                                                        Payment Detail's
+
+
+                                                    <button id="delete" class="btn btn-danger btn-sm" disabled
+                                                        onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
+                                                        <i class="fa fa-trash"></i>
+                                                        <form id="destroy{{ $exp->id }}" class="d-none"
+                                                            action="{{ route('leads.destroy', $exp->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('delete')
+                                                        </form>
+                                                    </button>
+                                                    <a type="button"
+                                                        href="{{ route('installation-create.create', $exp->id) }}"
+                                                        class="btn btn-secondary btn-sm" disabled data-toggle="tooltip"
+                                                        data-placement="top" title="Convert lead into Client">
+                                                        <i class="fa fa-user-plus"></i>
                                                     </a>
-                                                    <a type="button" href="{{ route('customer.payment.details',$exp->id) }}" class="btn btn-info btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Convert lead into Client">
-                                                        View Detail's
-                                                    </a>
-                                            </td>
+                                                </td>
                                             </tr>
                                         @endforeach
 
@@ -87,6 +101,8 @@
                                             <th class="text-center">Paid</th>
                                             <th class="text-center">Total</th>
                                             <th class="text-center">Due</th>
+                                            <th class="text-center">Assign To</th>
+                                            <th class="text-center">Message</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </tfoot>
@@ -105,9 +121,8 @@
         <!-- /.content -->
     </div>
     <script>
-       $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
     </script>
 @endsection
-

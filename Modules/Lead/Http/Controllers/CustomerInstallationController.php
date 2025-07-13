@@ -29,9 +29,10 @@ class CustomerInstallationController extends Controller
      */
     public function index($sale_type)
     {
+        $leads = Lead::all();
         $customers = $this->getCustomersByStatus(self::STATUS_QUEUE, $sale_type);
         $saleType = ucfirst($sale_type);
-        return view('lead::installation.queue', compact('customers', 'saleType'));
+        return view('lead::installation.queue', compact('customers', 'saleType', 'leads'));
     }
 
     /**
@@ -315,5 +316,38 @@ class CustomerInstallationController extends Controller
         }
 
         return self::STATUS_QUEUE;
+    }
+
+
+    public function assignindex($sale_type)
+    {
+        $customers = Customer::where('status', 'installation_assign')
+            ->where('sales_type', $sale_type) // <-- correct column
+            ->with(['lead', 'assignLead'])
+            ->get();
+
+        $saleType = ucfirst($sale_type);
+
+        return view('lead::installation.assign', compact('customers', 'saleType'));
+    }
+
+
+
+    public function assignStore(Request $request, $id)
+    {
+        // dd($request->all());
+        $request->validate([
+            'lead_id' => 'required|exists:leads,id',
+            'message' => 'required|string',
+        ]);
+
+        $customer = Customer::findOrFail($id);
+
+        $customer->assign_to = $request->lead_id;
+        $customer->message = $request->message;
+        $customer->status = 'installation_assign';
+        $customer->save();
+
+        return redirect()->back()->with('success', 'Lead assigned successfully.');
     }
 }

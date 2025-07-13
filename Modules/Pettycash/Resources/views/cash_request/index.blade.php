@@ -53,8 +53,8 @@
                                             <th class="text-center">Branch</th>
                                             <th class="text-center">Title</th>
                                             <th class="text-center">Amount</th>
-                                            <th class="text-center">Date</th>
-                                            <th class="text-center">Month</th>
+                                            <th class="text-center">Date (Month)</th>
+                                            {{-- <th class="text-center">Month</th> --}}
                                             <th class="text-center">Description</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>
@@ -67,8 +67,10 @@
                                                 <td class="text-center">{{ $req->branch->name ?? 'N/A' }}</td>
                                                 <td class="text-center">{{ $req->title }}</td>
                                                 <td class="text-center">{{ $req->amount }}</td>
-                                                <td class="text-center">{{ $req->date }}</td>
-                                                <td class="text-center">{{ $req->month_name }}</td>
+                                                <td class="text-center">
+                                                    {{ \Carbon\Carbon::parse($req->date)->format('F Y') }}
+                                                </td>
+                                                {{-- <td class="text-center">{{ $req->month_name }}</td> --}}
                                                 <td class="text-center">{{ $req->description }}</td>
                                                 <td class="text-center">
                                                     @if ($req->status === 'approved')
@@ -80,62 +82,66 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {{-- @if (Auth::user()->role->name === 'Super Admin') --}}
                                                     @if (auth()->user()->can('edit_pettycash'))
-                                                        @if ($req->status === 'pending')
-                                                            <button type="button" class="btn btn-primary btn-sm text-white"
-                                                                data-toggle="modal"
-                                                                data-target="#exampleModalCentercashtransfer{{ $req->id }}">
-                                                                Transfer
-                                                            </button>
-                                                            @include('pettycash::cash_transfer.transfer')
-
-                                                            <form method="POST"
-                                                                action="{{ route('pettycash-request.reject', $req->id) }}"
-                                                                style="display:inline;">
-                                                                @csrf
-                                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                                    Reject
+                                                        @if (Auth::user()->role->name === 'Super Admin')
+                                                            @if ($req->status === 'pending')
+                                                                <button type="button"
+                                                                    class="btn btn-primary btn-sm text-white"
+                                                                    data-toggle="modal"
+                                                                    data-target="#exampleModalCentercashtransfer{{ $req->id }}">
+                                                                    Transfer
                                                                 </button>
-                                                            </form>
-                                                        @endif
-                                                        @if ($req->status === 'approved')
-                                                            <button type="button" class="btn btn-danger btn-sm text-white">
-                                                                Locked
-                                                            </button>
-                                                        @endif
-                                                        @if ($req->status === 'rejected')
-                                                            <button type="button" class="btn btn-primary btn-sm text-white"
-                                                                data-toggle="modal"
-                                                                data-target="#exampleModalCentercashtransfer{{ $req->id }}">
-                                                                Transfer
-                                                            </button>
-                                                            @include('pettycash::cash_transfer.transfer')
-                                                        @endif
-                                                    @else
-                                                        @if ($req->status === 'pending')
-                                                            <a data-toggle="modal"
-                                                                data-target="#editCategory{{ $req->id }}"
-                                                                class="btn btn-primary btn-sm"><i
-                                                                    class="fa fa-edit"></i></a>
-                                                            @include('pettycash::cash_request.edit')
+                                                                @include('pettycash::cash_transfer.transfer')
 
-                                                            <button class="btn btn-danger btn-sm"
-                                                                onclick="
+                                                                <form method="POST"
+                                                                    action="{{ route('pettycash-request.reject', $req->id) }}"
+                                                                    style="display:inline;">
+                                                                    @csrf
+                                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                                        Reject
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+                                                            @if ($req->status === 'approved')
+                                                                <button type="button"
+                                                                    class="btn btn-danger btn-sm text-white">
+                                                                    Locked
+                                                                </button>
+                                                            @endif
+                                                            @if ($req->status === 'rejected')
+                                                                <button type="button"
+                                                                    class="btn btn-primary btn-sm text-white"
+                                                                    data-toggle="modal"
+                                                                    data-target="#exampleModalCentercashtransfer{{ $req->id }}">
+                                                                    Transfer
+                                                                </button>
+                                                                @include('pettycash::cash_transfer.transfer')
+                                                            @endif
+                                                        @else
+                                                            @if ($req->status === 'pending')
+                                                                <a data-toggle="modal"
+                                                                    data-target="#editCategory{{ $req->id }}"
+                                                                    class="btn btn-primary btn-sm"><i
+                                                                        class="fa fa-edit"></i></a>
+                                                                @include('pettycash::cash_request.edit')
+
+                                                                <button class="btn btn-danger btn-sm"
+                                                                    onclick="
                                                                 event.preventDefault();
                                                                 if (confirm('Are you sure? It will delete the data permanently!')) {
                                                                     document.getElementById('destroy{{ $req->id }}').submit();
                                                                 }">
-                                                                <i class="fa fa-trash"></i>
-                                                                <form id="destroy{{ $req->id }}" class="d-none"
-                                                                    action="{{ route('pettycash-request.destroy', $req->id) }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                </form>
-                                                            </button>
-                                                        @else
-                                                            <span class="btn btn-secondary btn-sm">Locked</span>
+                                                                    <i class="fa fa-trash"></i>
+                                                                    <form id="destroy{{ $req->id }}" class="d-none"
+                                                                        action="{{ route('pettycash-request.destroy', $req->id) }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                    </form>
+                                                                </button>
+                                                            @else
+                                                                <span class="btn btn-secondary btn-sm">Locked</span>
+                                                            @endif
                                                         @endif
                                                     @endif
                                                 </td>
@@ -152,8 +158,8 @@
                                             <th class="text-center">Branch</th>
                                             <th class="text-center">Title</th>
                                             <th class="text-center">Amount</th>
-                                            <th class="text-center">Date</th>
-                                            <th class="text-center">Month</th>
+                                            <th class="text-center">Date (Month)</th>
+                                            {{-- <th class="text-center">Month</th> --}}
                                             <th class="text-center">Description</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Action</th>

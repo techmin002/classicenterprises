@@ -19,12 +19,11 @@ class PettyCashRequest extends Model
     'title',
     'amount',
     'date',
-    'month',
     'description',
     'slug',
 ];
 
-    protected static function newFactory(): PettyCashRequestFactory
+    protected static function newFactory()
     {
         //return PettyCashRequestFactory::new();
     }
