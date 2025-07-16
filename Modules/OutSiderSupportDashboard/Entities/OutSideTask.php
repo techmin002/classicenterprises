@@ -24,6 +24,8 @@ class OutSideTask extends Model
         'branch_id',
         'support_type',
         'priority',
+        'amc',
+        'warranty',
         'message',
         'created_by',
         'address',

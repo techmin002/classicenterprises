@@ -48,10 +48,12 @@
                                             <th class="text-center">Name</th>
                                             <th class="text-center">User Name</th>
                                             <th class="text-center">Contact</th>
-                                            <th class="text-center">Product</th>
-                                            <th class="text-center">Address</th>
+                                            {{-- <th class="text-center">Product</th>
+                                            <th class="text-center">Address</th> --}}
                                             <th class="text-center">Support Type</th>
                                             <th class="text-center">Priority</th>
+                                            <th class="text-center">AMC</th>
+                                            <th class="text-center">Warranty</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -64,15 +66,33 @@
                                                 <td>{{ $value->customer->lead->name }}</td>
                                                 <td>{{ $value->customer->lead->user_name }}</td>
                                                 <td>{{ $value->customer->lead->mobile }}</td>
-                                                <td>
+                                                {{-- <td>
                                                     @foreach ($value->customer->products as $product)
                                                         {{ $product->product['name'] }}
                                                     @endforeach
                                                 </td>
-                                                <td>{{ $value->customer->lead->address }}
+                                                <td>{{ $value->customer->lead->address }} --}}
                                                 </td>
                                                 <td>{{ $value->support_type }}</td>
-                                                <td>{{ $value->priority }}</td>
+                                                <td>{{ ucfirst($value->priority) }}</td>
+                                                <td class="text-center">
+                                                    @if ($value->amc == 'in')
+                                                        <span class="badge badge-success">In</span>
+                                                    @elseif ($value->amc == 'out')
+                                                        <span class="badge badge-danger">Out</span>
+                                                    @else
+                                                        <span class="badge badge-secondary">N/A</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                    @if ($value->warranty == 'in')
+                                                        <span class="badge badge-success">In</span>
+                                                    @elseif ($value->warranty == 'out')
+                                                        <span class="badge badge-danger">Out</span>
+                                                    @else
+                                                        <span class="badge badge-secondary">N/A</span>
+                                                    @endif
+                                                </td>
 
                                                 <td>
                                                     @can('edit_ticket')
@@ -234,10 +254,12 @@
                                             <th class="text-center">Name</th>
                                             <th class="text-center">User Name</th>
                                             <th class="text-center">Contact</th>
-                                            <th class="text-center">Product</th>
-                                            <th class="text-center">Address</th>
+                                            {{-- <th class="text-center">Product</th>
+                                            <th class="text-center">Address</th> --}}
                                             <th class="text-center">Support Type</th>
                                             <th class="text-center">Priority</th>
+                                            <th class="text-center">AMC</th>
+                                            <th class="text-center">Warranty</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </tfoot>

@@ -67,6 +67,7 @@ class LeadController extends Controller
         $lead->mobile = $request->input('mobile');
         $lead->landline = $request->input('landline') ?? NULL;
         $lead->lead_type = $request->input('type');
+        $lead->installation_category = $request->input('installation_category');
         $lead->branch_id = $branch_id ?? NULL;
         $lead->created_by = auth()->user()->id;
         $lead->message = $request->input('message');
@@ -120,6 +121,7 @@ class LeadController extends Controller
         $lead->mobile = $request->input('mobile');
         $lead->lead_source = $request->input('lead_source') ?? 'N/A';
         $lead->sales_type = $request->input('sales_type') ?? 'N/A';
+        $lead->installation_category = $request->input('installation_category') ?? 'N/A';
         $lead->message = $request->input('message');
         $lead->save();
 
@@ -148,10 +150,10 @@ class LeadController extends Controller
 
         $branches = Branch::all();
         if (auth()->user()->role['name'] === 'Super Admin') {
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('lead_type', 'hot')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('lead_type', 'hot')->get();
         } else {
             $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('lead_type', 'hot')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('branch_id', $branch_id)->where('lead_type', 'hot')->get();
         }
         $type = 'hot';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
@@ -161,10 +163,10 @@ class LeadController extends Controller
 
         $branches = Branch::all();
         if (auth()->user()->role['name'] === 'Super Admin') {
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('lead_type', 'warm')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('lead_type', 'warm')->get();
         } else {
             $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('lead_type', 'warm')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('branch_id', $branch_id)->where('lead_type', 'warm')->get();
         }
         $type = 'warm';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
@@ -174,10 +176,10 @@ class LeadController extends Controller
 
         $branches = Branch::all();
         if (auth()->user()->role['name'] === 'Super Admin') {
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('lead_type', 'cold')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('lead_type', 'cold')->get();
         } else {
             $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('lead_type', 'cold')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('branch_id', $branch_id)->where('lead_type', 'cold')->get();
         }
         $type = 'cold';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
@@ -249,7 +251,7 @@ class LeadController extends Controller
     {
         $search = $request->get('search', '');
         $accessories = Accessory::where('name', 'LIKE', "%{$search}%")
-            ->select('id', 'name', 'sales_price','units')
+            ->select('id', 'name', 'sales_price', 'units')
             ->get();
 
         return response()->json($accessories);
@@ -260,7 +262,7 @@ class LeadController extends Controller
 
         // Fetch products based on the search query
         $products = Machinery::where('name', 'like', "%{$search}%")
-            ->select('id', 'name', 'sales_price','units') // Include fields needed for the dropdown
+            ->select('id', 'name', 'sales_price', 'units') // Include fields needed for the dropdown
             ->limit(10) // Limit results for performance
             ->get();
 
@@ -291,6 +293,7 @@ class LeadController extends Controller
                 'due_amount' => $request->grand_total,
                 'customer_type' => 'indor',
                 'sales_type' => $lead->sales_type ?? 'classic_customer',
+                'installation_category' => $lead->installation_category,
                 'status' => 'installation_queue',
             ]);
         }
@@ -305,9 +308,9 @@ class LeadController extends Controller
                         'created_by' => auth()->user()->id,
                         'product_id' => $productId,
                         'remarks' => $request->remark,
-                        'product_price' =>$request->products_price[$index] ?? 0,
-                        'product_qty' =>$request->products_qty[$index] ?? 0,
-                        'product_total' =>$request->products_total[$index] ?? 0,
+                        'product_price' => $request->products_price[$index] ?? 0,
+                        'product_qty' => $request->products_qty[$index] ?? 0,
+                        'product_total' => $request->products_total[$index] ?? 0,
                         'status' => 'installation_queue',
                     ]);
                 }
@@ -332,16 +335,16 @@ class LeadController extends Controller
                 }
             }
         }
-        return redirect()->route('installation-queue.index',['sale_type' => $lead->sales_type])->with('success', 'Customer added successfully');
+        return redirect()->route('installation-queue.index', ['sale_type' => $lead->sales_type])->with('success', 'Customer added successfully');
     }
     public function retailler()
     {
         $branches = Branch::all();
         if (auth()->user()->role['name'] === 'Super Admin') {
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('sales_type','retailler')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('sales_type', 'retailler')->get();
         } else {
             $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('sales_type','retailler')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('branch_id', $branch_id)->where('sales_type', 'retailler')->get();
         }
         $type = 'Retailler';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));
@@ -350,10 +353,10 @@ class LeadController extends Controller
     {
         $branches = Branch::all();
         if (auth()->user()->role['name'] === 'Super Admin') {
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('sales_type','wholeseller')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('sales_type', 'wholeseller')->get();
         } else {
             $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('status','non_convert')->where('branch_id', $branch_id)->where('sales_type','wholeseller')->get();
+            $leads = Lead::with('responses', 'branch')->where('status', 'non_convert')->where('branch_id', $branch_id)->where('sales_type', 'wholeseller')->get();
         }
         $type = 'Wholeseller';
         return view('lead::leads.index', compact('leads', 'type', 'branches'));

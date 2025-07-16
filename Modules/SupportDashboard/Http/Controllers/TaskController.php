@@ -42,7 +42,9 @@ class TaskController extends Controller
             'customer_id'     => $request->customer_id,
             'support_type'    => $request->support_type,
             'priority'        => $request->priority,
-            'assign_to'       => $request->assign_to ?? null, // store only if present
+            'amc'             => $request->amc ?? null,
+            'warranty'        => $request->warranty ?? null,
+            'assign_to'       => $request->assign_to ?? null,
             'payment_method'  => $request->payment_method ?? null,
             'service_charge'  => 0,
             'amount'          => 0,
@@ -52,9 +54,9 @@ class TaskController extends Controller
             'created_by'      => auth()->user()->id ?? null,
         ]);
 
-        // return redirect()->back()->with('success', 'Support Ticket Created Successfully');
         return redirect()->route('supportdashboard-task.queue')->with('success', 'Support Ticket Created Successfully.');
     }
+
 
     /**
      * Show the specified resource.

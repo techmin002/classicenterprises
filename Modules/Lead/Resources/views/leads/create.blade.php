@@ -22,14 +22,18 @@
                             </div>
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Contact Number </label>
-                                <input class="form-control" placeholder="Enter mobile number" type="tel"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" pattern="\d{10}"maxlength="10" name="mobile" id="mobile" required
-                                title="Please enter exactly 10 digits">
+                                <input class="form-control" placeholder="Enter mobile number" type="tel"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
+                                    pattern="\d{10}"maxlength="10" name="mobile" id="mobile" required
+                                    title="Please enter exactly 10 digits">
                             </div>
 
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Alternate Contact Number </label>
-                                <input class="form-control" placeholder="Enter alternate mobile number" type="tel"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" pattern="\d{10}"maxlength="10" name="landline" id="landline"
-                                title="Please enter exactly 10 digits">
+                                <input class="form-control" placeholder="Enter alternate mobile number" type="tel"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
+                                    pattern="\d{10}"maxlength="10" name="landline" id="landline"
+                                    title="Please enter exactly 10 digits">
                             </div>
                             <input type="hidden" name="type" value="{{ $type }}">
 
@@ -46,16 +50,16 @@
                                     </div>
                                 </div>
                             </div>
-                            @if(auth()->user()->role['name'] === 'Super Admin')
-                            <div class="mt-3 col-lg-6">
-                                <label class="form-label12">Branch</label>
-                                <select name="branch_id" id="" class="form-control">
-                                    <option value="" selected disabled>Select Branch</option>
-                                    @foreach ($branches as $branch)
-                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            @if (auth()->user()->role['name'] === 'Super Admin')
+                                <div class="mt-3 col-lg-6">
+                                    <label class="form-label12">Branch</label>
+                                    <select name="branch_id" id="" class="form-control">
+                                        <option value="" selected disabled>Select Branch</option>
+                                        @foreach ($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             @endif
                             <div class="mt-3 col-lg-12">
                                 <label class="form-label12">Address</label>
@@ -65,10 +69,10 @@
                                 <label class="form-label12">Lead Source</label>
                                 <select name="lead_source" id="" class="form-control">
                                     <option value="" selected disabled>Select Lead Source</option>
-                                    <option value="facebook" >Facebook</option>
-                                    <option value="instagram" >Instagram</option>
-                                    <option value="whatsapp" >WhatsApp</option>
-                                    <option value="other" >Other</option>
+                                    <option value="facebook">Facebook</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="other">Other</option>
 
                                 </select>
                             </div>
@@ -79,6 +83,15 @@
                                     <option value="classic_customer">Classic Customer</option>
                                     <option value="retailler">Retailler</option>
                                     <option value="wholeseller">Wholeseller</option>
+                                </select>
+                            </div>
+                            <div class="mt-3 col-lg-6">
+                                <label class="form-label12">Installation Category</label>
+                                <select name="installation_category" class="form-control">
+                                    <option value="" selected disabled>Select Installation Category</option>
+                                    <option value="retailler">Retailler</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="industrial">Industrial</option>
                                 </select>
                             </div>
                             <div class="mt-3 col-lg-12">

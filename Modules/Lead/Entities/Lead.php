@@ -22,6 +22,7 @@ class Lead extends Model
         'branch_id',
         'created_by',
         'lead_type',
+        'installation_category',
         'followups',
         'status',
         'lead_source',

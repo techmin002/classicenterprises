@@ -18,6 +18,8 @@ class Task extends Model
         'customer_id',
         'support_type',
         'priority',
+        'amc',
+        'warranty',
         'message',
         'status',
         'created_by',

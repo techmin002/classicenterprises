@@ -6,57 +6,51 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Modules\Employee\Entities\Employee;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Modules\EMISystem\Entities\EmiPlan;
 use Modules\Lead\Entities\Customer;
 use Modules\Lead\Entities\CustomerAccessory;
 use Modules\Lead\Entities\CustomerPayment;
 use Modules\Lead\Entities\CustomerProduct;
-use Modules\Lead\Entities\Lead;
-use Modules\Product\Entities\Machinery;
-use Modules\EMISystem\Entities\EmiPlan;
 use Modules\Lead\Entities\EmiCustomer;
-use Illuminate\Support\Facades\DB;
+use Modules\Lead\Entities\Lead;
 
-class CustomerInstallationController extends Controller
+class InstallationCategoryController extends Controller
 {
     const STATUS_QUEUE = 'installation_queue';
     const STATUS_REPORT = 'installation_report';
     const STATUS_COMPLETE = 'installation_complete';
     const STATUS_EMI = 'emi_process';
-
     /**
-     * Display installation queue
+     * Display a listing of the resource.
      */
-    public function index($sale_type)
+    public function index($installation_category)
     {
         $leads = Lead::all();
-        $customers = $this->getCustomersByStatus(self::STATUS_QUEUE, $sale_type);
-        $saleType = ucfirst($sale_type);
-        return view('lead::installation.queue', compact('customers', 'saleType', 'leads'));
+        $customers = $this->getCustomersByStatus(self::STATUS_QUEUE, $installation_category);
+        $installation_category = ucfirst($installation_category);
+        return view('lead::installation-category.queue', compact('customers', 'installation_category', 'leads'));
     }
 
-    /**
-     * Display installation reports
-     */
-    public function installationReport($sale_type)
+    private function getCustomersByStatus($status, $installation_category)
     {
-        $customers = $this->getCustomersByStatus(self::STATUS_REPORT, $sale_type);
-        $saleType = ucfirst($sale_type);
-        return view('lead::installation.reports', compact('customers', 'saleType'));
+        $query = Customer::with('lead')
+            ->where('status', $status)
+            ->where('installation_category', $installation_category);
+
+        if (auth()->user()->role['name'] != 'Super Admin') {
+            $query->where('branch_id', auth()->user()->branch_id);
+        }
+
+        return $query->orderBy('created_at', 'desc')->get();
     }
 
-    /**
-     * Display completed installations
-     */
-    public function installationComplete($sale_type)
-    {
-        $customers = $this->getCustomersByStatus(self::STATUS_COMPLETE, $sale_type);
-        $saleType = ucfirst($sale_type);
-        return view('lead::installation.complete', compact('customers', 'saleType'));
-    }
+
+
 
     /**
-     * Show installation creation form
+     * Show the form for creating a new resource.
      */
     public function create($id)
     {
@@ -67,7 +61,7 @@ class CustomerInstallationController extends Controller
         $customerMachines = CustomerProduct::where('customer_id', $customer['id'])->with('product')->get();
         $customerAccessories = CustomerAccessory::where('customer_id', $customer['id'])->with('accessory')->get();
 
-        return view('lead::installation.create', compact(
+        return view('lead::installation-category.create', compact(
             'customer',
             'customerMachines',
             'customerAccessories',
@@ -77,10 +71,27 @@ class CustomerInstallationController extends Controller
         ));
     }
 
+
+    public function installationCategoryReport($installation_category)
+    {
+        $customers = $this->getCustomersByStatus(self::STATUS_REPORT, $installation_category);
+        $installation_category = ucfirst($installation_category);
+        return view('lead::installation-category.reports', compact('customers', 'installation_category'));
+    }
+
     /**
-     * Store new installation
+     * Display completed installations
      */
-    public function store(Request $request): RedirectResponse
+    public function installationCategoryComplete($installation_category)
+    {
+        $customers = $this->getCustomersByStatus(self::STATUS_COMPLETE, $installation_category);
+        $installation_category = ucfirst($installation_category);
+        return view('lead::installation-category.complete', compact('customers', 'installation_category'));
+    }
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
 
         DB::beginTransaction();
@@ -118,7 +129,7 @@ class CustomerInstallationController extends Controller
 
             DB::commit();
 
-            return redirect()->route('installation.reports', ['sale_type' => $lead->sales_type])
+            return redirect()->route('installation-category.reports', ['installation_category' => $lead->installation_category])
                 ->with('success', 'Installation created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -126,43 +137,6 @@ class CustomerInstallationController extends Controller
         }
     }
 
-    /**
-     * Show customer payment details
-     */
-    public function customerPaymentDetails($id)
-    {
-        $customer = Customer::where('id', $id)->with('lead', 'payments')->first();
-        return view('lead::installation.payment', compact('customer'));
-    }
-
-    /**
-     * Show customer details
-     */
-    public function customerDetails($id)
-    {
-        $customer = Customer::where('id', $id)->with('lead', 'products', 'accessories')->first();
-        return view('lead::installation.customer_details', compact('customer'));
-    }
-
-    /***********************
-     * PRIVATE METHODS
-     ***********************/
-
-    /**
-     * Get customers by status and sale type
-     */
-    private function getCustomersByStatus($status, $saleType)
-    {
-        $query = Customer::with('lead')
-            ->where('status', $status)
-            ->where('sales_type', $saleType);
-
-        if (auth()->user()->role['name'] != 'Super Admin') {
-            $query->where('branch_id', auth()->user()->branch_id);
-        }
-
-        return $query->orderBy('created_at', 'desc')->get();
-    }
 
     /**
      * Process products for installation
@@ -241,7 +215,6 @@ class CustomerInstallationController extends Controller
             }
         }
     }
-
     /**
      * Process payment and determine customer status
      */
@@ -318,21 +291,37 @@ class CustomerInstallationController extends Controller
         return self::STATUS_QUEUE;
     }
 
-
-    public function assignindex($sale_type)
+    /**
+     * Show the specified resource.
+     */
+    public function show($id)
     {
-        $customers = Customer::where('status', 'installation_assign')
-            ->where('sales_type', $sale_type) // <-- correct column
-            ->with(['lead', 'assignLead'])
-            ->get();
-
-        $saleType = ucfirst($sale_type);
-
-        return view('lead::installation.assign', compact('customers', 'saleType'));
+        return view('lead::show');
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        return view('lead::edit');
+    }
 
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
 
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        //
+    }
     public function assignStore(Request $request, $id)
     {
         // dd($request->all());
@@ -349,5 +338,16 @@ class CustomerInstallationController extends Controller
         $customer->save();
 
         return back()->with('success', 'Lead assigned successfully.');
+    }
+    public function assignindex($installation_category)
+    {
+        $customers = Customer::where('status', 'installation_assign')
+            ->where('installation_category', $installation_category) // <-- correct column
+            ->with(['lead', 'assignLead'])
+            ->get();
+
+        $installation_category = ucfirst($installation_category);
+
+        return view('lead::installation-category.assign', compact('customers', 'installation_category'));
     }
 }

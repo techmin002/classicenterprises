@@ -74,9 +74,9 @@
 
                                                 <td>
                                                     @can('create_ticket')
-                                                    <a href="{{ route('products-accessories.edit', $value->id) }}"
-                                                        class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#exampleModal{{ $value->id }}"> Create Ticket</a>
+                                                        <a href="{{ route('products-accessories.edit', $value->id) }}"
+                                                            class="btn btn-primary btn-sm" data-toggle="modal"
+                                                            data-target="#exampleModal{{ $value->id }}"> Create Ticket</a>
                                                     @endcan
 
                                                     <div class="modal fade" id="exampleModal{{ $value->id }}"
@@ -102,10 +102,12 @@
                                                                 </div>
 
                                                                 <!-- Modal Body -->
-                                                                <form action="{{ route('supportdashboard-task.store') }}" method="POST">
+                                                                <form action="{{ route('supportdashboard-task.store') }}"
+                                                                    method="POST">
                                                                     @csrf
                                                                     <div class="modal-body">
-                                                                        <input type="hidden" name="customer_id" value="{{ $value->id }}">
+                                                                        <input type="hidden" name="customer_id"
+                                                                            value="{{ $value->id }}">
                                                                         <div class="form-group">
                                                                             <label for="support_type"
                                                                                 class="font-weight-bold">Support
@@ -114,10 +116,13 @@
                                                                                 class="form-control">
                                                                                 <option value="" selected disabled>
                                                                                     Select Support Type</option>
-                                                                                <option value="normal_service">Normal Service
+                                                                                <option value="normal_service">Normal
+                                                                                    Service
                                                                                 </option>
-                                                                                <option value="maintenance">Maintenance</option>
-                                                                                <option value="location_shifting">Location Shifting
+                                                                                <option value="maintenance">Maintenance
+                                                                                </option>
+                                                                                <option value="location_shifting">Location
+                                                                                    Shifting
                                                                                 </option>
                                                                             </select>
                                                                         </div>
@@ -132,6 +137,28 @@
                                                                                 <option value="high">High</option>
                                                                                 <option value="medium">Medium</option>
                                                                                 <option value="low">Low</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="amc"
+                                                                                class="font-weight-bold">AMC</label>
+                                                                            <select name="amc" id="amc"
+                                                                                class="form-control">
+                                                                                <option value="" selected disabled>
+                                                                                    Select AMC</option>
+                                                                                <option value="in">AMC In</option>
+                                                                                <option value="out">AMC Out</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="warranty"
+                                                                                class="font-weight-bold">Warranty</label>
+                                                                            <select name="warranty" id="warranty"
+                                                                                class="form-control">
+                                                                                <option value="" selected disabled>
+                                                                                    Select Warranty</option>
+                                                                                <option value="in">Warranty In</option>
+                                                                                <option value="out">Warranty Out</option>
                                                                             </select>
                                                                         </div>
 

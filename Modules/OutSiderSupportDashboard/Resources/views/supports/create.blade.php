@@ -73,6 +73,24 @@
                             <option value="low">Low</option>
                         </select>
                     </div>
+                    <div class="form-group col-md-6">
+                        <label for="amc" class="font-weight-bold">AMC</label>
+                        <select name="amc" id="amc" class="form-control">
+                            <option value="" selected disabled>Select AMC</option>
+                            <option value="in">AMC In</option>
+                            <option value="out">AMC Out</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="warranty" class="font-weight-bold">Warranty</label>
+                        <select name="warranty" id="warranty" class="form-control">
+                            <option value="" selected disabled>Select Warranty</option>
+                            <option value="in">Warranty In</option>
+                            <option value="out">Warranty Out</option>
+                        </select>
+                    </div>
+
                     <!-- FIXED: Service Address -->
                     <div class="form-group col-md-6">
                         <label for="address" class="font-weight-bold">Service Address</label>
@@ -82,7 +100,8 @@
                     <!-- FIXED: Home Address -->
                     <div class="form-group col-md-6">
                         <label for="home_address" class="font-weight-bold">Home Address</label>
-                        <textarea name="home_address" id="home_address" class="form-control" rows="2" placeholder="Enter home address..."></textarea>
+                        <textarea name="home_address" id="home_address" class="form-control" rows="2"
+                            placeholder="Enter home address..."></textarea>
                     </div>
                     <div class="form-group col-md-12">
                         <label for="message" class="font-weight-bold">Message</label>

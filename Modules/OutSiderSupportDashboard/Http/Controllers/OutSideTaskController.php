@@ -67,6 +67,8 @@ class OutSideTaskController extends Controller
             'customer_id'     => $request->customer_id ?? null,
             'support_type'    => $request->support_type,
             'priority'        => $request->priority,
+            'amc'             => $request->amc ?? null,
+            'warranty'        => $request->warranty ?? null,
             'address'        => $request->address,
             'home_address'        => $request->home_address,
             'assign_to'       => $request->assign_to ?? null, // store only if present

@@ -26,6 +26,7 @@ class Customer extends Model
         'status',
         'customer_type',
         'sales_type',
+        'installation_category',
         'install_date',
         'converted_by'
     ];
@@ -62,4 +63,5 @@ class Customer extends Model
     {
         return $this->belongsTo(Lead::class, 'assign_to');
     }
+
 }

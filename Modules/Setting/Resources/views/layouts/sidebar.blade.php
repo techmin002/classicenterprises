@@ -161,7 +161,7 @@
                       </ul>
                   </li>
                   <div class="my-3 border-top border-success pt-1">
-                      <li class="nav-header text-primary"><b>Sales Detail's</b></li>
+                      <li class="nav-header text-primary"><b>Installation Detail's</b></li>
                       <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
                               <i class="nav-icon fas fa-image"></i>
@@ -274,6 +274,130 @@
                               </ul>
                           </li>
                       @endcan
+
+                      {{-- new --}}
+                      @can('access_sliders')
+                          {{-- Retailler --}}
+                          <li class="nav-item @if (request()->routeIs('installation-category-*') && request()->route('installation_category') === 'retailler') menu-is-opening menu-open @endif">
+                              <a href="#" class="nav-link @if (request()->routeIs('installation-category-*') && request()->route('installation_category') === 'retailler') active @endif">
+                                  <i class="nav-icon fas fa-image"></i>
+                                  <p>
+                                      Retailler
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category-queue.index', 'retailler') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
+                                                  request()->route('installation_category') === 'retailler') active @endif">
+                                          <p>Installation Queue</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category-assign.index', 'retailler') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
+                                                  request()->route('installation_category') === 'retailler') active @endif">
+                                          <p>Installation Assign</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category.reports', 'retailler') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'retailler') active @endif">
+                                          <p>Installation Reports</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category.complete', 'retailler') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'retailler') active @endif">
+                                          <p>Installation Complete</p>
+                                      </a>
+                                  </li>
+                              </ul>
+                          </li>
+
+                          {{-- Commercial --}}
+                          <li class="nav-item @if (request()->routeIs('installation-category-*') && request()->route('installation_category') === 'commercial') menu-is-opening menu-open @endif">
+                              <a href="#" class="nav-link @if (request()->routeIs('installation-category-*') && request()->route('installation_category') === 'commercial') active @endif">
+                                  <i class="nav-icon fas fa-image"></i>
+                                  <p>
+                                      Commercial
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category-queue.index', 'commercial') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
+                                                  request()->route('installation_category') === 'commercial') active @endif">
+                                          <p>Installation Queue</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category-assign.index', 'commercial') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
+                                                  request()->route('installation_category') === 'commercial') active @endif">
+                                          <p>Installation Assign</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category.reports', 'commercial') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'commercial') active @endif">
+                                          <p>Installation Reports</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category.complete', 'commercial') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'commercial') active @endif">
+                                          <p>Installation Complete</p>
+                                      </a>
+                                  </li>
+                              </ul>
+                          </li>
+
+                          {{-- Industrial --}}
+                          <li class="nav-item @if (request()->routeIs('installation-category-*') && request()->route('installation_category') === 'industrial') menu-is-opening menu-open @endif">
+                              <a href="#" class="nav-link @if (request()->routeIs('installation-category-*') && request()->route('installation_category') === 'industrial') active @endif">
+                                  <i class="nav-icon fas fa-image"></i>
+                                  <p>
+                                      Industrial
+                                      <i class="right fas fa-angle-left"></i>
+                                  </p>
+                              </a>
+                              <ul class="nav nav-treeview">
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category-queue.index', 'industrial') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
+                                                  request()->route('installation_category') === 'industrial') active @endif">
+                                          <p>Installation Queue</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category-assign.index', 'industrial') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
+                                                  request()->route('installation_category') === 'industrial') active @endif">
+                                          <p>Installation Assign</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category.reports', 'industrial') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'industrial') active @endif">
+                                          <p>Installation Reports</p>
+                                      </a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a href="{{ route('installation-category.complete', 'industrial') }}"
+                                          class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'industrial') active @endif">
+                                          <p>Installation Complete</p>
+                                      </a>
+                                  </li>
+                              </ul>
+                          </li>
+                      @endcan
+
+
+
+
                   </div>
                   <div class="border-top border-success"></div>
                   @if (auth()->user()->access_type === 'Admin')
