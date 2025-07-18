@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/amc",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\AMC\\": "",
+            "Modules\\AMC\\App\\": "app/",
+            "Modules\\AMC\\Database\\Factories\\": "database/factories/",
+            "Modules\\AMC\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\AMC\\Tests\\": "tests/"
+        }
+    }
+}

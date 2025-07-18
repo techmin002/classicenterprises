@@ -161,7 +161,7 @@
                       </ul>
                   </li>
                   <div class="my-3 border-top border-success pt-1">
-                      <li class="nav-header text-primary"><b>Installation Detail's</b></li>
+                      <li class="nav-header text-primary"><b>Installation Dashboard</b></li>
                       <li class="nav-item @if (request()->routeIs('products.*')) menu-is-opening menu-open @endif">
                           <a href="#" class="nav-link @if (request()->routeIs('products.*')) active @endif">
                               <i class="nav-icon fas fa-image"></i>
@@ -398,6 +398,26 @@
 
 
 
+                  </div>
+                  <div class="my-3 border-top border-success pt-1">
+                      <li class="nav-header text-primary"><b>AMC Dashboard</b></li>
+                      <li class="nav-item @if (request()->routeIs('amc.*')) menu-is-opening menu-open @endif">
+                          <a href="#" class="nav-link @if (request()->routeIs('amc.*')) active @endif">
+                              <i class="nav-icon fas fa-image"></i>
+                              <p>
+                                  AMC
+                                  <i class="right fas fa-angle-left"></i>
+                              </p>
+                          </a>
+                          <ul class="nav nav-treeview">
+                              <li class="nav-item">
+                                  <a href="{{ route('amc.index') }}"
+                                      class="nav-link {{ request()->routeIs('amc.index')  ? 'active' : '' }}">
+                                      <p>List</p>
+                                  </a>
+                              </li>
+                          </ul>
+                      </li>
                   </div>
                   <div class="border-top border-success"></div>
                   @if (auth()->user()->access_type === 'Admin')
