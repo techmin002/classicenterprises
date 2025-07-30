@@ -75,10 +75,12 @@
                                                 <td class="text-center">{{ $value->status }}</td>
 
                                                 <td>
-                                                    <a href="{{ route('task.complete.details', $value->id) }}" class="btn btn-success btn-xs">View Details</a>
+                                                    <a href="{{ route('task.complete.details', $value->id) }}"
+                                                        class="btn btn-success btn-xs w-75">View Details</a>
 
 
-                                                    <a href="" class="btn btn-primary btn-xs w-100 mt-2" data-toggle="modal"
+                                                    <a href="" class="btn btn-primary btn-xs w-75 mt-2"
+                                                        data-toggle="modal"
                                                         data-target="#exampleModal1{{ $value->id }}">Note</a>
 
                                                     {{-- modal start --}}

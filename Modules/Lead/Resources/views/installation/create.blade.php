@@ -507,8 +507,31 @@
                             </div>
                         </div>
 
-                        <!-- Payment Details Card -->
+                        <!-- Gifted Card -->
                         <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div class="col-6">
+                                        <h4><i class="fas fa-gift mr-2"></i>Gifted</h4>
+                                        <div class="d-flex align-items-center mt-3" style="gap: 1rem;">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="giftedYes" name="is_gifted" value="1"
+                                                    class="custom-control-input">
+                                                <label class="custom-control-label" for="giftedYes">Yes</label>
+                                            </div>
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="giftedNo" name="is_gifted" value="0"
+                                                    class="custom-control-input" checked>
+                                                <label class="custom-control-label" for="giftedNo">No</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- Payment Details Card -->
+                        <div class="col-md-12" id="paymentCard">
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <div class="col-6">
@@ -642,23 +665,21 @@
                                 </div>
                             </div>
                         </div>
-
-                    </div>
-
-                    <!-- Remarks Card -->
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4><i class="fas fa-comment-alt mr-2"></i>Additional Remarks</h4>
-                            </div>
-                            <div class="card-body">
-                                <textarea name="remarks" class="form-control" id="" cols="30" rows="3"
-                                    placeholder="Enter any additional remarks here..."></textarea>
-                            </div>
-                            <div class="card-footer text-center">
-                                <button class="btn btn-success px-5 py-2" type="submit">
-                                    <i class="fas fa-save mr-2"></i> Save Installation
-                                </button>
+                        <!-- Remarks Card -->
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4><i class="fas fa-comment-alt mr-2"></i>Additional Remarks</h4>
+                                </div>
+                                <div class="card-body">
+                                    <textarea name="remarks" class="form-control" id="" cols="30" rows="3"
+                                        placeholder="Enter any additional remarks here..."></textarea>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <button class="btn btn-success px-5 py-2" type="submit">
+                                        <i class="fas fa-save mr-2"></i> Save Installation
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -883,4 +904,27 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const giftedYes = document.getElementById('giftedYes');
+            const giftedNo = document.getElementById('giftedNo');
+            const paymentCard = document.getElementById('paymentCard');
+
+            function togglePaymentCard() {
+                if (giftedYes.checked) {
+                    paymentCard.style.display = 'none';
+                } else {
+                    paymentCard.style.display = 'block';
+                }
+            }
+
+            // Initial toggle on page load
+            togglePaymentCard();
+
+            // Listen for changes
+            giftedYes.addEventListener('change', togglePaymentCard);
+            giftedNo.addEventListener('change', togglePaymentCard);
+        });
+    </script>
+
 @endsection

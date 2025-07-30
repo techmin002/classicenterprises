@@ -8,6 +8,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Modules\AMC\Entities\AmcAccessory;
+use Modules\AMC\Entities\AmcAssign;
+use Modules\AMC\Entities\AmcAssignAccessory;
 use Modules\Finance\Entities\PaymentVerification;
 use Modules\Lead\Entities\Customer;
 use Modules\Product\Entities\Accessory;
@@ -73,16 +76,47 @@ class TaskController extends Controller
         return view('supportdashboard::queue.index', compact('data', 'users'));
     }
 
+
     public function assign()
     {
-
-        $data = Task::with('customer.lead', 'customer.products')
-            ->where('status', 'assign')
-            ->get();
+        $data = Task::with('customer.lead', 'customer.products')->where('status', 'assign')->get();
         $accessories = Accessory::all();
 
-        return view('supportdashboard::assign.index', compact('data', 'accessories'));
+        $amcMap = [];
+
+        // Group all accessories assigned via AMC by customer
+        $assignAccessories = AmcAssignAccessory::with('accessory')->get();
+
+        foreach ($assignAccessories as $item) {
+            $customerId = $item->customer_id;
+            $accessoryName = $item->accessory->name ?? null;
+
+            if (!$accessoryName) continue;
+
+            $assignedQty = $item->quantity ?? 0;
+
+            // calculate already used quantity (from same table if you store used qty separately or in another table)
+            $usedQty = $item->used_quantity ?? 0; // ❗ if no such column, change accordingly
+
+            $remainingQty = max(0, $assignedQty - $usedQty);
+
+            // map result
+            if (!isset($amcMap[$customerId])) {
+                $amcMap[$customerId] = [];
+            }
+
+            // if same accessory assigned multiple times to same customer, add
+            if (isset($amcMap[$customerId][$accessoryName])) {
+                $amcMap[$customerId][$accessoryName] += $remainingQty;
+            } else {
+                $amcMap[$customerId][$accessoryName] = $remainingQty;
+            }
+        }
+
+        return view('supportdashboard::assign.index', compact('data', 'accessories', 'amcMap'));
     }
+
+
     public function complete()
     {
         $data = Task::with('customer.lead', 'customer.products', 'serviceItems') // include serviceItems
@@ -181,21 +215,36 @@ class TaskController extends Controller
             PaymentVerification::create($verificationData);
         }
 
-        // Store accessories
+        // Store accessories and update AMC accessory quantities
+
         if ($request->has('accessories')) {
-            foreach ($request->accessories as $accessory) {
-                DB::table('task_service_items')->insert([
-                    'task_id' => $data->id,
-                    'name' => $accessory['name'],
-                    'qty' => $accessory['qty'],
-                    'price' => $accessory['price'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+            $customerId = $request->customer_id;
+
+            // Get the AMC assignment for this customer
+            $amcAssign = AmcAssign::where('customer_id', $customerId)->first();
+
+            if ($amcAssign) {
+                foreach ($request->accessories as $item) {
+                    $accessoryId = $item['accessory_id'] ?? null;
+                    $usedQty = $item['qty'] ?? 0;
+
+                    if ($accessoryId && $usedQty > 0) {
+                        // Get the accessory from amc_assign_accessories instead of amc_accessories
+                        $assignAccessory = AmcAssignAccessory::where('amc_assign_id', $amcAssign->id)
+                            ->where('accessory_id', $accessoryId)
+                            ->first();
+
+                        if ($assignAccessory) {
+                            // Reduce quantity
+                            $updatedQty = max(0, $assignAccessory->quantity - $usedQty);
+                            $assignAccessory->update(['quantity' => $updatedQty]);
+                        }
+                    }
+                }
             }
         }
 
-
+        // dd('exit');
 
         return redirect()->route('supportdashboard-task.complete')->with('success', 'Task Completed');
     }

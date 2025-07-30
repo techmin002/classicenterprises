@@ -43,7 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('customer/details/{id}', [CustomerInstallationController::class, 'customerDetails'])->name('customer.details');
 
     Route::get('/installation-assign/{sale_type}', [CustomerInstallationController::class, 'assignindex'])->name('installation-assign.index');
-    Route::put('/installation-assignstore/{id}', [CustomerInstallationController::class, 'assignstore'])->name('installation-assign.store');
+    Route::put('/installation-assignstore/{id}', [CustomerInstallationController::class, 'assignStore'])->name('installation-assign.store');
 
 
     Route::get('/installation-category-queue/{installation_category}', [InstallationCategoryController::class, 'index'])->name('installation-category-queue.index');

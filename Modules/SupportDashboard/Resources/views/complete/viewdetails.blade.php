@@ -37,12 +37,16 @@
                         <!-- /.card -->
 
                         <div class="card">
-
+                            <div class="card-header">
+                                <a href="{{ url()->previous() }}" class="btn btn-sm btn-secondary float-right">
+                                    <i class="fa fa-arrow-left"></i> Back
+                                </a>
+                            </div>
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-striped">
-                                      <h4><strong>Service Charge: {{ $task->service_charge }}</strong></h4>
-                                      <thead class="mt-2">
+                                    <h4><strong>Service Charge: {{ $task->service_charge }}</strong></h4>
+                                    <thead class="mt-2">
                                         <tr>
                                             <th class="text-center">S.N</th>
                                             <th class="text-center">Name</th>
@@ -58,7 +62,8 @@
                                                 <td class="text-center">{{ $item->name }}</td>
                                                 <td class="text-center">{{ $item->qty }}</td>
                                                 <td class="text-center">{{ number_format($item->price, 2) }}</td>
-                                                <td class="text-center">{{ number_format($item->qty * $item->price, 2) }}</td>
+                                                <td class="text-center">{{ number_format($item->qty * $item->price, 2) }}
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>

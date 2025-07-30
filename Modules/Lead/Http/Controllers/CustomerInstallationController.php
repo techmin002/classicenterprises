@@ -6,16 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Modules\EMISystem\Entities\EmiPlan;
 use Modules\Employee\Entities\Employee;
 use Modules\Lead\Entities\Customer;
 use Modules\Lead\Entities\CustomerAccessory;
 use Modules\Lead\Entities\CustomerPayment;
 use Modules\Lead\Entities\CustomerProduct;
+use Modules\Lead\Entities\EmiCustomer;
 use Modules\Lead\Entities\Lead;
 use Modules\Product\Entities\Machinery;
-use Modules\EMISystem\Entities\EmiPlan;
-use Modules\Lead\Entities\EmiCustomer;
-use Illuminate\Support\Facades\DB;
 
 class CustomerInstallationController extends Controller
 {
@@ -105,15 +105,30 @@ class CustomerInstallationController extends Controller
             $status = $this->processPaymentAndDetermineStatus($request, $customer, $lead);
 
             // Update Customer
+            // $customer->update([
+            //     'converted_by' => $request->converted_by,
+            //     'install_date' => $request->install_date,
+            //     'branch_id' => $lead->branch_id,
+            //     'total_amount' => $request->grand_total,
+            //     'paid_amount' => $request->paid_amount ?? 0,
+            //     'due_amount' => $request->grand_total - ($request->paid_amount ?? 0),
+            //     'customer_type' => 'indoor',
+            //     'status' => $status,
+            // ]);
+
+            $isGifted = $request->is_gifted == 1;
+
             $customer->update([
-                'converted_by' => $request->converted_by,
-                'install_date' => $request->install_date,
-                'branch_id' => $lead->branch_id,
+                'converted_by'  => $request->converted_by,
+                'install_date'  => $request->install_date,
+                'branch_id'     => $lead->branch_id,
                 'total_amount' => $request->grand_total,
-                'paid_amount' => $request->paid_amount ?? 0,
-                'due_amount' => $request->grand_total - ($request->paid_amount ?? 0),
+                'paid_amount'   => $isGifted ? 0 : ($request->paid_amount ?? 0),
+                'due_amount'    => $isGifted ? 0 : ($request->grand_total - ($request->paid_amount ?? 0)),
                 'customer_type' => 'indoor',
-                'status' => $status,
+                'message'  => $request->remarks,
+                'status'        => $isGifted ? 'installation_complete' : 'installation_report',
+                'gifted'     => $request->is_gifted,
             ]);
 
             DB::commit();

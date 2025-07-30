@@ -2,6 +2,7 @@
 
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
+use Modules\AMC\Http\Controllers\AmcAssignController;
 use Modules\AMC\Http\Controllers\AMCController;
 
 /*
@@ -18,4 +19,7 @@ use Modules\AMC\Http\Controllers\AMCController;
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('amc', AMCController::class)->names('amc');
     Route::get('amc/status/{id}', [AMCController::class, 'status'])->name('amc.status');
+
+    Route::resource('amcassign', AmcAssignController::class)->names('amcassign');
+    Route::get('amcassign/status/{id}', [AmcAssignController::class, 'status'])->name('amcassign.status');
 });

@@ -43,7 +43,7 @@
                                     <label>Month <span class="text-danger">*</span></label>
                                     <select name="month" class="form-control" required>
                                         <option value="">Select Month</option>
-                                        @for ($m = 1; $m <= 12; $m++)
+                                        @for ($m = 0; $m <= 12; $m++)
                                             <option value="{{ $m }}" {{ $amc->month == $m ? 'selected' : '' }}>
                                                 {{ $m }}</option>
                                         @endfor
@@ -82,19 +82,23 @@
                         </div>
                         <div class="card-body">
                             <div id="accessoryContainer">
-                                @foreach ($amc->accessories as $index => $acc)
-                                    <div class="row align-items-center accessory-row mb-3"
-                                        id="accessory-{{ $index }}">
+                                @foreach ($attachedAccessories as $index => $item)
+                                    <div class="row mb-2 accessory-row">
                                         <div class="col-md-6">
-                                            <select class="form-control accessory-select" name="accessories_id[]"
-                                                id="accessory-select-{{ $index }}">
-                                                <option value="{{ $acc->accessory->id }}" selected>
-                                                    {{ $acc->accessory->name }}</option>
+                                            <select name="accessories[{{ $index }}][accessory_id]"
+                                                class="form-control" required>
+                                                @foreach ($accessories as $accessory)
+                                                    <option value="{{ $accessory->id }}"
+                                                        {{ $accessory->id == $item->accessory_id ? 'selected' : '' }}>
+                                                        {{ $accessory->name }}
+                                                    </option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <input type="number" name="accessories_qty[]" value="{{ $acc->quantity }}"
-                                                class="form-control" placeholder="Quantity">
+                                            <input type="number" name="accessories[{{ $index }}][quantity]"
+                                                class="form-control" value="{{ $item->quantity ?? 1 }}" min="1"
+                                                required>
                                         </div>
                                         <div class="col-md-2">
                                             <button type="button" class="badge badge-danger removeAccessory">X</button>
@@ -127,17 +131,17 @@
             $('#addAccessory').on('click', function() {
                 accessoryIndex++;
                 const row = `
-                <div class="row align-items-center accessory-row mb-3" id="accessory-${accessoryIndex}">
-                    <div class="col-md-6">
-                        <select class="form-control accessory-select" name="accessories_id[]" id="accessory-select-${accessoryIndex}"></select>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="number" name="accessories_qty[]" value="1" class="form-control" placeholder="Quantity">
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="badge badge-danger removeAccessory">X</button>
-                    </div>
-                </div>`;
+                    <div class="row align-items-center accessory-row mb-3" id="accessory-${accessoryIndex}">
+                        <div class="col-md-6">
+                            <select class="form-control accessory-select" name="accessories_id[]" id="accessory-select-${accessoryIndex}"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" name="accessories_qty[]" value="1" class="form-control" placeholder="Quantity">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="badge badge-danger removeAccessory">X</button>
+                        </div>
+                    </div>`;
                 $('#accessoryContainer').append(row);
                 initializeSelect(`#accessory-select-${accessoryIndex}`);
             });
@@ -171,10 +175,21 @@
                 $(this).closest('.accessory-row').remove();
             });
 
-            // Initialize already loaded selects
+            // Initialize already added accessories
             $('.accessory-select').each(function() {
-                initializeSelect(this);
+                const $select = $(this);
+                const selectedId = $select.find('option:selected').val();
+                const selectedText = $select.find('option:selected').text();
+
+                initializeSelect(this); // initialize select2 first
+
+                if (selectedId && selectedText) {
+                    // Manually add selected option as a valid Select2 option
+                    const option = new Option(selectedText, selectedId, true, true);
+                    $select.append(option).trigger('change');
+                }
             });
+
         });
     </script>
 @endsection

@@ -187,7 +187,7 @@
                                                                         <div class="form-group mt-3">
                                                                             <label for="message"
                                                                                 class="font-weight-bold">Message</label>
-                                                                            <textarea name="message" id="message" class="form-control" rows="4" placeholder="Enter message..."></textarea>
+                                                                            <textarea name="message" id="message" class="form-control" rows="4" placeholder="Enter message..." required></textarea>
                                                                         </div>
                                                                     </div>
 

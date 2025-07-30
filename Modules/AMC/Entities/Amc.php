@@ -33,4 +33,5 @@ class AMC extends Model
     {
         return $this->hasMany(AmcAccessory::class, 'amc_id');
     }
+
 }

@@ -41,7 +41,7 @@
                                     <label>Month <span class="text-danger">*</span></label>
                                     <select name="month" class="form-control" required>
                                         <option value="">Select Month</option>
-                                        @for ($m = 1; $m <= 12; $m++)
+                                        @for ($m = 0; $m <= 12; $m++)
                                             <option value="{{ $m }}">{{ $m }}</option>
                                         @endfor
                                     </select>

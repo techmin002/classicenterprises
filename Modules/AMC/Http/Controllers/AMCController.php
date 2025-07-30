@@ -19,7 +19,7 @@ class AMCController extends Controller
     public function index()
     {
         $amcs = Amc::all();
-        return view('amc::index', compact('amcs'));
+        return view('amc::AmcList.index', compact('amcs'));
     }
 
 
@@ -28,7 +28,7 @@ class AMCController extends Controller
      */
     public function create()
     {
-        return view('amc::create');
+        return view('amc::AmcList.create');
     }
 
     /**
@@ -97,7 +97,7 @@ class AMCController extends Controller
     public function show($id)
     {
         $amc = Amc::with(['accessories.accessory'])->findOrFail($id);
-        return view('amc::details', compact('amc'));
+        return view('amc::AmcList.details', compact('amc'));
     }
 
 
@@ -106,13 +106,9 @@ class AMCController extends Controller
      */
     public function edit($id)
     {
-        // Get AMC record
         $amc = Amc::findOrFail($id);
-
-        // Get all active accessories (for dropdown)
         $accessories = Accessory::where('status', 'on')->get();
 
-        // Get accessories already linked with this AMC
         $attachedAccessories = DB::table('amc_accessories')
             ->where('amc_id', $amc->id)
             ->get()
@@ -122,8 +118,9 @@ class AMCController extends Controller
                 return $item;
             });
 
-        return view('amc::edit', compact('amc', 'accessories', 'attachedAccessories'));
+        return view('amc::AmcList.edit', compact('amc', 'accessories', 'attachedAccessories'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -197,6 +194,20 @@ class AMCController extends Controller
     }
 
 
+    public function Status($id)
+    {
+        // dd($id);
+        $amc = AMC::findOrfail($id);
+        if ($amc->status == 'on') {
+            $status = 'off';
+        } else {
+            $status = 'on';
+        }
+        $amc->update([
+            'status' => $status
+        ]);
+        return redirect()->back()->with('success', 'AMC Status Updated!');
+    }
     /**
      * Remove the specified resource from storage.
      */

@@ -23,7 +23,9 @@ class Customer extends Model
         'total_amount',
         'paid_amount',
         'due_amount',
+        'gifted',
         'status',
+        'message',
         'customer_type',
         'sales_type',
         'installation_category',
@@ -63,5 +65,4 @@ class Customer extends Model
     {
         return $this->belongsTo(Lead::class, 'assign_to');
     }
-
 }
