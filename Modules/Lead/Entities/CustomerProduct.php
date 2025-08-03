@@ -15,7 +15,7 @@ class CustomerProduct extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $table='customer_products';
+    protected $table = 'customer_products';
     protected $fillable = [
         'lead_id',
         'branch_id',
@@ -25,14 +25,16 @@ class CustomerProduct extends Model
         'product_price',
         'product_qty',
         'product_total',
+        'exchange',
+        'total_exchange',
         'status',
         'remarks'
     ];
     public function product()
     {
-        return $this->belongsTo(Machinery::class,'product_id','id');
+        return $this->belongsTo(Machinery::class, 'product_id', 'id');
     }
-    protected static function newFactory(): CustomerProductFactory
+    protected static function newFactory()
     {
         //return CustomerProductFactory::new();
     }

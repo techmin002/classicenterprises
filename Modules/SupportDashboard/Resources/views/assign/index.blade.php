@@ -121,21 +121,6 @@
                                                                                         name="service_charge"
                                                                                         class="form-control" min="0">
                                                                                 </div>
-                                                                                {{-- <div class="border p-2 rounded">
-    <strong>Free Accessories:</strong>
-    <hr class="my-1">
-    @if (isset($amcMap[$value->customer_id]) && count($amcMap[$value->customer_id]))
-        @foreach ($amcMap[$value->customer_id] as $accessory)
-            <span class="badge badge-info">
-                {{ $accessory['name'] }} ({{ $accessory['quantity'] }})
-            </span>
-        @endforeach
-    @else
-        <span class="text-muted">No Accessories</span>
-    @endif
-</div> --}}
-
-
                                                                                 <div class="form-group">
                                                                                     <label>Accessories</label>
                                                                                     <div
@@ -430,3 +415,30 @@
         </section>
     </div>
 @endsection
+@php
+    $warrantyIn = optional($value->customer)->warranty_in;
+    $warrantyOut = optional($value->customer)->warranty_out;
+    $warrantyLifetime = optional($value->customer)->warranty_lifetime;
+@endphp
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const modalId = {{ $modalId }};
+    const serviceChargeInput = document.getElementById(`serviceCharge${modalId}`);
+
+    const warrantyIn = new Date("{{ $warrantyIn }}");
+    const warrantyOut = new Date("{{ $warrantyOut }}");
+    const warrantyLifetime = {{ $warrantyLifetime ?? 0 }};
+    const today = new Date();
+
+    if (
+        (warrantyLifetime === 1) ||
+        (warrantyIn && warrantyOut && today >= warrantyIn && today <= warrantyOut)
+    ) {
+        serviceChargeInput.value = 0;
+        serviceChargeInput.setAttribute('readonly', true);
+    } else {
+        serviceChargeInput.removeAttribute('readonly');
+    }
+});
+</script>

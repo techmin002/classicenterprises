@@ -506,6 +506,47 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Warranty Card -->
+                        <div class="col-md-12" id="warrantyCard">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4><i class="fas fa-shield-alt mr-2"></i>Warranty Details</h4>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <!-- Warranty From -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Warranty From</label>
+                                                <input type="date" name="warranty_from" id="warrantyFrom"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <!-- Warranty To -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Warranty To</label>
+                                                <input type="date" name="warranty_to" id="warrantyTo"
+                                                    class="form-control">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 d-flex align-items-center mt-4">
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" name="lifetime" value="1" id="lifetimeRadio"
+                                                    class="custom-control-input">
+                                                <label class="custom-control-label font-weight-bold" for="lifetimeRadio">
+                                                    Lifetime Warranty
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Gifted Card -->
                         <div class="col-md-12">
@@ -527,9 +568,10 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
+
+
                         <!-- Payment Details Card -->
                         <div class="col-md-12" id="paymentCard">
                             <div class="card">
@@ -690,7 +732,7 @@
 
     </div>
 
-    <!-- JavaScript (unchanged from original) -->
+    <!-- JavaScript  -->
     <script>
         $(document).ready(function() {
             let accessoryIndex = 0;
@@ -926,5 +968,32 @@
             giftedNo.addEventListener('change', togglePaymentCard);
         });
     </script>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const lifetimeRadio = document.getElementById("lifetimeRadio");
+            const warrantyFrom = document.getElementById("warrantyFrom");
+            const warrantyTo = document.getElementById("warrantyTo");
+
+            let wasSelected = false;
+
+            lifetimeRadio.addEventListener("click", function() {
+                if (wasSelected) {
+                    this.checked = false;
+                    warrantyFrom.disabled = false;
+                    warrantyTo.disabled = false;
+                    wasSelected = false;
+                } else {
+                    this.checked = true;
+                    warrantyFrom.disabled = true;
+                    warrantyTo.disabled = true;
+                    wasSelected = true;
+                }
+            });
+        });
+    </script>
+
+
 
 @endsection

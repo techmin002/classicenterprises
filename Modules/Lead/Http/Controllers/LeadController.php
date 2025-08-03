@@ -12,6 +12,7 @@ use Modules\Branch\Entities\Branch;
 use Modules\Lead\Entities\Customer;
 use Modules\Lead\Entities\CustomerAccessory;
 use Modules\Lead\Entities\CustomerProduct;
+use Modules\Lead\Entities\Exchange;
 use Modules\Lead\Entities\LeadResponse;
 use Modules\Product\Entities\Accessory;
 use Modules\Product\Entities\Machinery;
@@ -311,6 +312,8 @@ class LeadController extends Controller
                         'product_price' => $request->products_price[$index] ?? 0,
                         'product_qty' => $request->products_qty[$index] ?? 0,
                         'product_total' => $request->products_total[$index] ?? 0,
+                        'exchange'         => $request->is_exchange ?? 'no',
+                        'total_exchange'   => $request->total_exchange ?? 0,
                         'status' => 'installation_queue',
                     ]);
                 }
@@ -335,6 +338,18 @@ class LeadController extends Controller
                 }
             }
         }
+        if ($request->is_exchange === 'yes' && $request->has('exchange_names')) {
+            foreach ($request->exchange_names as $index => $name) {
+                Exchange::create([
+                    'lead_id' => $lead->id,
+                    'branch_id' => $lead->branch_id,
+                    'customer_id' => $customer->id,
+                    'item_name'   => $name,
+                    'item_amount' => $request->exchange_prices[$index] ?? 0,
+                ]);
+            }
+        }
+
         return redirect()->route('installation-queue.index', ['sale_type' => $lead->sales_type])->with('success', 'Customer added successfully');
     }
     public function retailler()

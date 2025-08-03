@@ -104,17 +104,6 @@ class CustomerInstallationController extends Controller
             // Process Payment and determine status
             $status = $this->processPaymentAndDetermineStatus($request, $customer, $lead);
 
-            // Update Customer
-            // $customer->update([
-            //     'converted_by' => $request->converted_by,
-            //     'install_date' => $request->install_date,
-            //     'branch_id' => $lead->branch_id,
-            //     'total_amount' => $request->grand_total,
-            //     'paid_amount' => $request->paid_amount ?? 0,
-            //     'due_amount' => $request->grand_total - ($request->paid_amount ?? 0),
-            //     'customer_type' => 'indoor',
-            //     'status' => $status,
-            // ]);
 
             $isGifted = $request->is_gifted == 1;
 
@@ -129,6 +118,10 @@ class CustomerInstallationController extends Controller
                 'message'  => $request->remarks,
                 'status'        => $isGifted ? 'installation_complete' : 'installation_report',
                 'gifted'     => $request->is_gifted,
+                'warranty_in'       => $request->warranty_from,
+                'warranty_out'      => $request->warranty_to,
+                'warranty_lifetime' => $request->has('lifetime') ? 1 : 0,
+
             ]);
 
             DB::commit();
@@ -351,6 +344,7 @@ class CustomerInstallationController extends Controller
     public function assignStore(Request $request, $id)
     {
         // dd($request->all());
+
         $request->validate([
             'lead_id' => 'required|exists:leads,id',
             'message' => 'required|string',
@@ -362,7 +356,8 @@ class CustomerInstallationController extends Controller
         $customer->message = $request->message;
         $customer->status = 'installation_assign';
         $customer->save();
-
         return back()->with('success', 'Lead assigned successfully.');
+        // return redirect()->route('installation-assign.index', ['sale_type' => $lead->sales_type])
+        //     ->with('success', 'Lead assigned successfully.');
     }
 }
