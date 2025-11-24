@@ -1,0 +1,11 @@
+{
+    "name": "EMISystem",
+    "alias": "emisystem",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\EMISystem\\Providers\\EMISystemServiceProvider"
+    ],
+    "files": []
+}

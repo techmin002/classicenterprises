@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/petrolmgnt",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\PetrolMGNT\\": "",
+            "Modules\\PetrolMGNT\\App\\": "app/",
+            "Modules\\PetrolMGNT\\Database\\Factories\\": "database/factories/",
+            "Modules\\PetrolMGNT\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\PetrolMGNT\\Tests\\": "tests/"
+        }
+    }
+}

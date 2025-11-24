@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Modules\PetrolMGNT\Http\Controllers\BikeController;
+use Modules\PetrolMGNT\Http\Controllers\PetrolController;
+use Modules\PetrolMGNT\Http\Controllers\PetrolMGNTController;
+use Modules\PetrolMGNT\Http\Controllers\BikeServiceController;
+use Modules\PetrolMGNT\Http\Controllers\PetrolPumpController;
+use Modules\PetrolMGNT\Http\Controllers\ServiceCenterController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('petrol', PetrolController::class);
+    Route::get('petrol/status/{id}', [PetrolController::class, 'status'])->name('petrol.status');
+
+
+
+    Route::resource('bike', BikeController::class);
+    Route::get('bike/status/{id}', [BikeController::class, 'status'])->name('bike.status');
+
+
+    Route::resource('service', BikeServiceController::class);
+    // Route::get('service/status/{id}', [BikeServiceController::class, 'status'])->name('service.status');
+    Route::get('bike-service/status/{id}', [BikeServiceController::class, 'status'])->name('bike-service.status');
+    Route::get('/get-bikes-by-branch', [BikeServiceController::class, 'getBikesByBranch'])->name('get.bikes.by.branch');
+
+    Route::resource('petrolpump', PetrolPumpController::class);
+    Route::get('petrolpump/status/{id}', [PetrolPumpController::class, 'status'])->name('petrolpump.status');
+
+    Route::resource('servicecenter', ServiceCenterController::class);
+    Route::get('servicecenter/status/{id}', [ServiceCenterController::class, 'status'])->name('servicecenter.status');
+});

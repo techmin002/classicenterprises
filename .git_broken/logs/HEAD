@@ -1,0 +1,29 @@
+0000000000000000000000000000000000000000 340c83b0c94659a21a93522605e08a99fe26a62f ganesh kunwar <kunwarganesh07> 1758187276 +0545	clone: from https://github.com/techmin002/classicenterprises.git
+340c83b0c94659a21a93522605e08a99fe26a62f 2f516722dbb33429441a26d4d410eeafb62a0a1c ganesh kunwar <kunwarganesh07> 1758256026 +0545	commit: Added Filter in pettyCash transaction
+2f516722dbb33429441a26d4d410eeafb62a0a1c bfafbcf0f942300b7dd008f99649f3b2f157c833 ganesh kunwar <kunwarganesh07> 1758525355 +0545	commit: Updated
+bfafbcf0f942300b7dd008f99649f3b2f157c833 27f792424c31f2b74934955a0c5b3858ebb36ded ganesh kunwar <kunwarganesh07> 1758851228 +0545	commit: fix petty cash
+27f792424c31f2b74934955a0c5b3858ebb36ded 2515d96cf78bd257291c7fa9ca13b8355272f7cc ganesh kunwar <kunwarganesh07> 1758878977 +0545	commit (merge): fix
+2515d96cf78bd257291c7fa9ca13b8355272f7cc e7188bba6abf2301418313eec6cafedbe174b2ab ganesh kunwar <kunwarganesh07> 1759840998 +0545	commit: Lead Module Changed
+e7188bba6abf2301418313eec6cafedbe174b2ab 97d67c8bcee38c2fcb283a90f77b782b9f058778 ganesh kunwar <kunwarganesh07> 1759841156 +0545	commit (merge): Changes Successful
+97d67c8bcee38c2fcb283a90f77b782b9f058778 a00b198142c17ce2fbc4cef530a8c2b4735cab99 ganesh kunwar <kunwarganesh07> 1759843703 +0545	pull: Fast-forward
+a00b198142c17ce2fbc4cef530a8c2b4735cab99 e776b2a343cece316f89b56740e07b973cced06e ganesh kunwar <kunwarganesh07> 1759979463 +0545	commit: Done Changes
+e776b2a343cece316f89b56740e07b973cced06e 72a0109ce54b4f5a41b35882d2878508212b7d5d ganesh kunwar <kunwarganesh07> 1760593667 +0545	commit: Update Done
+72a0109ce54b4f5a41b35882d2878508212b7d5d da49441b7c8a6831cff8a2fa0bbf2775ded3feda ganesh kunwar <kunwarganesh07> 1760593770 +0545	pull --rebase origin master (start): checkout da49441b7c8a6831cff8a2fa0bbf2775ded3feda
+da49441b7c8a6831cff8a2fa0bbf2775ded3feda 72a0109ce54b4f5a41b35882d2878508212b7d5d ganesh kunwar <kunwarganesh07> 1760601436 +0545	rebase (abort): returning to refs/heads/master
+72a0109ce54b4f5a41b35882d2878508212b7d5d 72a0109ce54b4f5a41b35882d2878508212b7d5d ganesh kunwar <kunwarganesh07> 1760601441 +0545	checkout: moving from master to master
+72a0109ce54b4f5a41b35882d2878508212b7d5d 1feba3089138cf1361a2e7c9d6e3ebdae89c4c1e ganesh kunwar <kunwarganesh07> 1760601452 +0545	pull origin master: Fast-forward
+1feba3089138cf1361a2e7c9d6e3ebdae89c4c1e 60413e186ecb206a97d972c0c5d30b3dc1c3b0d1 ganesh kunwar <kunwarganesh07> 1760620141 +0545	pull: Fast-forward
+60413e186ecb206a97d972c0c5d30b3dc1c3b0d1 d4567e50b09158041a47208123c9edd32e044013 ganesh kunwar <kunwarganesh07> 1760620334 +0545	commit: Lead Module Change
+d4567e50b09158041a47208123c9edd32e044013 736c1a310bbed0220113169439b6f040880d2d9b ganesh kunwar <kunwarganesh07> 1760701211 +0545	commit: Lead Module Complete
+736c1a310bbed0220113169439b6f040880d2d9b 369debb6436103903559ecc953352e4e5527b1a3 ganesh kunwar <kunwarganesh07> 1761452237 +0545	commit: Skim Add
+369debb6436103903559ecc953352e4e5527b1a3 4462b95bdd84cd12089cc10d2840a4ef21cb369e ganesh kunwar <kunwarganesh07> 1761539515 +0545	commit: Lead Module Change
+4462b95bdd84cd12089cc10d2840a4ef21cb369e 06afc70a4629e23e09ee23fa4c79cf09e2694c53 ganesh kunwar <kunwarganesh07> 1761715829 +0545	commit: Petty Cash Transfer Module Changed
+06afc70a4629e23e09ee23fa4c79cf09e2694c53 873a63d3176ad75b9ead4a42d95d03784c7f5ce0 ganesh kunwar <kunwarganesh07> 1761722484 +0545	commit: Lead Module Changed
+873a63d3176ad75b9ead4a42d95d03784c7f5ce0 333836aa0238e9f04ed843f41f0a4c372e4265e7 ganesh kunwar <kunwarganesh07> 1762058176 +0545	commit: Lead Update
+333836aa0238e9f04ed843f41f0a4c372e4265e7 30260552bc70682cab238f8b56e032a1023b85b5 ganesh kunwar <kunwarganesh07> 1762061278 +0545	commit: Lead Update
+30260552bc70682cab238f8b56e032a1023b85b5 479383ea1223047141521fc97ebf0b80e5063ee4 ganesh kunwar <kunwarganesh07> 1762076866 +0545	commit: petty cash update
+479383ea1223047141521fc97ebf0b80e5063ee4 b6ec5ce4ba52aceb5d6a5ecd614e1ad65b25f2b4 ganesh kunwar <kunwarganesh07> 1762661865 +0545	commit: AMC MODEL CHANGED
+b6ec5ce4ba52aceb5d6a5ecd614e1ad65b25f2b4 ece06adff65c68f601915d0afb57571669896a4b ganesh kunwar <kunwarganesh07> 1763266996 +0545	commit: SUPPORT DASHBOARD CHANGES
+ece06adff65c68f601915d0afb57571669896a4b 167fea608937c788f5334c1954106667dfd758a5 ganesh kunwar <kunwarganesh07> 1763525171 +0545	commit: AMC Complete
+167fea608937c788f5334c1954106667dfd758a5 912bf404d146f07246b681f9bddc2891e900129f ganesh kunwar <kunwarganesh07> 1763534276 +0545	commit: AMC Complete
+912bf404d146f07246b681f9bddc2891e900129f af28caa03265acf2d570f2e2da879b164842941d ganesh kunwar <kunwarganesh07> 1763631766 +0545	commit: Suport dashboard

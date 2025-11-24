@@ -1,0 +1,11 @@
+{
+    "name": "AMC",
+    "alias": "amc",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AMC\\Providers\\AMCServiceProvider"
+    ],
+    "files": []
+}

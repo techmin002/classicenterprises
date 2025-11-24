@@ -1,0 +1,11 @@
+{
+    "name": "Pettycash",
+    "alias": "pettycash",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Pettycash\\Providers\\PettycashServiceProvider"
+    ],
+    "files": []
+}

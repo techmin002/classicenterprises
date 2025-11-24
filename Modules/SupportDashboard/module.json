@@ -1,0 +1,11 @@
+{
+    "name": "SupportDashboard",
+    "alias": "supportdashboard",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SupportDashboard\\Providers\\SupportDashboardServiceProvider"
+    ],
+    "files": []
+}
