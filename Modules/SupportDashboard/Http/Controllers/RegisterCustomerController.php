@@ -169,15 +169,16 @@ class RegisterCustomerController extends Controller
         // $customers = CustomerTicket::with(['amc', 'customer'])->where('branch_id', $branch_id)->whereIn('type', ['register', 'amc'])->where('status', 'queue')->latest()->get();
         $customers = CustomerTicket::with(['amcCustomer', 'customer'])
             ->where('branch_id', $branch_id)
-            ->where(function ($q) {
-                $q->where('register_type', 'yes')
-                    ->orWhere(function ($amc) {
-                        $amc->where('amc_type', 'yes')
-                            ->whereHas('amcCustomer', function ($a) {
-                                $a->where('type', 'register');
-                            });
-                    });
-            })
+            ->where('register_type', 'yes')
+            // ->where(function ($q) {
+            //     $q->where('register_type', 'yes')
+            //         ->orWhere(function ($amc) {
+            //             $amc->where('amc_type', 'yes')
+            //                 ->whereHas('amcCustomer', function ($a) {
+            //                     $a->where('type', 'register');
+            //                 });
+            //         });
+            // })
             ->where('status', 'queue')
             ->latest()
             ->get();
@@ -269,15 +270,7 @@ class RegisterCustomerController extends Controller
         }
         $users = User::where('branch_id', $branch_id)->get();
         $customers = CustomerTicket::with(['amc', 'customer', 'user'])->where('branch_id', $branch_id)
-            ->where(function ($q) {
-                $q->where('register_type', 'yes')
-                    ->orWhere(function ($amc) {
-                        $amc->where('amc_type', 'yes')
-                            ->whereHas('amcCustomer', function ($a) {
-                                $a->where('type', 'register');
-                            });
-                    });
-            })
+            ->where('register_type', 'yes')
             ->where('status', 'assign')->latest()->get();
 
         foreach ($customers as $customer) {
@@ -713,11 +706,11 @@ class RegisterCustomerController extends Controller
 
         $customers = Customer::with(['lead', 'registerAmc'])
             ->where('branch_id', $branch_id)
-            ->where('ticket_status', ['on', 'report', 'complete'])
+            ->whereIn('ticket_status', ['on', 'report', 'complete'])
             ->whereDate('created_at', '>=', $oneYearAgo)
             ->orderBy('created_at', 'desc')->get();
 
-        return view('supportdashboard::register_customer.ticketcreate', compact('customers'));
+        return view('supportdashboard::register_customer.warranty_in_ticketcreate', compact('customers'));
     }
 
     public function warrenty()
@@ -732,11 +725,11 @@ class RegisterCustomerController extends Controller
 
         $customers = Customer::with(['lead', 'registerAmc'])
             ->where('branch_id', $branch_id)
-            ->where('ticket_status', ['on', 'report', 'complete'])
+            ->whereIn('ticket_status', ['on', 'report', 'complete'])
             ->whereDate('created_at', '<', $oneYearAgo)
             ->orderBy('created_at', 'desc')->get();
 
-        return view('supportdashboard::register_customer.ticketcreate', compact('customers'));
+        return view('supportdashboard::register_customer.warranty_out_ticketcreate', compact('customers'));
     }
 
     private function formatTimeDifference($dateTime)

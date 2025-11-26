@@ -40,7 +40,7 @@ class AmcCustomerController extends Controller
         $amcCustomers = AmcCustomer::with(['customer', 'amc'])
             ->where('branch_id', $branch_id)
             ->where(function ($query) {
-                $query->whereIn('status', ['create', 'report', 'complete'])
+                $query->whereIn('status', ['on', 'report', 'complete'])
                     ->orWhereNull('status');
             })
             ->get();
