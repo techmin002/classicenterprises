@@ -605,9 +605,15 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amccustomer-ticket.service') }}"
-                                class="nav-link {{ request()->routeIs('amccustomer-ticket.service') ? 'active' : '' }}">
-                                <p>AMC Service</p>
+                            <a href="{{ route('amccustomer-ticket.inservice') }}"
+                                class="nav-link {{ request()->routeIs('amccustomer-ticket.inservice') ? 'active' : '' }}">
+                                <p>AMC In Service</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('amccustomer-ticket.outservice') }}"
+                                class="nav-link {{ request()->routeIs('amccustomer-ticket.outservice') ? 'active' : '' }}">
+                                <p>AMC Out Service</p>
                             </a>
                         </li>
                         <li class="nav-item">

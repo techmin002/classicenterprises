@@ -72,7 +72,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::prefix('amccustomer-ticket')->group(function () {
 
-        Route::get('/service', [AmcCustomerController::class, 'service'])->name('amccustomer-ticket.service');
+        Route::get('/inservice', [AmcCustomerController::class, 'inservice'])->name('amccustomer-ticket.inservice');
+        Route::get('/outservice', [AmcCustomerController::class, 'outservice'])->name('amccustomer-ticket.outservice');
         Route::get('/dashboard', [AmcCustomerController::class, 'dashboard'])->name('amccustomer-ticket.dashboard');
         Route::post('/store', [AmcCustomerController::class, 'store'])->name('amccustomer-ticket.store');
         Route::get('/queue', [AmcCustomerController::class, 'queue'])->name('amccustomer-ticket.queue');

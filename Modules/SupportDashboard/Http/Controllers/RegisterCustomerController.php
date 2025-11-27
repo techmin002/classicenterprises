@@ -30,21 +30,21 @@ class RegisterCustomerController extends Controller
         return view('supportdashboard::index');
     }
 
-    // public function dashboard()
-    // {
-    //     if (auth()->user()->role->name === 'Super Admin') {
-    //         $branchId = session('branch_id');
-    //     } else {
-    //         $branchId = auth()->user()->branch_id;
-    //     }
+    public function dashboard()
+    {
+        if (auth()->user()->role->name === 'Super Admin') {
+            $branchId = session('branch_id');
+        } else {
+            $branchId = auth()->user()->branch_id;
+        }
 
-    //     $totalcustomer = CustomerTicket::where('branch_id', $branchId)->where('type', 'register')->count();
-    //     $queuecount = CustomerTicket::where('branch_id', $branchId)->where('type', 'register')->where('status', 'queue')->count();
-    //     $assigncount = CustomerTicket::where('branch_id', $branchId)->where('type', 'register')->where('status', 'assign')->count();
-    //     $completecount = CustomerTicket::where('branch_id', $branchId)->where('type', 'register')->where('status', 'complete')->where('due_amount', 0)->count();
+        $totalcustomer = CustomerTicket::where('branch_id', $branchId)->where('register_type', 'yes')->count();
+        $queuecount = CustomerTicket::where('branch_id', $branchId)->where('register_type', 'yes')->where('status', 'queue')->count();
+        $assigncount = CustomerTicket::where('branch_id', $branchId)->where('register_type', 'yes')->where('status', 'assign')->count();
+        $completecount = CustomerTicket::where('branch_id', $branchId)->where('register_type', 'yes')->where('status', 'complete')->where('due_amount', 0)->count();
 
-    //     return view('supportdashboard::register_customer.dashboard', compact('totalcustomer', 'queuecount', 'assigncount', 'completecount'));
-    // }
+        return view('supportdashboard::register_customer.dashboard', compact('totalcustomer', 'queuecount', 'assigncount', 'completecount'));
+    }
     /**
      * Show the form for creating a new resource.
      */

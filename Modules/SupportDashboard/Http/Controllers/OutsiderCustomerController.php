@@ -38,10 +38,10 @@ class OutsiderCustomerController extends Controller
             $branchId = auth()->user()->branch_id;
         }
 
-        $totalcustomer = CustomerTicket::where('branch_id', $branchId)->where('type', 'outsider')->count();
-        $queuecount = CustomerTicket::where('branch_id', $branchId)->where('type', 'outsider')->where('status', 'queue')->count();
-        $assigncount = CustomerTicket::where('branch_id', $branchId)->where('type', 'outsider')->where('status', 'assign')->count();
-        $completecount = CustomerTicket::where('branch_id', $branchId)->where('type', 'outsider')->where('status', 'complete')->where('due_amount', 0)->count();
+        $totalcustomer = CustomerTicket::where('branch_id', $branchId)->where('outsider_type', 'yes')->count();
+        $queuecount = CustomerTicket::where('branch_id', $branchId)->where('outsider_type', 'yes')->where('status', 'queue')->count();
+        $assigncount = CustomerTicket::where('branch_id', $branchId)->where('outsider_type', 'yes')->where('status', 'assign')->count();
+        $completecount = CustomerTicket::where('branch_id', $branchId)->where('outsider_type', 'yes')->where('status', 'complete')->where('due_amount', 0)->count();
 
         return view('supportdashboard::outsider_customer.dashboard', compact('totalcustomer', 'queuecount', 'assigncount', 'completecount'));
     }

@@ -29,7 +29,7 @@ class AmcCustomerController extends Controller
     }
 
 
-    public function service()
+    public function inservice()
     {
         // Branch selection
         $branch_id = auth()->user()->role['name'] === 'Super Admin'
@@ -59,6 +59,10 @@ class AmcCustomerController extends Controller
             $startDate = \Carbon\Carbon::parse($item->date);
             $amcEndDate = $startDate->copy()->addMonths($totalMonths);
 
+            if (now()->gt($amcEndDate)) {
+                continue; // DO NOT SHOW EXPIRED AMC
+            }
+
             // Next service = last date + 4 months
             $nextServiceDate = \Carbon\Carbon::parse($item->last_date)->addMonths(4);
 
@@ -79,12 +83,57 @@ class AmcCustomerController extends Controller
             }
         }
 
-        return view('supportdashboard::amc_customer.service', [
+        return view('supportdashboard::amc_customer.inservice', [
             'amccustomer' => $finalData
         ]);
     }
 
+    public function outservice()
+    {
+        // Branch selection
+        $branch_id = auth()->user()->role['name'] === 'Super Admin'
+            ? session('branch_id')
+            : auth()->user()->branch_id;
 
+        // Fetch AMC customers
+        $amcCustomers = AmcCustomer::with(['customer', 'amc'])
+            ->where('branch_id', $branch_id)
+            ->where(function ($query) {
+                $query->whereIn('status', ['on', 'report', 'complete'])
+                    ->orWhereNull('status');
+            })
+            ->get();
+
+        $finalData = [];
+
+        foreach ($amcCustomers as $item) {
+
+            if (!$item->amc) continue;
+
+            // AMC duration in months
+            $totalMonths = $item->amc->year * 12;
+
+            // AMC start date = created_at
+            $startDate = \Carbon\Carbon::parse($item->date);
+
+            // AMC end date
+            $amcEndDate = $startDate->copy()->addMonths($totalMonths);
+
+            // Check expired
+            if (now()->greaterThan($amcEndDate)) {
+
+                $item->amc_end_date = $amcEndDate->toDateString();
+                $item->amc_start_date = $startDate->toDateString();
+                $item->duration_years = $item->amc->year;
+
+                $finalData[] = $item;
+            }
+        }
+
+        return view('supportdashboard::amc_customer.outservice', [
+            'amccustomer' => $finalData
+        ]);
+    }
 
 
     public function dashboard()
@@ -95,10 +144,10 @@ class AmcCustomerController extends Controller
             $branchId = auth()->user()->branch_id;
         }
 
-        $totalcustomer = CustomerTicket::where('branch_id', $branchId)->where('type', 'amc')->count();
-        $queuecount = CustomerTicket::where('branch_id', $branchId)->where('type', 'amc')->where('status', 'queue')->count();
-        $assigncount = CustomerTicket::where('branch_id', $branchId)->where('type', 'amc')->where('status', 'assign')->count();
-        $completecount = CustomerTicket::where('branch_id', $branchId)->where('type', 'amc')->where('status', 'complete')->where('due_amount', 0)->count();
+        $totalcustomer = CustomerTicket::where('branch_id', $branchId)->where('amc_type', 'yes')->count();
+        $queuecount = CustomerTicket::where('branch_id', $branchId)->where('amc_type', 'yes')->where('status', 'queue')->count();
+        $assigncount = CustomerTicket::where('branch_id', $branchId)->where('amc_type', 'yes')->where('status', 'assign')->count();
+        $completecount = CustomerTicket::where('branch_id', $branchId)->where('amc_type', 'yes')->where('status', 'complete')->where('due_amount', 0)->count();
 
         return view('supportdashboard::amc_customer.dashboard', compact('totalcustomer', 'queuecount', 'assigncount', 'completecount'));
     }
