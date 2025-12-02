@@ -7,14 +7,10 @@ use App\Models\Log;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Modules\AMC\Entities\AmcAssign;
 use Modules\AMC\Entities\AmcCustomer;
-use Modules\EMISystem\Entities\EmiPlan;
 use Modules\Lead\Entities\Customer;
 use Modules\Lead\Entities\CustomerAccessory;
-use Modules\Lead\Entities\CustomerProduct;
 use Modules\SupportDashboard\Entities\CustomerTicket;
 use Modules\SupportDashboard\Entities\CustomerTicketAccessory;
 use Modules\SupportDashboard\Entities\CustomerTicketPayment;
@@ -67,7 +63,7 @@ class RegisterCustomerController extends Controller
             $cashFileName = $cashFile->getClientOriginalName();
             $cashFile->move(public_path('receipts/Ticket'), $cashFileName);
         } else {
-            $cashFileName = NULL;
+            $cashFileName = null;
         }
 
         if ($request->hasFile('online_receipt')) {
@@ -75,7 +71,7 @@ class RegisterCustomerController extends Controller
             $onlineFileName = $onlineFile->getClientOriginalName();
             $onlineFile->move(public_path('receipts/Ticket'), $onlineFileName);
         } else {
-            $onlineFileName = NULL;
+            $onlineFileName = null;
         }
 
         if ($request->hasFile('cheque_receipt')) {
@@ -83,43 +79,41 @@ class RegisterCustomerController extends Controller
             $chequeFileName = $chequeFile->getClientOriginalName();
             $chequeFile->move(public_path('receipts/Ticket'), $chequeFileName);
         } else {
-            $chequeFileName = NULL;
+            $chequeFileName = null;
         }
 
         $ticket = CustomerTicket::create([
-            'customer_id'     => $request->customer_id,
-            'branch_id'       => $branch_id,
-            'register_type'            => 'yes',
-            'support_type'    => $request->support_type,
-            'priority'        => $request->priority,
-            'amc'             => $request->amc,
-            'warranty'        => $request->warranty,
-            'assign_to'       => $request->assign_to,
-            'service_charge'  => $request->service_charge,
+            'customer_id' => $request->customer_id,
+            'branch_id' => $branch_id,
+            'register_type' => 'yes',
+            'support_type' => $request->support_type,
+            'priority' => $request->priority,
+            'amc' => $request->amc,
+            'warranty' => $request->warranty,
+            'assign_to' => $request->assign_to,
+            'service_charge' => $request->service_charge,
 
-            'amount'        => $request->amount,
-
-
+            'amount' => $request->amount,
 
             // 🧾 Payment Section
-            'payment_status'    => $request->payment_status,
-            'payment_method'    => $request->payment_method,
+            'payment_status' => $request->payment_status,
+            'payment_method' => $request->payment_method,
 
             // 💰 Cash Payment
-            'cash_amount'       => $request->cash_amount ?? 0,
-            'cash_receipt'      => $cashFileName,
+            'cash_amount' => $request->cash_amount ?? 0,
+            'cash_receipt' => $cashFileName,
 
             // 💳 Online Payment
-            'online_amount'     => $request->online_amount ?? 0,
-            'online_receipt'    => $onlineFileName,
+            'online_amount' => $request->online_amount ?? 0,
+            'online_receipt' => $onlineFileName,
 
             // 🧾 Cheque Payment
-            'cheque_amount'     => $request->cheque_amount ?? 0,
-            'cheque_number'     => $request->cheque_number,
-            'cheque_receipt'    => $chequeFileName,
+            'cheque_amount' => $request->cheque_amount ?? 0,
+            'cheque_number' => $request->cheque_number,
+            'cheque_receipt' => $chequeFileName,
 
-            'message'        => $request->message,
-            'status'          => 'queue',
+            'message' => $request->message,
+            'status' => 'queue',
         ]);
 
         $amc = AmcCustomer::where('customer_id', $request->customer_id)->first();
@@ -146,17 +140,16 @@ class RegisterCustomerController extends Controller
         ]);
 
         Log::create([
-            'perform'   => auth()->user()->name
-                . ' Task ' . $request->support_type . ' Created:'
-                . ' at ' . now(),
-            'user_id'   => auth()->user()->id,
+            'perform' => auth()->user()->name
+                .' Task '.$request->support_type.' Created:'
+                .' at '.now(),
+            'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
+            'url' => url()->current(),
         ]);
 
         return redirect()->route('registercustomer-ticket.queue')->with('success', 'Register Customer Ticket Created Successfully.');
     }
-
 
     public function queue()
     {
@@ -170,24 +163,14 @@ class RegisterCustomerController extends Controller
         $customers = CustomerTicket::with(['amcCustomer', 'customer'])
             ->where('branch_id', $branch_id)
             ->where('register_type', 'yes')
-            // ->where(function ($q) {
-            //     $q->where('register_type', 'yes')
-            //         ->orWhere(function ($amc) {
-            //             $amc->where('amc_type', 'yes')
-            //                 ->whereHas('amcCustomer', function ($a) {
-            //                     $a->where('type', 'register');
-            //                 });
-            //         });
-            // })
             ->where('status', 'queue')
             ->latest()
             ->get();
 
-
-
         foreach ($customers as $customer) {
             $customer->created_time = $this->formatTimeDifference($customer->created_at);
         }
+
         return view('supportdashboard::register_customer.queue', compact('customers', 'users'));
     }
 
@@ -202,6 +185,7 @@ class RegisterCustomerController extends Controller
             'ticket_id' => $ticket->id,
             'note' => $request->note,
         ]);
+
         // Log::create([
         //     'perform'   => auth()->user()->name . ' Message Update : '
         //         . $user->name . ' at ' . now(),
@@ -222,7 +206,7 @@ class RegisterCustomerController extends Controller
         // Ticket (no fail)
         $ticket = CustomerTicket::where('id', $id)->first();
 
-        if (!$ticket) {
+        if (! $ticket) {
             return back()->with('error', 'Ticket not found.');
         }
 
@@ -250,16 +234,15 @@ class RegisterCustomerController extends Controller
 
         // Log entry
         Log::create([
-            'perform'   => auth()->user()->name . ' Assign Lead to : ' . $user->name . ' at ' . now(),
-            'user_id'   => auth()->user()->id,
+            'perform' => auth()->user()->name.' Assign Lead to : '.$user->name.' at '.now(),
+            'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
+            'url' => url()->current(),
         ]);
 
         return redirect()->route('registercustomer-ticket.assign')
             ->with('success', 'Ticket assigned successfully.');
     }
-
 
     public function assign()
     {
@@ -274,7 +257,7 @@ class RegisterCustomerController extends Controller
             ->where('status', 'assign')->latest()->get();
 
         foreach ($customers as $customer) {
-            $customer->created_time = $this->formatTimeDifference($customer->created_at);
+            $customer->created_time = $this->formatTimeDifference($customer->updated_at);
         }
 
         return view('supportdashboard::register_customer.assign', compact('customers', 'users'));
@@ -282,7 +265,7 @@ class RegisterCustomerController extends Controller
 
     public function create($id)
     {
-        $customer = CustomerTicket::with(['amc', 'customer'])->findOrFail($id);;
+        $customer = CustomerTicket::with(['amc', 'customer'])->findOrFail($id);
         // $customer = Customer::with('lead')->findOrFail($id);
         $customerAccessories = CustomerAccessory::with('accessory')->get();
 
@@ -312,7 +295,7 @@ class RegisterCustomerController extends Controller
 
             // Check in customers table
             while (Customer::where('user_name', $username)->exists()) {
-                $username = $originalUsername . $counter;
+                $username = $originalUsername.$counter;
                 $counter++;
             }
             // 🧾 Handle Receipts
@@ -321,7 +304,7 @@ class RegisterCustomerController extends Controller
                 $cashFileName = $cashFile->getClientOriginalName(); // keep original name
                 $cashFile->move(public_path('receipts'), $cashFileName); // save to public/receipts
             } else {
-                $cashFileName = Null;
+                $cashFileName = null;
             }
             //
 
@@ -330,7 +313,7 @@ class RegisterCustomerController extends Controller
                 $onlineFileName = $onlineFile->getClientOriginalName();
                 $onlineFile->move(public_path('receipts'), $onlineFileName);
             } else {
-                $onlineFileName = Null;
+                $onlineFileName = null;
             }
 
             if ($request->hasFile('cheque_receipt')) {
@@ -338,7 +321,7 @@ class RegisterCustomerController extends Controller
                 $chequeFileName = $chequeFile->getClientOriginalName();
                 $chequeFile->move(public_path('receipts'), $chequeFileName);
             } else {
-                $chequeFileName = Null;
+                $chequeFileName = null;
             }
 
             $paidAmount = ($request->cash_amount ?? 0) + ($request->online_amount ?? 0) + ($request->cheque_amount ?? 0);
@@ -354,59 +337,57 @@ class RegisterCustomerController extends Controller
                 $productFileName = $productFile->getClientOriginalName(); // keep original name
                 $productFile->move(public_path('receipts'), $productFileName); // save to public/receipts
             } else {
-                $productFileName = NULL;
+                $productFileName = null;
             }
             if ($request->hasFile('warranty_card')) {
                 $warrantyFile = $request->file('warranty_card');
                 $warrantyFileName = $warrantyFile->getClientOriginalName(); // keep original name
                 $warrantyFile->move(public_path('receipts'), $warrantyFileName); // save to public/receipts
             } else {
-                $warrantyFileName = NULL;
+                $warrantyFileName = null;
             }
-
 
             $totalAmount = $grandTotal + $request->service_charge;
 
             // 🧩 Update Customer
             $ticket->update([
-                'user_name'         => $username,
-                'customer_name'      => $request->name,
-                'contact'      => $request->mobile,
-                'landline'      => $request->landline,
-                'address'      => $request->address,
-                'email'      => $request->email,
-                'install_date'      => $request->install_date,
-                'branch_id'         => $branch_id,
-                'service_type'      => $request->service_type,
-                'service_charge'      => $request->service_charge ?? 0,
-                'amount'      => $request->grand_total,
-                'total_amount'      => $totalAmount,
-                'paid_amount'       => $paidAmount,
-                'due_amount'        => $dueAmount,
+                'user_name' => $username,
+                'customer_name' => $request->name,
+                'contact' => $request->mobile,
+                'landline' => $request->landline,
+                'address' => $request->address,
+                'email' => $request->email,
+                'install_date' => now(),
+                'branch_id' => $branch_id,
+                'service_type' => $request->service_type,
+                'service_charge' => $request->service_charge ?? 0,
+                'amount' => $request->grand_total,
+                'total_amount' => $totalAmount,
+                'paid_amount' => $paidAmount,
+                'due_amount' => $dueAmount,
 
                 // 🧾 Payment Section
-                'payment_status'    => $request->payment_status,
-                'payment_method'    => $request->method,
+                'payment_status' => $request->payment_status,
+                'payment_method' => $request->method,
 
                 // 💰 Cash Payment
-                'cash_amount'       => $request->cash_amount,
-                'cash_receipt'      => $cashFileName,
+                'cash_amount' => $request->cash_amount,
+                'cash_receipt' => $cashFileName,
 
                 // 💳 Online Payment
-                'online_amount'     => $request->online_amount,
-                'online_receipt'    => $onlineFileName,
+                'online_amount' => $request->online_amount,
+                'online_receipt' => $onlineFileName,
 
                 // 🧾 Cheque Payment
-                'cheque_amount'     => $request->cheque_amount,
-                'cheque_number'     => $request->cheque_number,
-                'cheque_receipt'    => $chequeFileName,
+                'cheque_amount' => $request->cheque_amount,
+                'cheque_number' => $request->cheque_number,
+                'cheque_receipt' => $chequeFileName,
 
+                'message' => $request->remarks,
+                'status' => 'complete',
 
-                'message'           => $request->remarks,
-                'status'           => 'complete',
-
-                'product_document'    => $productFileName,
-                'warranty_card'    => $warrantyFileName,
+                'product_document' => $productFileName,
+                'warranty_card' => $warrantyFileName,
             ]);
 
             $amc = AmcCustomer::where('customer_id', $request->customer_id)->first();
@@ -415,10 +396,27 @@ class RegisterCustomerController extends Controller
                 $amc->save();
             }
 
-            $customer = Customer::findOrFail($request->customer_id);
-            $customer->ticket_status = 'complete';
-            $customer->save();
+            $customer = Customer::with('lead')->where('id', $request->customer_id)->first();
 
+            if ($customer) {
+                $customer->update([
+                    'ticket_status' => 'complete',
+                ]);
+
+                if ($customer->lead) {
+                    $customer->lead->update([
+                        'mobile' => $request->mobile,
+                        'landline' => $request->landline,
+                        'address' => $request->address,
+                    ]);
+                }
+            }
+
+            if ($ticket->support_type == 'regular_servicing') {
+                $customers = Customer::with('lead')->where('id', $request->customer_id)->first();
+                $customers->warranty__service_date = now();
+                $customers->save();
+            }
 
             // 🔁 Store Accessories
             if ($request->has('accessories_id') && is_array($request->accessories_id)) {
@@ -436,35 +434,31 @@ class RegisterCustomerController extends Controller
                 }
             }
 
-
-
             if ($paidAmount > 0) {
                 CustomerTicketPayment::create([
-                    'ticket_id'        => $ticket->id,
-                    'branch_id'      => $branch_id,
-                    'customer_id'    => $request->customer_id,
-                    'created_by'     => $request->converted_by ?? auth()->id(),
-                    'paid_amount'    => $paidAmount,
+                    'ticket_id' => $ticket->id,
+                    'branch_id' => $branch_id,
+                    'customer_id' => $request->customer_id,
+                    'created_by' => $request->converted_by ?? auth()->id(),
+                    'paid_amount' => $paidAmount,
                     'payment_method' => $request->method,
 
                     // 💰 Cash Payment
-                    'cash_amount'       => $request->cash_amount,
-                    'cash_receipt'      => $cashFileName,
+                    'cash_amount' => $request->cash_amount,
+                    'cash_receipt' => $cashFileName,
 
                     // 💳 Online Payment
-                    'online_amount'     => $request->online_amount,
-                    'online_receipt'    => $onlineFileName,
+                    'online_amount' => $request->online_amount,
+                    'online_receipt' => $onlineFileName,
 
                     // 🧾 Cheque Payment
-                    'cheque_amount'     => $request->cheque_amount,
-                    'cheque_number'     => $request->cheque_number,
-                    'cheque_receipt'    => $chequeFileName,
-                    'status'         => 'paid',
-
+                    'cheque_amount' => $request->cheque_amount,
+                    'cheque_number' => $request->cheque_number,
+                    'cheque_receipt' => $chequeFileName,
+                    'status' => 'paid',
 
                 ]);
             }
-
 
             TicketNote::create([
                 'ticket_id' => $ticket->id,
@@ -484,9 +478,11 @@ class RegisterCustomerController extends Controller
                 ->with('success', 'Ticket    created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Error creating installation: ' . $e->getMessage());
+
+            return back()->withInput()->with('error', 'Error creating installation: '.$e->getMessage());
         }
     }
+
     public function report()
     {
         // dd('hello');
@@ -502,14 +498,14 @@ class RegisterCustomerController extends Controller
             ->where('register_type', 'yes')
             ->where('support_type', 'maintenance')
             ->where('warranty', 'in')
-            ->where('status', 'complete')->latest()->get();
+            ->where('status', 'complete')->get();
 
         $maintananceout = CustomerTicket::with(['amc', 'customer', 'user'])
             ->where('branch_id', $branch_id)
             ->where('register_type', 'yes')
             ->where('support_type', 'maintenance')
             ->where('warranty', 'out')
-            ->where('status', 'complete')->latest()->get();
+            ->where('status', 'complete')->get();
 
         // Filter
         $filterin = CustomerTicket::with(['amc', 'customer', 'user'])
@@ -517,16 +513,14 @@ class RegisterCustomerController extends Controller
             ->where('register_type', 'yes')
             ->where('support_type', 'filter_leakage')
             ->where('warranty', 'in')
-            ->where('status', 'complete')->latest()->get();
+            ->where('status', 'complete')->get();
 
         $filterout = CustomerTicket::with(['amc', 'customer', 'user'])
             ->where('branch_id', $branch_id)
             ->where('register_type', 'yes')
             ->where('support_type', 'filter_leakage')
             ->where('warranty', 'out')
-            ->where('status', 'complete')->latest()->get();
-
-
+            ->where('status', 'complete')->get();
 
         // Location
         $locationin = CustomerTicket::with(['amc', 'customer', 'user'])
@@ -534,15 +528,14 @@ class RegisterCustomerController extends Controller
             ->where('register_type', 'yes')
             ->where('support_type', 'location_shifting')
             ->where('warranty', 'in')
-            ->where('status', 'complete')->latest()->get();
+            ->where('status', 'complete')->get();
 
         $locationout = CustomerTicket::with(['amc', 'customer', 'user'])
             ->where('branch_id', $branch_id)
             ->where('register_type', 'yes')
             ->where('support_type', 'location_shifting')
             ->where('warranty', 'out')
-            ->where('status', 'complete')->latest()->get();
-
+            ->where('status', 'complete')->get();
 
         // Regular
         $regularin = CustomerTicket::with(['amc', 'customer', 'user'])
@@ -550,20 +543,20 @@ class RegisterCustomerController extends Controller
             ->where('register_type', 'yes')
             ->where('support_type', 'regular_servicing')
             ->where('warranty', 'in')
-            ->where('status', 'complete')->latest()->get();
+            ->where('status', 'complete')->get();
 
         $regularout = CustomerTicket::with(['amc', 'customer', 'user'])
             ->where('branch_id', $branch_id)
             ->where('register_type', 'yes')
             ->where('support_type', 'regular_servicing')
             ->where('warranty', 'out')
-            ->where('status', 'complete')->latest()->get();
+            ->where('status', 'complete')->get();
 
         // foreach ($maintanancein as $customer) {
         //     $customer->created_time = $this->formatTimeDifference($customer->created_at);
         // }
-
-        return view('supportdashboard::register_customer.report', compact('maintanancein', 'maintananceout', 'users', 'filterin', 'filterout', 'locationin', 'locationout', 'regularin', 'regularout',));
+        // dd('hello');
+        return view('supportdashboard::register_customer.report', compact('maintanancein', 'maintananceout', 'users', 'filterin', 'filterout', 'locationin', 'locationout', 'regularin', 'regularout'));
     }
 
     public function complete()
@@ -605,8 +598,6 @@ class RegisterCustomerController extends Controller
             ->where('warranty', 'out')
             ->where('status', 'complete')->where('due_amount', 0)->latest()->get();
 
-
-
         // Location
         $locationin = CustomerTicket::with(['amc', 'customer', 'user'])
             ->where('branch_id', $branch_id)
@@ -621,7 +612,6 @@ class RegisterCustomerController extends Controller
             ->where('support_type', 'location_shifting')
             ->where('warranty', 'out')
             ->where('status', 'complete')->where('due_amount', 0)->latest()->get();
-
 
         // Regular
         $regularin = CustomerTicket::with(['amc', 'customer', 'user'])
@@ -642,23 +632,20 @@ class RegisterCustomerController extends Controller
         //     $customer->created_time = $this->formatTimeDifference($customer->created_at);
         // }
 
-        return view('supportdashboard::register_customer.complete', compact('maintanancein', 'maintananceout', 'users', 'filterin', 'filterout', 'locationin', 'locationout', 'regularin', 'regularout',));
+        return view('supportdashboard::register_customer.complete', compact('maintanancein', 'maintananceout', 'users', 'filterin', 'filterout', 'locationin', 'locationout', 'regularin', 'regularout'));
     }
-
-
 
     public function customerDetails($id)
     {
-        dd($id);
+        // dd($id);
         $customer = CustomerTicket::with([
             'customer',
             'payments',
-            'accessories.accessory'
+            'accessories.accessory',
         ])->where('id', $id)->firstOrFail();
 
         return view('supportdashboard::register_customer.details', compact('customer'));
     }
-
 
     /**
      * Show the specified resource.
@@ -692,8 +679,7 @@ class RegisterCustomerController extends Controller
         //
     }
 
-
-
+    // Warranty in
     public function regular()
     {
         if (auth()->user()->role['name'] === 'Super Admin') {
@@ -703,16 +689,22 @@ class RegisterCustomerController extends Controller
         }
 
         $oneYearAgo = now()->subYear();
+        $today = now()->toDateString();
 
         $customers = Customer::with(['lead', 'registerAmc'])
             ->where('branch_id', $branch_id)
             ->whereIn('ticket_status', ['on', 'report', 'complete'])
             ->whereDate('created_at', '>=', $oneYearAgo)
-            ->orderBy('created_at', 'desc')->get();
+            ->whereRaw('
+            DATE_ADD(warranty__service_date, INTERVAL 4 MONTH) - INTERVAL 2 DAY <= ?
+        ', [$today])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('supportdashboard::register_customer.warranty_in_ticketcreate', compact('customers'));
     }
 
+    // Warranty Out
     public function warrenty()
     {
         if (auth()->user()->role['name'] === 'Super Admin') {
@@ -722,19 +714,24 @@ class RegisterCustomerController extends Controller
         }
 
         $oneYearAgo = now()->subYear();
+        $today = now()->toDateString();
 
         $customers = Customer::with(['lead', 'registerAmc'])
             ->where('branch_id', $branch_id)
             ->whereIn('ticket_status', ['on', 'report', 'complete'])
             ->whereDate('created_at', '<', $oneYearAgo)
-            ->orderBy('created_at', 'desc')->get();
+            ->whereRaw('
+            DATE_ADD(warranty__service_date, INTERVAL 4 MONTH) - INTERVAL 2 DAY <= ?
+        ', [$today])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('supportdashboard::register_customer.warranty_out_ticketcreate', compact('customers'));
     }
 
     private function formatTimeDifference($dateTime)
     {
-        if (!$dateTime) {
+        if (! $dateTime) {
             return 'N/A';
         }
 
@@ -752,22 +749,38 @@ class RegisterCustomerController extends Controller
         $parts = [];
 
         if ($years > 0) {
-            $parts[] = $years . ' year' . ($years > 1 ? 's' : '');
-            if ($months > 0) $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
+            $parts[] = $years.' year'.($years > 1 ? 's' : '');
+            if ($months > 0) {
+                $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            }
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
         } elseif ($months > 0) {
-            $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
+            $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
         } elseif ($days > 0) {
-            $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         } else {
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         }
 
-        return $parts ? implode(' ', $parts) . ' ago' : 'Just now';
+        return $parts ? implode(' ', $parts).' ago' : 'Just now';
     }
 }

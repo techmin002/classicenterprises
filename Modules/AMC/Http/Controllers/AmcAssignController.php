@@ -166,12 +166,12 @@ class AmcAssignController extends Controller
 
         ]);
 
-        if ($request->customer_id) {
-            $customer = Customer::findOrFail($request->customer_id);
-            $customer->amc = 'yes';
-            $customer->amc_date = Carbon::now();
-            $customer->save();
-        }
+        // if ($request->customer_id) {
+        //     $customer = Customer::findOrFail($request->customer_id);
+        //     $customer->amc = 'yes';
+        //     $customer->amc_date = Carbon::now();
+        //     $customer->save();
+        // }
 
         return redirect()->route('amcassign.index')->with('success', 'AMC Assign successfully.');
     }

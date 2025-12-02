@@ -16,7 +16,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Ticket Queue</h1>
+                        <h1>Outsider Customer Ticket Queue</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -62,8 +62,8 @@
                                                 <td class="text-center">{{ $exp->contact ?? 'N/A' }}</td>
                                                 <td class="text-center">{{ $exp->address ?? 'N/A' }}</td>
                                                 <td class="text-center">{{ $exp->product_name ?? 'N/A' }}</td>
-                                                <td class="text-center">{{ $exp->support_type ?? 'N/A' }}</td>
-                                                <td class="text-center">{{ $exp->priority ?? 'N/A' }}</td>
+                                                <td class="text-center">{{ ucfirst($exp->support_type) ?? 'N/A' }}</td>
+                                                <td class="text-center">{{ ucfirst($exp->priority) ?? 'N/A' }}</td>
                                                 <td class="text-center text-muted">{{ $exp->created_time ?? 'N/A' }}</td>
 
                                                 <td>

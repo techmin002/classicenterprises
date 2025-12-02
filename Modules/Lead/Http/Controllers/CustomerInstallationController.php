@@ -336,6 +336,8 @@ class CustomerInstallationController extends Controller
                 'warranty_in'       => $request->warranty_from,
                 'warranty_out'      => $request->warranty_to,
                 'warranty_lifetime' => $request->has('lifetime') ? 1 : 0,
+                'warranty__service_date'       => $request->install_date,
+
 
                 'product_document'    => $productFileName,
                 'warranty_card'    => $warrantyFileName,

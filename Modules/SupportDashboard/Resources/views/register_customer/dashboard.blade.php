@@ -5,7 +5,7 @@
 @section('breadcrumb')
 <ol class="breadcrumb border-0 m-0">
     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-    <li class="breadcrumb-item active">Support Dashboard</li>
+    <li class="breadcrumb-item active">Register Customer Support Dashboard</li>
 </ol>
 @endsection
 
@@ -34,21 +34,6 @@
             <div class="row">
                 <div class="col-lg-3 col-6">
                     <!-- small box -->
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3>{{ $totalcustomer }}</h3>
-
-                            <p>Customers</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-bag"></i>
-                        </div>
-                        <a href="" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <!-- ./col -->
-                <div class="col-lg-3 col-6">
-                    <!-- small box -->
                     <div class="small-box bg-primary">
                         <div class="inner">
                             <h3>{{ $queuecount }}</h3>
@@ -60,6 +45,21 @@
                         </div>
                         <a href="{{ route('registercustomer-ticket.queue') }}" class="small-box-footer">More info <i
                                 class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ $totalcustomer }}</h3>
+
+                            <p>Customers</p>
+                        </div>
+                        <div class="icon">
+                            <i class="ion ion-bag"></i>
+                        </div>
+                        <a href="" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
                 <!-- ./col -->

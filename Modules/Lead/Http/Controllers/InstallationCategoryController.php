@@ -2,13 +2,11 @@
 
 namespace Modules\Lead\Http\Controllers;
 
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use App\Models\Log;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Modules\EMISystem\Entities\EmiPlan;
 use Modules\Lead\Entities\Customer;
@@ -19,14 +17,17 @@ use Modules\Lead\Entities\CustomerProduct;
 use Modules\Lead\Entities\EmiCustomer;
 use Modules\Lead\Entities\Lead;
 use Modules\Lead\Entities\Skim;
-use Modules\Product\Entities\Machinery;
 
 class InstallationCategoryController extends Controller
 {
     const STATUS_QUEUE = 'installation_queue';
+
     const STATUS_REPORT = 'installation_report';
+
     const STATUS_COMPLETE = 'installation_complete';
+
     const STATUS_EMI = 'emi_process';
+
     /**
      * Display a listing of the resource.
      */
@@ -54,8 +55,8 @@ class InstallationCategoryController extends Controller
 
         // ✅ Custom date filter
         if ($request->filled(['start_date', 'end_date'])) {
-            $start = $request->start_date . ' 00:00:00';
-            $end = $request->end_date . ' 23:59:59';
+            $start = $request->start_date.' 00:00:00';
+            $end = $request->end_date.' 23:59:59';
             $customers->whereBetween('updated_at', [$start, $end]);
         }
 
@@ -72,7 +73,6 @@ class InstallationCategoryController extends Controller
         return view('lead::installation-category.queue', compact('customers', 'installation_category', 'leads', 'users'));
     }
 
-
     private function getCustomersByStatus($status, $installation_category)
     {
         $query = Customer::with('lead', 'products')
@@ -86,9 +86,6 @@ class InstallationCategoryController extends Controller
 
         return $query;
     }
-
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -112,7 +109,6 @@ class InstallationCategoryController extends Controller
         ));
     }
 
-
     public function installationCategoryReport(Request $request, $installation_category)
     {
         // Start query (Query Builder, do not call get() yet)
@@ -129,8 +125,8 @@ class InstallationCategoryController extends Controller
 
         // ✅ Custom date filter
         if ($request->filled(['start_date', 'end_date'])) {
-            $start = $request->start_date . ' 00:00:00';
-            $end = $request->end_date . ' 23:59:59';
+            $start = $request->start_date.' 00:00:00';
+            $end = $request->end_date.' 23:59:59';
             $customers->whereBetween('updated_at', [$start, $end]);
         }
 
@@ -147,11 +143,9 @@ class InstallationCategoryController extends Controller
         return view('lead::installation-category.reports', compact('customers', 'installation_category'));
     }
 
-
-
     private function formatTimeDifference($dateTime)
     {
-        if (!$dateTime) {
+        if (! $dateTime) {
             return 'N/A';
         }
 
@@ -169,23 +163,39 @@ class InstallationCategoryController extends Controller
         $parts = [];
 
         if ($years > 0) {
-            $parts[] = $years . ' year' . ($years > 1 ? 's' : '');
-            if ($months > 0) $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
+            $parts[] = $years.' year'.($years > 1 ? 's' : '');
+            if ($months > 0) {
+                $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            }
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
         } elseif ($months > 0) {
-            $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
+            $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
         } elseif ($days > 0) {
-            $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         } else {
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         }
 
-        return $parts ? implode(' ', $parts) . ' ago' : 'Just now';
+        return $parts ? implode(' ', $parts).' ago' : 'Just now';
     }
 
     /**
@@ -217,8 +227,8 @@ class InstallationCategoryController extends Controller
 
         // ✅ Custom date filter
         if ($request->filled(['start_date', 'end_date'])) {
-            $start = $request->start_date . ' 00:00:00';
-            $end = $request->end_date . ' 23:59:59';
+            $start = $request->start_date.' 00:00:00';
+            $end = $request->end_date.' 23:59:59';
             $customers->whereBetween('updated_at', [$start, $end]);
         }
 
@@ -232,7 +242,6 @@ class InstallationCategoryController extends Controller
 
         return view('lead::installation-category.complete', compact('customers', 'installation_category'));
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -263,7 +272,6 @@ class InstallationCategoryController extends Controller
             // Process Payment and determine status
             $status = $this->processPaymentAndDetermineStatus($request, $customer, $lead);
 
-
             $isGifted = $request->is_gifted == 1;
 
             $username = $request->username; // the generated username from frontend
@@ -274,7 +282,7 @@ class InstallationCategoryController extends Controller
             // Check in customers table
             while (Customer::where('user_name', $username)->exists()) {
                 // dd('HiI');
-                $username = $originalUsername . $counter;
+                $username = $originalUsername.$counter;
                 $counter++;
             }
             // 🧾 Handle Receipts
@@ -313,8 +321,6 @@ class InstallationCategoryController extends Controller
                 $status = 'installation_report';
             }
 
-
-
             if ($request->hasFile('product_document')) {
                 $productFile = $request->file('product_document');
                 $productFileName = $productFile->getClientOriginalName(); // keep original name
@@ -330,70 +336,67 @@ class InstallationCategoryController extends Controller
                 $warrantyFileName = $customer->warranty_card;
             }
 
-
             $totalAmount = $grandTotal - $request->exchange_amount;
             // 🧩 Update Customer
             $customer->update([
-                'user_name'         => $username,
-                'name'      => $request->name,
-                'mobile'      => $request->mobile,
-                'landline'      => $request->landline,
-                'address'      => $request->address,
-                'email'      => $request->email,
-                'install_date'      => $request->install_date,
-                'branch_id'         => $lead->branch_id,
-                'total_amount'      => $totalAmount,
-                'paid_amount'       => $paidAmount,
-                'due_amount'        => $dueAmount,
-                'customer_type'     => 'indoor',
-                'message'           => $request->remarks,
-                'ticket_status'     => 'on',
-                'status'            => $status,
-                'gifted'            => $request->is_gifted,
-                'warranty_in'       => $request->warranty_from,
-                'warranty_out'      => $request->warranty_to,
+                'user_name' => $username,
+                'name' => $request->name,
+                'mobile' => $request->mobile,
+                'landline' => $request->landline,
+                'address' => $request->address,
+                'email' => $request->email,
+                'install_date' => $request->install_date,
+                'branch_id' => $lead->branch_id,
+                'total_amount' => $totalAmount,
+                'paid_amount' => $paidAmount,
+                'due_amount' => $dueAmount,
+                'customer_type' => 'indoor',
+                'message' => $request->remarks,
+                'ticket_status' => 'on',
+                'status' => $status,
+                'gifted' => $request->is_gifted,
+                'warranty_in' => $request->warranty_from,
+                'warranty_out' => $request->warranty_to,
                 'warranty_lifetime' => $request->has('lifetime') ? 1 : 0,
+                'warranty__service_date' => $request->install_date,
 
-
-                'product_document'    => $productFileName,
-                'warranty_card'    => $warrantyFileName,
-
+                'product_document' => $productFileName,
+                'warranty_card' => $warrantyFileName,
 
                 // 🧾 Payment Section
-                'payment_status'    => $request->payment_status,
-                'payment_method'    => $request->method,
+                'payment_status' => $request->payment_status,
+                'payment_method' => $request->method,
 
                 // 💰 Cash Payment
-                'cash_amount'       => $request->cash_amount,
-                'cash_receipt'      => $cashFileName,
+                'cash_amount' => $request->cash_amount,
+                'cash_receipt' => $cashFileName,
 
                 // 💳 Online Payment
-                'online_amount'     => $request->online_amount,
-                'online_receipt'    => $onlineFileName,
+                'online_amount' => $request->online_amount,
+                'online_receipt' => $onlineFileName,
 
                 // 🧾 Cheque Payment
-                'cheque_amount'     => $request->cheque_amount,
-                'cheque_number'     => $request->cheque_number,
-                'cheque_receipt'    => $chequeFileName,
+                'cheque_amount' => $request->cheque_amount,
+                'cheque_number' => $request->cheque_number,
+                'cheque_receipt' => $chequeFileName,
             ]);
-
 
             if ($paidAmount > 0) {
                 CustomerPayment::create([
-                    'lead_id'        => $customer->lead_id,
-                    'branch_id'      => $customer->branch_id,
-                    'customer_id'    => $customer->id,
-                    'created_by'     => $customer->converted_by ?? auth()->id(),
-                    'paid_amount'    => $customer->paid_amount ?? 0,
+                    'lead_id' => $customer->lead_id,
+                    'branch_id' => $customer->branch_id,
+                    'customer_id' => $customer->id,
+                    'created_by' => $customer->converted_by ?? auth()->id(),
+                    'paid_amount' => $customer->paid_amount ?? 0,
                     'payment_method' => $customer->payment_method ?? null,
-                    'cash_amount'    => $customer->cash_amount ?? 0,
-                    'cash_receipt'   => $customer->cash_receipt ?? null,
-                    'online_amount'  => $customer->online_amount ?? 0,
+                    'cash_amount' => $customer->cash_amount ?? 0,
+                    'cash_receipt' => $customer->cash_receipt ?? null,
+                    'online_amount' => $customer->online_amount ?? 0,
                     'online_receipt' => $customer->online_receipt ?? null,
-                    'cheque_amount'  => $customer->cheque_amount ?? 0,
-                    'cheque_number'  => $customer->cheque_number ?? null,
+                    'cheque_amount' => $customer->cheque_amount ?? 0,
+                    'cheque_number' => $customer->cheque_number ?? null,
                     'cheque_receipt' => $customer->cheque_receipt ?? null,
-                    'status'         => 'paid',
+                    'status' => 'paid',
                 ]);
             }
 
@@ -404,11 +407,11 @@ class InstallationCategoryController extends Controller
             ]);
 
             Log::create([
-                'perform'   => auth()->user()->name . ' Convert Lead Into Client : '
-                    . $lead->name . ' at ' . now(),
-                'user_id'   => auth()->user()->id,
+                'perform' => auth()->user()->name.' Convert Lead Into Client : '
+                    .$lead->name.' at '.now(),
+                'user_id' => auth()->user()->id,
                 'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-                'url'       => url()->current(),
+                'url' => url()->current(),
             ]);
 
             DB::commit();
@@ -417,10 +420,10 @@ class InstallationCategoryController extends Controller
                 ->with('success', 'Installation created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Error creating installation: ' . $e->getMessage());
+
+            return back()->withInput()->with('error', 'Error creating installation: '.$e->getMessage());
         }
     }
-
 
     /**
      * Process products for installation
@@ -441,7 +444,7 @@ class InstallationCategoryController extends Controller
                         $existing->update([
                             'product_qty' => $qty,
                             'product_price' => $price,
-                            'product_total' =>  $qty * $price,
+                            'product_total' => $qty * $price,
                         ]);
                     } else {
                         CustomerProduct::create([
@@ -479,9 +482,9 @@ class InstallationCategoryController extends Controller
 
                     if ($existing) {
                         $existing->update([
-                            'accessory_qty' =>  $qty,
+                            'accessory_qty' => $qty,
                             'accessory_price' => $price,
-                            'accessory_total' =>  $qty * $price,
+                            'accessory_total' => $qty * $price,
                         ]);
                     } else {
                         CustomerAccessory::create([
@@ -499,6 +502,7 @@ class InstallationCategoryController extends Controller
             }
         }
     }
+
     /**
      * Process payment and determine customer status
      */
@@ -606,6 +610,7 @@ class InstallationCategoryController extends Controller
     {
         //
     }
+
     public function assignStore(Request $request, $id)
     {
         // dd($request->all());
@@ -628,17 +633,17 @@ class InstallationCategoryController extends Controller
         ]);
 
         Log::create([
-            'perform'   => auth()->user()->name . ' Assign Lead to : '
-                . $user->name . ' at ' . now(),
-            'user_id'   => auth()->user()->id,
+            'perform' => auth()->user()->name.' Assign Lead to : '
+                .$user->name.' at '.now(),
+            'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
+            'url' => url()->current(),
         ]);
+
         // return back()->with('success', 'Lead assigned successfully.');
         return redirect()->route('installation-category-assign.index', ['installation_category' => $customer->installation_category])
             ->with('success', 'Lead assigned successfully.');
     }
-
 
     public function assignindex(Request $request, $installation_category)
     {
@@ -669,8 +674,8 @@ class InstallationCategoryController extends Controller
 
         // ✅ Custom date filter
         if ($request->filled(['start_date', 'end_date'])) {
-            $start = $request->start_date . ' 00:00:00';
-            $end = $request->end_date . ' 23:59:59';
+            $start = $request->start_date.' 00:00:00';
+            $end = $request->end_date.' 23:59:59';
             $customers->whereBetween('updated_at', [$start, $end]);
         }
 
@@ -693,7 +698,7 @@ class InstallationCategoryController extends Controller
             ->where('id', $id)
             ->first();
 
-        if (!$customer) {
+        if (! $customer) {
             abort(404, 'Customer not found');
         }
 
@@ -705,7 +710,6 @@ class InstallationCategoryController extends Controller
 
         return view('lead::details.index', compact('customer', 'skims'));
     }
-
 
     public function customerDetailsPDF($id)
     {
@@ -719,6 +723,6 @@ class InstallationCategoryController extends Controller
         $pdf = Pdf::loadView('lead::details.pdf', compact('customer', 'skims'))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->download('Customer_Details_' . $customer->id . '.pdf');
+        return $pdf->download('Customer_Details_'.$customer->id.'.pdf');
     }
 }

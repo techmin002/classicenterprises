@@ -5,9 +5,9 @@ namespace Modules\SupportDashboard\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Log;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Modules\Lead\Entities\Customer;
 use Modules\Lead\Entities\CustomerAccessory;
@@ -29,7 +29,6 @@ class OutsiderCustomerController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-
     public function dashboard()
     {
         if (auth()->user()->role->name === 'Super Admin') {
@@ -46,6 +45,24 @@ class OutsiderCustomerController extends Controller
         return view('supportdashboard::outsider_customer.dashboard', compact('totalcustomer', 'queuecount', 'assigncount', 'completecount'));
     }
 
+    public function regular_service()
+    {
+        $branchId = auth()->user()->role->name === 'Super Admin'
+            ? session('branch_id')
+            : auth()->user()->branch_id;
+
+        $today = Carbon::now()->toDateString();
+
+        $outsider = CustomerTicket::where('branch_id', $branchId)
+            ->where('outsider_type', 'yes')
+            ->whereIn('status', ['complete', 'report'])
+            ->whereRaw('DATE_ADD(updated_at, INTERVAL 4 MONTH) <= ?', [$today])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('supportdashboard::outsider_customer.service', compact('outsider'));
+    }
+
     public function customercreate(Request $request)
     {
 
@@ -56,23 +73,22 @@ class OutsiderCustomerController extends Controller
         }
         // dd($request->all());
         $ticket = CustomerTicket::create([
-            'customer_id'     => $request->customer_id,
-            'customer_name'     => $request->customer_name,
-            'contact'     => $request->contact,
-            'landline'     => $request->landline,
-            'email'     => $request->email,
-            'address'     => $request->address,
-            'product_name'     => $request->product_name,
-            'outsider_type'     => 'yes',
-            'branch_id'       => $branch_id,
-            'message'        => $request->message,
-            'support_type'    => $request->support_type,
-            'priority'        => $request->priority,
-            'amc'             => 'out',
-            'warranty'        => 'out',
+            'customer_id' => $request->customer_id,
+            'customer_name' => $request->customer_name,
+            'contact' => $request->contact,
+            'landline' => $request->landline,
+            'email' => $request->email,
+            'address' => $request->address,
+            'product_name' => $request->product_name,
+            'outsider_type' => 'yes',
+            'branch_id' => $branch_id,
+            'support_type' => $request->support_type,
+            'priority' => $request->priority,
+            'amc' => 'out',
+            'warranty' => 'out',
 
-            'message'        => $request->message,
-            'status'          => 'queue',
+            'message' => $request->message,
+            'status' => 'queue',
         ]);
         TicketNote::create([
             'ticket_id' => $ticket->id,
@@ -80,61 +96,16 @@ class OutsiderCustomerController extends Controller
         ]);
 
         Log::create([
-            'perform'   => auth()->user()->name
-                . ' Outsider Customer Ticket  Created:'
-                . ' at ' . now(),
-            'user_id'   => auth()->user()->id,
+            'perform' => auth()->user()->name
+                .' Outsider Customer Ticket  Created:'
+                .' at '.now(),
+            'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
+            'url' => url()->current(),
         ]);
 
         return redirect()->route('outsidercustomer-ticket.queue')->with('success', 'OutSider Customer Ticket Created Successfully.');
     }
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    // public function store(Request $request, $id)
-    // {
-    //     // dd($id);
-    //     $ticket = CustomerTicket::findOrFail($id);
-    //     // dd($request->all());
-
-    //     if (auth()->user()->role['name'] === 'Super Admin') {
-    //         $branch_id = session('branch_id');
-    //     } else {
-    //         $branch_id = auth()->user()->branch_id;
-    //     }
-
-
-    //     $ticket->update([
-    //         'support_type'    => $request->support_type,
-    //         'priority'        => $request->priority,
-    //         'amc'             => $request->amc,
-    //         'warranty'        => $request->warranty,
-
-    //         'message'        => $request->message,
-    //         'status'          => 'queue',
-    //     ]);
-
-
-    //     TicketNote::create([
-    //         'ticket_id' => $ticket->id,
-    //         'note' => $request->message,
-    //     ]);
-
-    //     Log::create([
-    //         'perform'   => auth()->user()->name
-    //             . ' Task ' . $request->support_type . ' Created:'
-    //             . ' at ' . now(),
-    //         'user_id'   => auth()->user()->id,
-    //         'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-    //         'url'       => url()->current(),
-    //     ]);
-
-    //     return redirect()->route('outsidercustomer-ticket.queue')->with('success', 'Register Customer Ticket Created Successfully.');
-    // }
 
     public function queue()
     {
@@ -164,6 +135,7 @@ class OutsiderCustomerController extends Controller
             'ticket_id' => $ticket->id,
             'note' => $request->note,
         ]);
+
         // Log::create([
         //     'perform'   => auth()->user()->name . ' Message Update : '
         //         . $user->name . ' at ' . now(),
@@ -198,12 +170,13 @@ class OutsiderCustomerController extends Controller
         ]);
 
         Log::create([
-            'perform'   => auth()->user()->name . ' Assign Lead to : '
-                . $user->name . ' at ' . now(),
-            'user_id'   => auth()->user()->id,
+            'perform' => auth()->user()->name.' Assign Lead to : '
+                .$user->name.' at '.now(),
+            'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
+            'url' => url()->current(),
         ]);
+
         // return back()->with('success', 'Lead assigned successfully.');
         return redirect()->route('outsidercustomer-ticket.assign')
             ->with('success', 'Ticket assigned successfully.');
@@ -221,12 +194,13 @@ class OutsiderCustomerController extends Controller
         foreach ($customers as $customer) {
             $customer->created_time = $this->formatTimeDifference($customer->updated_at);
         }
+
         return view('supportdashboard::outsider_customer.assign', compact('customers', 'users'));
     }
 
     public function create($id)
     {
-        $customer = CustomerTicket::with(['amc', 'customer', 'branch'])->findOrFail($id);;
+        $customer = CustomerTicket::with(['amc', 'customer', 'branch'])->findOrFail($id);
         // $customer = Customer::with('lead')->findOrFail($id);
         $customerAccessories = CustomerAccessory::with('accessory')->get();
 
@@ -256,7 +230,7 @@ class OutsiderCustomerController extends Controller
 
             // Check in customers table
             while (Customer::where('user_name', $username)->exists()) {
-                $username = $originalUsername . $counter;
+                $username = $originalUsername.$counter;
                 $counter++;
             }
             // 🧾 Handle Receipts
@@ -265,7 +239,7 @@ class OutsiderCustomerController extends Controller
                 $cashFileName = $cashFile->getClientOriginalName(); // keep original name
                 $cashFile->move(public_path('receipts'), $cashFileName); // save to public/receipts
             } else {
-                $cashFileName = Null;
+                $cashFileName = null;
             }
             //
 
@@ -276,7 +250,7 @@ class OutsiderCustomerController extends Controller
                 $onlineFileName = $onlineFile->getClientOriginalName();
                 $onlineFile->move(public_path('receipts'), $onlineFileName);
             } else {
-                $onlineFileName = Null;
+                $onlineFileName = null;
             }
 
             if ($request->hasFile('cheque_receipt')) {
@@ -284,7 +258,7 @@ class OutsiderCustomerController extends Controller
                 $chequeFileName = $chequeFile->getClientOriginalName();
                 $chequeFile->move(public_path('receipts'), $chequeFileName);
             } else {
-                $chequeFileName = Null;
+                $chequeFileName = null;
             }
 
             $paidAmount = ($request->cash_amount ?? 0) + ($request->online_amount ?? 0) + ($request->cheque_amount ?? 0);
@@ -301,60 +275,57 @@ class OutsiderCustomerController extends Controller
                 $productFileName = $productFile->getClientOriginalName(); // keep original name
                 $productFile->move(public_path('receipts'), $productFileName); // save to public/receipts
             } else {
-                $productFileName = NULL;
+                $productFileName = null;
             }
             if ($request->hasFile('warranty_card')) {
                 $warrantyFile = $request->file('warranty_card');
                 $warrantyFileName = $warrantyFile->getClientOriginalName(); // keep original name
                 $warrantyFile->move(public_path('receipts'), $warrantyFileName); // save to public/receipts
             } else {
-                $warrantyFileName = NULL;
+                $warrantyFileName = null;
             }
-
 
             $totalAmount = $grandTotal + $request->service_charge;
 
             // 🧩 Update Customer
             $ticket->update([
-                'user_name'         => $username,
-                'customer_name'      => $request->name,
-                'contact'      => $request->mobile,
-                'landline'      => $request->landline,
-                'address'      => $request->address,
-                'email'      => $request->email,
-                'install_date'      => $request->install_date,
-                'branch_id'         => $branch_id,
-                'service_type'      => $request->service_type,
-                'service_charge'      => $request->service_charge ?? 0,
-                'amount'      => $request->grand_total,
-                'total_amount'      => $totalAmount,
-                'paid_amount'       => $paidAmount,
-                'due_amount'        => $dueAmount,
+                'user_name' => $username,
+                'customer_name' => $request->name,
+                'contact' => $request->mobile,
+                'landline' => $request->landline,
+                'address' => $request->address,
+                'email' => $request->email,
+                'install_date' => now(),
+                'branch_id' => $branch_id,
+                'service_type' => $request->service_type,
+                'service_charge' => $request->service_charge ?? 0,
+                'amount' => $request->grand_total,
+                'total_amount' => $totalAmount,
+                'paid_amount' => $paidAmount,
+                'due_amount' => $dueAmount,
 
                 // 🧾 Payment Section
-                'payment_status'    => $request->payment_status,
-                'payment_method'    => $request->method,
+                'payment_status' => $request->payment_status,
+                'payment_method' => $request->method,
 
                 // 💰 Cash Payment
-                'cash_amount'       => $request->cash_amount,
-                'cash_receipt'      => $cashFileName,
+                'cash_amount' => $request->cash_amount,
+                'cash_receipt' => $cashFileName,
 
                 // 💳 Online Payment
-                'online_amount'     => $request->online_amount,
-                'online_receipt'    => $onlineFileName,
+                'online_amount' => $request->online_amount,
+                'online_receipt' => $onlineFileName,
 
                 // 🧾 Cheque Payment
-                'cheque_amount'     => $request->cheque_amount,
-                'cheque_number'     => $request->cheque_number,
-                'cheque_receipt'    => $chequeFileName,
+                'cheque_amount' => $request->cheque_amount,
+                'cheque_number' => $request->cheque_number,
+                'cheque_receipt' => $chequeFileName,
 
+                'message' => $request->remarks,
+                'status' => 'complete',
 
-                'message'           => $request->remarks,
-                'status'           => 'complete',
-
-
-                'product_document'    => $productFileName,
-                'warranty_card'    => $warrantyFileName,
+                'product_document' => $productFileName,
+                'warranty_card' => $warrantyFileName,
             ]);
 
             // 🔁 Store Accessories
@@ -373,35 +344,31 @@ class OutsiderCustomerController extends Controller
                 }
             }
 
-
-
             if ($paidAmount > 0) {
                 CustomerTicketPayment::create([
-                    'ticket_id'        => $ticket->id,
-                    'branch_id'      => $branch_id,
-                    'customer_id'    => $request->customer_id,
-                    'created_by'     => $request->converted_by ?? auth()->id(),
-                    'paid_amount'    => $paidAmount,
+                    'ticket_id' => $ticket->id,
+                    'branch_id' => $branch_id,
+                    'customer_id' => $request->customer_id,
+                    'created_by' => $request->converted_by ?? auth()->id(),
+                    'paid_amount' => $paidAmount,
                     'payment_method' => $request->method,
 
                     // 💰 Cash Payment
-                    'cash_amount'       => $request->cash_amount,
-                    'cash_receipt'      => $cashFileName,
+                    'cash_amount' => $request->cash_amount,
+                    'cash_receipt' => $cashFileName,
 
                     // 💳 Online Payment
-                    'online_amount'     => $request->online_amount,
-                    'online_receipt'    => $onlineFileName,
+                    'online_amount' => $request->online_amount,
+                    'online_receipt' => $onlineFileName,
 
                     // 🧾 Cheque Payment
-                    'cheque_amount'     => $request->cheque_amount,
-                    'cheque_number'     => $request->cheque_number,
-                    'cheque_receipt'    => $chequeFileName,
-                    'status'         => 'paid',
-
+                    'cheque_amount' => $request->cheque_amount,
+                    'cheque_number' => $request->cheque_number,
+                    'cheque_receipt' => $chequeFileName,
+                    'status' => 'paid',
 
                 ]);
             }
-
 
             TicketNote::create([
                 'ticket_id' => $ticket->id,
@@ -421,10 +388,10 @@ class OutsiderCustomerController extends Controller
                 ->with('success', 'Ticket    created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Error creating installation: ' . $e->getMessage());
+
+            return back()->withInput()->with('error', 'Error creating installation: '.$e->getMessage());
         }
     }
-
 
     public function report()
     {
@@ -439,6 +406,7 @@ class OutsiderCustomerController extends Controller
         foreach ($customers as $customer) {
             $customer->created_time = $this->formatTimeDifference($customer->updated_at);
         }
+
         return view('supportdashboard::outsider_customer.report', compact('customers', 'users'));
     }
 
@@ -455,9 +423,9 @@ class OutsiderCustomerController extends Controller
         foreach ($customers as $customer) {
             $customer->created_time = $this->formatTimeDifference($customer->updated_at);
         }
+
         return view('supportdashboard::outsider_customer.complete', compact('customers', 'users'));
     }
-
 
     public function customerDetails($id)
     {
@@ -465,11 +433,12 @@ class OutsiderCustomerController extends Controller
         $customer = CustomerTicket::with([
             'customer',
             'payments',
-            'accessories.accessory'
+            'accessories.accessory',
         ])->where('id', $id)->firstOrFail();
 
         return view('supportdashboard::outsider_customer.details', compact('customer'));
     }
+
     /**
      * Show the specified resource.
      */
@@ -504,7 +473,7 @@ class OutsiderCustomerController extends Controller
 
     private function formatTimeDifference($dateTime)
     {
-        if (!$dateTime) {
+        if (! $dateTime) {
             return 'N/A';
         }
 
@@ -522,22 +491,68 @@ class OutsiderCustomerController extends Controller
         $parts = [];
 
         if ($years > 0) {
-            $parts[] = $years . ' year' . ($years > 1 ? 's' : '');
-            if ($months > 0) $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
+            $parts[] = $years.' year'.($years > 1 ? 's' : '');
+            if ($months > 0) {
+                $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            }
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
         } elseif ($months > 0) {
-            $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
+            $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
         } elseif ($days > 0) {
-            $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         } else {
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         }
 
-        return $parts ? implode(' ', $parts) . ' ago' : 'Just now';
+        return $parts ? implode(' ', $parts).' ago' : 'Just now';
+    }
+
+    public function ticket_create(Request $request)
+    {
+        $ticket = CustomerTicket::findOrFail($request->customer_id);
+
+        $ticket->update([
+            'message' => $request->message,
+            'support_type' => $request->support_type,
+            'priority' => $request->priority,
+            'amc' => 'out',
+            'warranty' => 'out',
+            'status' => 'queue',
+        ]);
+
+        TicketNote::create([
+            'ticket_id' => $ticket->id,
+            'note' => $request->message,
+        ]);
+
+        Log::create([
+            'perform' => auth()->user()->name
+                .' Outsider Customer Ticket  Created:'
+                .' at '.now(),
+            'user_id' => auth()->user()->id,
+            'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
+            'url' => url()->current(),
+        ]);
+
+        return redirect()->route('outsidercustomer-ticket.queue')->with('success', 'OutSider Customer Ticket Created Successfully.');
     }
 }

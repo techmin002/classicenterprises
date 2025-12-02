@@ -3,11 +3,10 @@
 namespace Modules\Lead\Entities;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\AMC\Entities\AmcCustomer;
-use Modules\AMC\Entities\RegisterCustomerAMC;
 use Modules\Branch\Entities\Branch;
 use Modules\Lead\Database\factories\CustomerFactory;
 
@@ -19,6 +18,7 @@ class Customer extends Model
      * The attributes that are mass assignable.
      */
     protected $table = 'customers';
+
     protected $fillable = [
         'user_name',
         'lead_id',
@@ -40,6 +40,7 @@ class Customer extends Model
         'gifted',
         'warranty_in',
         'warranty_out',
+        'warranty__service_date',
         'warranty_lifetime',
         'payment_status',
         'payment_method',
@@ -52,28 +53,34 @@ class Customer extends Model
         'cheque_receipt',
         'grand_total',
         'product_document',
-        'warranty_card'
+        'warranty_card',
     ];
+
     public function lead()
     {
         return $this->belongsTo(Lead::class);
     }
+
     public function payments()
     {
         return $this->hasMany(CustomerPayment::class);
     }
+
     protected static function newFactory()
     {
-        //return CustomerFactory::new();
+        // return CustomerFactory::new();
     }
+
     public function products()
     {
         return $this->hasMany(CustomerProduct::class)->with('product');
     }
+
     public function accessories()
     {
         return $this->hasMany(CustomerAccessory::class);
     }
+
     public function branch()
     {
         return $this->belongsTo(Branch::class);
@@ -83,10 +90,12 @@ class Customer extends Model
     {
         return $this->hasOne(EmiCustomer::class);
     }
+
     public function assignLead()
     {
         return $this->belongsTo(User::class, 'assign_to', 'id');
     }
+
     public function convertedBy()
     {
         return $this->belongsTo(User::class, 'converted_by');
@@ -94,6 +103,6 @@ class Customer extends Model
 
     public function registerAmc()
     {
-        return $this->hasOne(AmcCustomer::class, 'customer_id');
+        return $this->hasOne(AmcCustomer::class, 'customer_id')->latest('date');
     }
 }

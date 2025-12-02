@@ -4,6 +4,7 @@ namespace Modules\SupportDashboard\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Log;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,11 +28,17 @@ class TicketController extends Controller
         } else {
             $branch_id = auth()->user()->branch_id;
         }
-        $register = Customer::with(['lead', 'registerAmc'])
+        // Customers fetch
+        $register = Customer::with(['lead', 'registerAmc.amc'])
             ->where('branch_id', $branch_id)
             ->whereIn('ticket_status', ['on', 'report', 'complete'])
             ->orderBy('created_at', 'desc')
             ->get();
+
+        // Loop customers & calculate AMC status
+        foreach ($register as $customer) {
+            $customer->amc_status = $this->getAmcStatus($customer);
+        }
 
 
         $outsider = CustomerTicket::with('amc')
@@ -44,14 +51,59 @@ class TicketController extends Controller
             ->latest()->orderBy('created_at', 'desc')
             ->get();
 
-        $amccustomer = AmcCustomer::with(['customer', 'amc'])
+        $amccustomers = AmcCustomer::with(['customer', 'amc'])
             ->where('branch_id', $branch_id)
-            ->whereIn('status', ['on',])
-            ->latest()->orderBy('created_at', 'desc')
-            ->get();
+            ->whereIn('status', ['on'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy('customer_id')
+            ->map(fn($row) => $row->first())
+            ->values();
 
-        return view('supportdashboard::ticket.index', compact('register', 'outsider', 'amccustomer'));
+        return view('supportdashboard::ticket.index', compact('register', 'outsider', 'amccustomers'));
     }
+
+
+    private function getAmcStatus($customer)
+    {
+        // Agar AMC customer table me entry hi nahi hai
+        if (!$customer->registerAmc) {
+            // dd('hello');
+
+            return "No AMC";
+        }
+
+        $amcCustomer = $customer->registerAmc; // AmcCustomer table
+        $amc = $amcCustomer->amc;              // AMC table
+
+        if (!$amc) {
+            // dd('hii');
+            return "No AMC";
+        }
+
+        // AMC start date
+        $startDate = Carbon::parse($amcCustomer->date);
+        // dd($startDate);
+
+        // AMC kitne saal ka hai (AMC table me year diya hai)
+        $durationYears = $amc->year;
+
+        // Expiry date = start date + AMC year
+        $expiryDate = $startDate->copy()->addYears($durationYears);
+
+        // Today date
+        $today = Carbon::now();
+
+        // Check expired or active
+        if ($today->greaterThan($expiryDate)) {
+            // dd('expire');
+            return "AMC Out";   // Expired
+        }
+
+        return "AMC In";        // Active
+    }
+
+
 
     /**
      * Show the form for creating a new resource.

@@ -3,9 +3,8 @@
 namespace Modules\AMC\Entities;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\AMC\Database\factories\AmcCustomerFactory;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Lead\Entities\Customer;
 
 class AmcCustomer extends Model
@@ -44,14 +43,17 @@ class AmcCustomer extends Model
         'message',
         'status',
     ];
+
     public function amc()
     {
         return $this->belongsTo(Amc::class, 'amc_id');
     }
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'sales');

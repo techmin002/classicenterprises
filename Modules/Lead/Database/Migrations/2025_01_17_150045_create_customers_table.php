@@ -41,7 +41,6 @@ return new class extends Migration
             $table->string('cheque_number')->nullable();
             $table->string('cheque_receipt')->nullable();
 
-
             $table->boolean('gifted')->default(0);
             $table->string('customer_type')->nullable();
             $table->string('sales_type')->nullable();
@@ -52,6 +51,7 @@ return new class extends Migration
             $table->text('message')->nullable();
             $table->date('warranty_in')->nullable();
             $table->date('warranty_out')->nullable();
+            $table->date('warranty__service_date')->nullable();
             $table->boolean('warranty_lifetime')->default(0);
             $table->string('product_document')->nullable();
             $table->string('warranty_card')->nullable();

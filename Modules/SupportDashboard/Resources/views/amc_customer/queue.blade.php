@@ -3,227 +3,228 @@
 @section('title', ' Ticket Queue')
 
 @section('breadcrumb')
-    <ol class="breadcrumb border-0 m-0">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active"> Ticket Queue</li>
-    </ol>
+<ol class="breadcrumb border-0 m-0">
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+    <li class="breadcrumb-item active"> Ticket Queue</li>
+</ol>
 @endsection
 
 @section('content')
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Ticket Queue</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Ticket Queue</li>
-                        </ol>
-                    </div>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Amc Customer Ticket Queue</h1>
                 </div>
-            </div><!-- /.container-fluid -->
-        </section>
-
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-
-                        <!-- /.card -->
-
-                        <div class="card">
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center">S.N</th>
-                                            <th class="text-center">Name</th>
-                                            <th class="text-center">Mobile</th>
-                                            <th class="text-center">Address</th>
-                                            <th class="text-center">Product</th>
-                                            <th class="text-center">Warranty</th>
-                                            <th class="text-center">Category</th>
-                                            <th class="text-center">Priority</th>
-                                            <th class="text-center">Time</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($customers as $key => $exp)
-                                            <tr>
-                                                <td class="text-center">{{ $loop->iteration }}</td>
-                                                <td class="text-center">
-                                                    {{ $exp->customer->lead->name ?? ($exp->amccustomer->customer_name ?? $exp->customer_name) }}
-                                                </td>
-                                                <td class="text-center">
-                                                    {{ $exp->customer->lead->mobile ?? ($exp->amccustomer->contact ?? $exp->contact) }}
-                                                </td>
-                                                <td class="text-center">
-                                                    {{ $exp->customer->lead->address ?? ($exp->amccustomer->address ?? $exp->address) }}
-                                                </td>
-                                                <td class="text-center">
-                                                    @if ($exp->customer && $exp->customer->products && $exp->customer->products->count() > 0)
-                                                        @foreach ($exp->customer->products as $customerProduct)
-                                                            {{ $customerProduct->product->name }}
-                                                        @endforeach
-                                                    @else
-                                                        {{ $exp->amccustomer->product_name }}
-                                                    @endif
-
-                                                </td>
-                                                <td class="text-center">{{ $exp->warranty }}</td>
-                                                <td class="text-center">{{ $exp->support_type }}</td>
-                                                <td class="text-center">{{ $exp->priority }}</td>
-                                                <td class="text-center text-muted">{{ $exp->created_time }}</td>
-                                                <td>
-                                                    <!-- First row: Delete + Move to Assign buttons with gap -->
-                                                    <div class="d-flex align-items-center gap-2 mb-2">
-                                                        <a data-toggle="modal"
-                                                            data-target="#editCategory{{ $exp->id }}"
-                                                            style="margin-left: 3px" class="btn btn-primary btn-sm">
-                                                            <i class="fa fa-user-plus" title="Move to Assign"></i>
-                                                        </a>
-                                                        @include('supportdashboard::amc_customer.assign_action')
-                                                        <button id="delete" class="btn btn-danger btn-sm" disabled
-                                                            onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
-                                                            <i class="fa fa-trash"></i>
-                                                            <form id="destroy{{ $exp->id }}" class="d-none"
-                                                                action="{{ route('leads.destroy', $exp->id) }}"
-                                                                method="POST">
-                                                                @csrf
-                                                                @method('delete')
-                                                            </form>
-                                                        </button>
-                                                    </div>
-
-
-                                                    <a type="button" href="{{ route('customer.details', $exp->id) }}"
-                                                        class="btn btn-info btn-sm mt-2" disabled data-toggle="tooltip"
-                                                        data-placement="top" title="Details">Detail's
-                                                    </a>
-
-                                                </td>
-
-                                            </tr>
-                                        @endforeach
-
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th class="text-center">S.N</th>
-                                            <th class="text-center">Name</th>
-                                            <th class="text-center">Mobile</th>
-                                            <th class="text-center">Address</th>
-                                            <th class="text-center">Product</th>
-                                            <th class="text-center">Warranty</th>
-                                            <th class="text-center">Category</th>
-                                            <th class="text-center">Priority</th>
-                                            <th class="text-center">Time</th>
-                                            <th class="text-center">Action</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                    </div>
-                    <!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                        <li class="breadcrumb-item active">Ticket Queue</li>
+                    </ol>
                 </div>
-                <!-- /.row -->
             </div>
-            <!-- /.container-fluid -->
-        </section>
-        <!-- /.content -->
-    </div>
-    <script>
-        $(function() {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
-    <script>
-        document.querySelectorAll('.view-btn').forEach(btn => {
-            const box = btn.closest('td').querySelector('.details-box');
+        </div><!-- /.container-fluid -->
+    </section>
 
-            btn.addEventListener('mouseenter', () => {
-                box.style.display = 'block';
-            });
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
 
-            btn.addEventListener('mouseleave', () => {
-                // Hide only after a small delay to allow smooth hover transition
-                setTimeout(() => {
-                    if (!box.matches(':hover')) {
-                        box.style.display = 'none';
-                    }
-                }, 150);
-            });
+                    <!-- /.card -->
 
-            box.addEventListener('mouseenter', () => {
-                box.style.display = 'block';
-            });
+                    <div class="card">
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">S.N</th>
+                                        <th class="text-center">Name</th>
+                                        <th class="text-center">Mobile</th>
+                                        <th class="text-center">Address</th>
+                                        <th class="text-center">Product</th>
+                                        <th class="text-center">Amc Status</th>
+                                        <th class="text-center">Category</th>
+                                        <th class="text-center">Priority</th>
+                                        <th class="text-center">Time</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($customers as $key => $exp)
+                                    <tr>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                        <td class="text-center">
+                                            {{ $exp->customer->lead->name ?? ($exp->amccustomer->customer_name ??
+                                            $exp->customer_name) }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $exp->customer->lead->mobile ?? ($exp->amccustomer->contact ??
+                                            $exp->contact) }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ $exp->customer->lead->address ?? ($exp->amccustomer->address ??
+                                            $exp->address) }}
+                                        </td>
+                                        <td class="text-center">
+                                            @if ($exp->customer && $exp->customer->products &&
+                                            $exp->customer->products->count() > 0)
+                                            @foreach ($exp->customer->products as $customerProduct)
+                                            {{ $customerProduct->product->name }}
+                                            @endforeach
+                                            @else
+                                            {{ $exp->amccustomer->product_name }}
+                                            @endif
 
-            box.addEventListener('mouseleave', () => {
-                box.style.display = 'none';
-            });
+                                        </td>
+                                        <td class="text-center">{{ ucfirst($exp->amc) }}</td>
+                                        <td class="text-center">{{ ucfirst($exp->support_type) }}</td>
+                                        <td class="text-center">{{ ucfirst($exp->priority) }}</td>
+                                        <td class="text-center text-muted">{{ $exp->created_time }}</td>
+                                        <td>
+                                            <!-- First row: Delete + Move to Assign buttons with gap -->
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <a data-toggle="modal" data-target="#editCategory{{ $exp->id }}" style="margin-left: 3px" class="btn btn-primary btn-sm">
+                                                    <i class="fa fa-user-plus" title="Move to Assign"></i>
+                                                </a>
+                                                @include('supportdashboard::amc_customer.assign_action')
+                                                <button id="delete" class="btn btn-danger btn-sm" disabled onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
+                                                    <i class="fa fa-trash"></i>
+                                                    <form id="destroy{{ $exp->id }}" class="d-none" action="{{ route('leads.destroy', $exp->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('delete')
+                                                    </form>
+                                                </button>
+                                            </div>
+
+
+                                            <a type="button" href="{{ route('customer.details', $exp->id) }}" class="btn btn-info btn-sm mt-2" disabled data-toggle="tooltip" data-placement="top" title="Details">Detail's
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+                                    @endforeach
+
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th class="text-center">S.N</th>
+                                        <th class="text-center">Name</th>
+                                        <th class="text-center">Mobile</th>
+                                        <th class="text-center">Address</th>
+                                        <th class="text-center">Product</th>
+                                        <th class="text-center">Amc Status</th>
+                                        <th class="text-center">Category</th>
+                                        <th class="text-center">Priority</th>
+                                        <th class="text-center">Time</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+</div>
+<script>
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+</script>
+<script>
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        const box = btn.closest('td').querySelector('.details-box');
+
+        btn.addEventListener('mouseenter', () => {
+            box.style.display = 'block';
         });
-    </script>
 
-    {{-- Custom Filter Button Script --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const customBtn = document.getElementById('customBtn');
-            const customFilter = document.getElementById('customDateFilter');
-            const filterButtons = document.querySelectorAll('.petty-filter .btn');
-
-            customBtn.addEventListener('click', function() {
-                filterButtons.forEach(btn => btn.classList.remove('active-btn'));
-                customBtn.classList.add('active-btn');
-
-                if (customFilter.style.display === 'none') {
-                    customFilter.style.display = 'block';
-                } else {
-                    customFilter.style.display = 'none';
-                    customBtn.classList.remove('active-btn');
+        btn.addEventListener('mouseleave', () => {
+            // Hide only after a small delay to allow smooth hover transition
+            setTimeout(() => {
+                if (!box.matches(':hover')) {
+                    box.style.display = 'none';
                 }
-            });
+            }, 150);
         });
-    </script>
 
-    {{-- Filter Buttons Custom CSS --}}
-    <style>
-        .petty-filter .btn {
-            margin-right: 12px;
-            padding: 8px 20px;
-            font-weight: 600;
-            font-size: 14px;
-            border-radius: 12px !important;
-            transition: all 0.3s ease-in-out;
-            position: relative;
-        }
+        box.addEventListener('mouseenter', () => {
+            box.style.display = 'block';
+        });
 
-        .petty-filter .btn:not(.active-btn) {
-            background: #f1f3f5;
-            color: #555;
-            border: 1px solid #d1d5db;
-        }
+        box.addEventListener('mouseleave', () => {
+            box.style.display = 'none';
+        });
+    });
 
-        .petty-filter .btn:not(.active-btn):hover {
-            background: #e9ecef;
-            color: #0d6efd;
-            border-color: #0d6efd;
-            transform: translateY(-2px);
-        }
+</script>
 
-        .petty-filter .active-btn {
-            background: linear-gradient(135deg, #0d6efd, #0b5ed7) !important;
-            color: #fff !important;
-            border: none !important;
-        }
-    </style>
+{{-- Custom Filter Button Script --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const customBtn = document.getElementById('customBtn');
+        const customFilter = document.getElementById('customDateFilter');
+        const filterButtons = document.querySelectorAll('.petty-filter .btn');
+
+        customBtn.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active-btn'));
+            customBtn.classList.add('active-btn');
+
+            if (customFilter.style.display === 'none') {
+                customFilter.style.display = 'block';
+            } else {
+                customFilter.style.display = 'none';
+                customBtn.classList.remove('active-btn');
+            }
+        });
+    });
+
+</script>
+
+{{-- Filter Buttons Custom CSS --}}
+<style>
+    .petty-filter .btn {
+        margin-right: 12px;
+        padding: 8px 20px;
+        font-weight: 600;
+        font-size: 14px;
+        border-radius: 12px !important;
+        transition: all 0.3s ease-in-out;
+        position: relative;
+    }
+
+    .petty-filter .btn:not(.active-btn) {
+        background: #f1f3f5;
+        color: #555;
+        border: 1px solid #d1d5db;
+    }
+
+    .petty-filter .btn:not(.active-btn):hover {
+        background: #e9ecef;
+        color: #0d6efd;
+        border-color: #0d6efd;
+        transform: translateY(-2px);
+    }
+
+    .petty-filter .active-btn {
+        background: linear-gradient(135deg, #0d6efd, #0b5ed7) !important;
+        color: #fff !important;
+        border: none !important;
+    }
+
+</style>
 @endsection

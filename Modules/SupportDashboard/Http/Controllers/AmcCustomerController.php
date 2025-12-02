@@ -7,11 +7,9 @@ use App\Models\Log;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Modules\AMC\Entities\AmcCustomer;
-use Modules\Inventory\Entities\Customer;
+use Modules\Lead\Entities\Customer;
 use Modules\Lead\Entities\CustomerAccessory;
 use Modules\SupportDashboard\Entities\CustomerTicket;
 use Modules\SupportDashboard\Entities\CustomerTicketAccessory;
@@ -28,113 +26,120 @@ class AmcCustomerController extends Controller
         return view('supportdashboard::index');
     }
 
-
     public function inservice()
     {
-        // Branch selection
         $branch_id = auth()->user()->role['name'] === 'Super Admin'
             ? session('branch_id')
             : auth()->user()->branch_id;
 
-        // Fetch AMC customers
         $amcCustomers = AmcCustomer::with(['customer', 'amc'])
             ->where('branch_id', $branch_id)
             ->where(function ($query) {
                 $query->whereIn('status', ['on', 'report', 'complete'])
                     ->orWhereNull('status');
             })
+            ->orderBy('created_at', 'desc')
             ->get();
 
+        $latestPerCustomer = [];
 
-        $finalData = [];
-
+        // Pick latest record per customer
         foreach ($amcCustomers as $item) {
+            if (! $item->amc) {
+                continue;
+            }
+            $customer_id = $item->customer_id;
+            if (! isset($latestPerCustomer[$customer_id])) {
+                $latestPerCustomer[$customer_id] = $item;
+            }
+        }
 
-            if (!$item->amc) continue;
+        $inService = [];
 
-            // AMC total months (ONLY year exists now)
+        foreach ($latestPerCustomer as $item) {
+
             $totalMonths = $item->amc->year * 12;
-
-            // AMC beginning and end date
             $startDate = \Carbon\Carbon::parse($item->date);
             $amcEndDate = $startDate->copy()->addMonths($totalMonths);
 
+            // Skip expired
             if (now()->gt($amcEndDate)) {
-                continue; // DO NOT SHOW EXPIRED AMC
+                continue;
             }
 
-            // Next service = last date + 4 months
             $nextServiceDate = \Carbon\Carbon::parse($item->last_date)->addMonths(4);
-
-            // Show 2 days before the next service date
             $showFrom = $nextServiceDate->copy()->subDays(2);
 
-            // Final condition
             if (
                 $nextServiceDate->toDateString() <= $amcEndDate->toDateString() &&
                 now()->toDateString() >= $showFrom->toDateString()
             ) {
-                // Append calculated values
                 $item->next_service_date = $nextServiceDate->toDateString();
                 $item->amc_end_date = $amcEndDate->toDateString();
                 $item->duration_months = $totalMonths / 12;
 
-                $finalData[] = $item;
+                $inService[] = $item;
             }
         }
 
         return view('supportdashboard::amc_customer.inservice', [
-            'amccustomer' => $finalData
+            'amccustomer' => $inService,
         ]);
     }
 
     public function outservice()
     {
-        // Branch selection
         $branch_id = auth()->user()->role['name'] === 'Super Admin'
             ? session('branch_id')
             : auth()->user()->branch_id;
 
-        // Fetch AMC customers
         $amcCustomers = AmcCustomer::with(['customer', 'amc'])
             ->where('branch_id', $branch_id)
             ->where(function ($query) {
                 $query->whereIn('status', ['on', 'report', 'complete'])
                     ->orWhereNull('status');
             })
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        $finalData = [];
+        $latestPerCustomer = [];
 
+        // Pick latest record per customer
         foreach ($amcCustomers as $item) {
+            if (! $item->amc) {
+                continue;
+            }
+            $customer_id = $item->customer_id;
+            if (! isset($latestPerCustomer[$customer_id])) {
+                $latestPerCustomer[$customer_id] = $item;
+            }
+        }
 
-            if (!$item->amc) continue;
+        $outService = [];
 
-            // AMC duration in months
+        foreach ($latestPerCustomer as $item) {
+
             $totalMonths = $item->amc->year * 12;
-
-            // AMC start date = created_at
             $startDate = \Carbon\Carbon::parse($item->date);
-
-            // AMC end date
             $amcEndDate = $startDate->copy()->addMonths($totalMonths);
 
-            // Check expired
-            if (now()->greaterThan($amcEndDate)) {
+            $nextServiceDate = \Carbon\Carbon::parse($item->last_date)->addMonths(4);
+            $showFrom = $nextServiceDate->copy()->subDays(2);
 
+            if (now()->greaterThan($amcEndDate)) {
+                $item->next_service_date = $nextServiceDate->toDateString();
                 $item->amc_end_date = $amcEndDate->toDateString();
                 $item->amc_start_date = $startDate->toDateString();
                 $item->duration_years = $item->amc->year;
 
-                $finalData[] = $item;
+                $outService[] = $item;
             }
         }
 
         return view('supportdashboard::amc_customer.outservice', [
-            'amccustomer' => $finalData
+            'amccustomer' => $outService,
         ]);
     }
-
 
     public function dashboard()
     {
@@ -170,16 +175,16 @@ class AmcCustomerController extends Controller
         $id = $request->id;
 
         $ticket = CustomerTicket::create([
-            'amc_customer_id'     => $id,
-            'customer_id'     => $request->customer_id,
-            'support_type'    => $request->support_type,
-            'priority'        => $request->priority,
-            'branch_id'        => $branch_id,
-            'amc'             => $request->amc,
-            'warranty'        => $request->warranty,
-            'amc_type'     => 'yes',
-            'message'        => $request->message,
-            'status'          => 'queue',
+            'amc_customer_id' => $id,
+            'customer_id' => $request->customer_id,
+            'support_type' => $request->support_type,
+            'priority' => $request->priority,
+            'branch_id' => $branch_id,
+            'amc' => $request->amc,
+            'warranty' => 'out',
+            'amc_type' => 'yes',
+            'message' => $request->message,
+            'status' => 'queue',
         ]);
 
         if ($request->customer_id) {
@@ -202,7 +207,6 @@ class AmcCustomerController extends Controller
         //     $ticket->save();
         // }
 
-
         $amccustomer = AmcCustomer::findOrFail($id);
         if ($amccustomer) {
             $amccustomer->last_date = now();
@@ -216,12 +220,12 @@ class AmcCustomerController extends Controller
         ]);
 
         Log::create([
-            'perform'   => auth()->user()->name
-                . ' Task ' . $request->support_type . ' Created:'
-                . ' at ' . now(),
-            'user_id'   => auth()->user()->id,
+            'perform' => auth()->user()->name
+                .' Task '.$request->support_type.' Created:'
+                .' at '.now(),
+            'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
+            'url' => url()->current(),
         ]);
 
         return redirect()->route('amccustomer-ticket.queue')->with('success', 'Amc Customer Ticket Created Successfully.');
@@ -255,6 +259,7 @@ class AmcCustomerController extends Controller
             'ticket_id' => $ticket->id,
             'note' => $request->note,
         ]);
+
         // Log::create([
         //     'perform'   => auth()->user()->name . ' Message Update : '
         //         . $user->name . ' at ' . now(),
@@ -275,7 +280,7 @@ class AmcCustomerController extends Controller
         // Ticket (safe)
         $ticket = CustomerTicket::find($id);
 
-        if (!$ticket) {
+        if (! $ticket) {
             return back()->with('error', 'Ticket not found.');
         }
 
@@ -316,17 +321,16 @@ class AmcCustomerController extends Controller
 
         // Log
         Log::create([
-            'perform'   => auth()->user()->name . ' Assign Lead to : '
-                . $user->name . ' at ' . now(),
-            'user_id'   => auth()->user()->id,
+            'perform' => auth()->user()->name.' Assign Lead to : '
+                .$user->name.' at '.now(),
+            'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
+            'url' => url()->current(),
         ]);
 
         return redirect()->route('amccustomer-ticket.assign')
             ->with('success', 'Ticket assigned successfully.');
     }
-
 
     public function assign()
     {
@@ -340,12 +344,13 @@ class AmcCustomerController extends Controller
         foreach ($customers as $customer) {
             $customer->created_time = $this->formatTimeDifference($customer->updated_at);
         }
+
         return view('supportdashboard::amc_customer.assign', compact('customers', 'users'));
     }
 
     public function create($id)
     {
-        $customer = CustomerTicket::with(['amc', 'customer', 'branch', 'amccustomer'])->findOrFail($id);;
+        $customer = CustomerTicket::with(['amc', 'customer', 'branch', 'amccustomer'])->findOrFail($id);
         // $customer = Customer::with('lead')->findOrFail($id);
         $customerAccessories = CustomerAccessory::with('accessory')->get();
 
@@ -375,7 +380,7 @@ class AmcCustomerController extends Controller
 
             // Check in customers table
             while (Customer::where('user_name', $username)->exists()) {
-                $username = $originalUsername . $counter;
+                $username = $originalUsername.$counter;
                 $counter++;
             }
             // 🧾 Handle Receipts
@@ -384,7 +389,7 @@ class AmcCustomerController extends Controller
                 $cashFileName = $cashFile->getClientOriginalName(); // keep original name
                 $cashFile->move(public_path('receipts'), $cashFileName); // save to public/receipts
             } else {
-                $cashFileName = Null;
+                $cashFileName = null;
             }
             //
 
@@ -395,7 +400,7 @@ class AmcCustomerController extends Controller
                 $onlineFileName = $onlineFile->getClientOriginalName();
                 $onlineFile->move(public_path('receipts'), $onlineFileName);
             } else {
-                $onlineFileName = Null;
+                $onlineFileName = null;
             }
 
             if ($request->hasFile('cheque_receipt')) {
@@ -403,7 +408,7 @@ class AmcCustomerController extends Controller
                 $chequeFileName = $chequeFile->getClientOriginalName();
                 $chequeFile->move(public_path('receipts'), $chequeFileName);
             } else {
-                $chequeFileName = Null;
+                $chequeFileName = null;
             }
 
             $paidAmount = ($request->cash_amount ?? 0) + ($request->online_amount ?? 0) + ($request->cheque_amount ?? 0);
@@ -420,67 +425,68 @@ class AmcCustomerController extends Controller
                 $productFileName = $productFile->getClientOriginalName(); // keep original name
                 $productFile->move(public_path('receipts'), $productFileName); // save to public/receipts
             } else {
-                $productFileName = NULL;
+                $productFileName = null;
             }
             if ($request->hasFile('warranty_card')) {
                 $warrantyFile = $request->file('warranty_card');
                 $warrantyFileName = $warrantyFile->getClientOriginalName(); // keep original name
                 $warrantyFile->move(public_path('receipts'), $warrantyFileName); // save to public/receipts
             } else {
-                $warrantyFileName = NULL;
+                $warrantyFileName = null;
             }
-
 
             $totalAmount = $grandTotal + $request->service_charge;
 
             // 🧩 Update Customer
             $ticket->update([
-                'user_name'         => $username,
-                'customer_name'      => $request->name,
-                'contact'      => $request->mobile,
-                'landline'      => $request->landline,
-                'address'      => $request->address,
-                'email'      => $request->email,
-                'install_date'      => $request->install_date,
-                'branch_id'         => $branch_id,
-                'service_type'      => $request->service_type,
-                'service_charge'      => $request->service_charge ?? 0,
-                'amount'      => $request->grand_total,
-                'total_amount'      => $totalAmount,
-                'paid_amount'       => $paidAmount,
-                'due_amount'        => $dueAmount,
+                'user_name' => $username,
+                'customer_name' => $request->name,
+                'contact' => $request->mobile,
+                'landline' => $request->landline,
+                'address' => $request->address,
+                'email' => $request->email,
+                'install_date' => $request->install_date,
+                'branch_id' => $branch_id,
+                'service_type' => $request->service_type,
+                'service_charge' => $request->service_charge ?? 0,
+                'amount' => $request->grand_total,
+                'total_amount' => $totalAmount,
+                'paid_amount' => $paidAmount,
+                'due_amount' => $dueAmount,
 
                 // 🧾 Payment Section
-                'payment_status'    => $request->payment_status,
-                'payment_method'    => $request->method,
+                'payment_status' => $request->payment_status,
+                'payment_method' => $request->method,
 
                 // 💰 Cash Payment
-                'cash_amount'       => $request->cash_amount,
-                'cash_receipt'      => $cashFileName,
+                'cash_amount' => $request->cash_amount,
+                'cash_receipt' => $cashFileName,
 
                 // 💳 Online Payment
-                'online_amount'     => $request->online_amount,
-                'online_receipt'    => $onlineFileName,
+                'online_amount' => $request->online_amount,
+                'online_receipt' => $onlineFileName,
 
                 // 🧾 Cheque Payment
-                'cheque_amount'     => $request->cheque_amount,
-                'cheque_number'     => $request->cheque_number,
-                'cheque_receipt'    => $chequeFileName,
+                'cheque_amount' => $request->cheque_amount,
+                'cheque_number' => $request->cheque_number,
+                'cheque_receipt' => $chequeFileName,
 
+                'message' => $request->remarks,
+                'status' => 'complete',
 
-                'message'           => $request->remarks,
-                'status'           => 'complete',
-
-
-                'product_document'    => $productFileName,
-                'warranty_card'    => $warrantyFileName,
+                'product_document' => $productFileName,
+                'warranty_card' => $warrantyFileName,
             ]);
 
-
             if ($request->customer_id) {
-                $customer = Customer::findOrFail($request->customer_id);
+                $customer = Customer::with('lead')->where('id', $request->customer_id)->first();
                 $customer->ticket_status = 'complete';
                 $customer->save();
+
+                $customer->lead->mobile = $request->mobile;
+                $customer->lead->landline = $request->landline;
+                $customer->lead->address = $request->address;
+                $customer->lead->save();
             }
 
             $amccustomer = AmcCustomer::where('customer_id', $request->customer_id)->first();
@@ -506,35 +512,31 @@ class AmcCustomerController extends Controller
                 }
             }
 
-
-
             if ($paidAmount > 0) {
                 CustomerTicketPayment::create([
-                    'ticket_id'        => $ticket->id,
-                    'branch_id'      => $branch_id,
-                    'customer_id'    => $request->customer_id,
-                    'created_by'     => $request->converted_by ?? auth()->id(),
-                    'paid_amount'    => $paidAmount,
+                    'ticket_id' => $ticket->id,
+                    'branch_id' => $branch_id,
+                    'customer_id' => $request->customer_id,
+                    'created_by' => $request->converted_by ?? auth()->id(),
+                    'paid_amount' => $paidAmount,
                     'payment_method' => $request->method,
 
                     // 💰 Cash Payment
-                    'cash_amount'       => $request->cash_amount,
-                    'cash_receipt'      => $cashFileName,
+                    'cash_amount' => $request->cash_amount,
+                    'cash_receipt' => $cashFileName,
 
                     // 💳 Online Payment
-                    'online_amount'     => $request->online_amount,
-                    'online_receipt'    => $onlineFileName,
+                    'online_amount' => $request->online_amount,
+                    'online_receipt' => $onlineFileName,
 
                     // 🧾 Cheque Payment
-                    'cheque_amount'     => $request->cheque_amount,
-                    'cheque_number'     => $request->cheque_number,
-                    'cheque_receipt'    => $chequeFileName,
-                    'status'         => 'paid',
-
+                    'cheque_amount' => $request->cheque_amount,
+                    'cheque_number' => $request->cheque_number,
+                    'cheque_receipt' => $chequeFileName,
+                    'status' => 'paid',
 
                 ]);
             }
-
 
             TicketNote::create([
                 'ticket_id' => $ticket->id,
@@ -554,7 +556,8 @@ class AmcCustomerController extends Controller
                 ->with('success', 'Ticket    created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Error creating installation: ' . $e->getMessage());
+
+            return back()->withInput()->with('error', 'Error creating installation: '.$e->getMessage());
         }
     }
 
@@ -585,7 +588,6 @@ class AmcCustomerController extends Controller
 
         return view('supportdashboard::amc_customer.complete', compact('customers', 'users'));
     }
-
 
     /**
      * Show the specified resource.
@@ -618,9 +620,10 @@ class AmcCustomerController extends Controller
     {
         //
     }
+
     private function formatTimeDifference($dateTime)
     {
-        if (!$dateTime) {
+        if (! $dateTime) {
             return 'N/A';
         }
 
@@ -638,22 +641,38 @@ class AmcCustomerController extends Controller
         $parts = [];
 
         if ($years > 0) {
-            $parts[] = $years . ' year' . ($years > 1 ? 's' : '');
-            if ($months > 0) $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
+            $parts[] = $years.' year'.($years > 1 ? 's' : '');
+            if ($months > 0) {
+                $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            }
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
         } elseif ($months > 0) {
-            $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
+            $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
         } elseif ($days > 0) {
-            $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         } else {
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         }
 
-        return $parts ? implode(' ', $parts) . ' ago' : 'Just now';
+        return $parts ? implode(' ', $parts).' ago' : 'Just now';
     }
 }

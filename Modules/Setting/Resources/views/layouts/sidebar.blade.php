@@ -92,13 +92,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
         background-color: rgba(255, 255, 255, 0.15);
         border-radius: 10px;
     }
+
 </style>
 <aside class="main-sidebar elevation-4">
     <!-- Brand Logo -->
-    <a href="{{ route('home') }}" class="brand-link text-center text-white" style="background-color: #007bff"
-        style="text-decoration: none;">
+    <a href="{{ route('home') }}" class="brand-link text-center text-white" style="background-color: #007bff" style="text-decoration: none;">
         {{-- <img src="{{ asset('backend/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
-            class="brand-image img-circle elevation-3" style="opacity: .8"> --}}
+        class="brand-image img-circle elevation-3" style="opacity: .8"> --}}
         {{-- <i class="fa fa-paw"></i> --}}
         @php($branch = Session::get('branch'))
         <span class="brand-text font-weight-bold ">{{ $branch->name ?? $profile->company_name }} </span>
@@ -110,8 +110,7 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
         <div class="user-panel mt-3 pb-3 mb-3 d-flex bg-dark">
             <div class="image">
 
-                <img src="{{ asset('upload/images/settings/' . $profile->logo) }}" class="w-100 img-fluid"
-                    alt="User Image">
+                <img src="{{ asset('upload/images/settings/' . $profile->logo) }}" class="w-100 img-fluid" alt="User Image">
             </div>
         </div>
 
@@ -140,10 +139,8 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                 </li>
 
                 @can('access_user_management')
-                <li
-                    class="nav-item {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'menu-is-opening menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Users Management
@@ -152,20 +149,17 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('roles.index') }}"
-                                class="nav-link {{ request()->routeIs('roles.index') ? 'active' : '' }}">
+                            <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.index') ? 'active' : '' }}">
                                 <p>Roles</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('users.index') }}"
-                                class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
+                            <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
                                 <p>Users</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('users.create') }}"
-                                class="nav-link {{ request()->routeIs('users.create') ? 'active' : '' }}">
+                            <a href="{{ route('users.create') }}" class="nav-link {{ request()->routeIs('users.create') ? 'active' : '' }}">
                                 <p>Create Users</p>
                             </a>
                         </li>
@@ -174,10 +168,8 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                 @endcan
 
                 {{-- @can('access_user_management') --}}
-                <li
-                    class="nav-item {{ request()->routeIs('hot-leads') || request()->routeIs('warm-leads') || request()->routeIs('cold-leads') || request()->routeIs('followups') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs('hot-leads') || request()->routeIs('warm-leads') || request()->routeIs('cold-leads') || request()->routeIs('followups') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('hot-leads') || request()->routeIs('warm-leads') || request()->routeIs('cold-leads') || request()->routeIs('followups') ? 'menu-is-opening menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('hot-leads') || request()->routeIs('warm-leads') || request()->routeIs('cold-leads') || request()->routeIs('followups') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Leads
@@ -186,26 +178,22 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('hot-leads') }}"
-                                class="nav-link {{ request()->routeIs('hot-leads') ? 'active' : '' }}">
+                            <a href="{{ route('hot-leads') }}" class="nav-link {{ request()->routeIs('hot-leads') ? 'active' : '' }}">
                                 <p>Hot Leads</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('warm-leads') }}"
-                                class="nav-link {{ request()->routeIs('warm-leads') ? 'active' : '' }}">
+                            <a href="{{ route('warm-leads') }}" class="nav-link {{ request()->routeIs('warm-leads') ? 'active' : '' }}">
                                 <p>Warm Leads</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('cold-leads') }}"
-                                class="nav-link {{ request()->routeIs('cold-leads') ? 'active' : '' }}">
+                            <a href="{{ route('cold-leads') }}" class="nav-link {{ request()->routeIs('cold-leads') ? 'active' : '' }}">
                                 <p>Cold Leads</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('followups') }}"
-                                class="nav-link {{ request()->routeIs('followups') ? 'active' : '' }}">
+                            <a href="{{ route('followups') }}" class="nav-link {{ request()->routeIs('followups') ? 'active' : '' }}">
                                 <p>Followups</p>
                             </a>
                         </li>
@@ -223,14 +211,12 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('salecategories.retailler') }}"
-                                class="nav-link {{ request()->routeIs('salecategories.retailler') ? 'active' : '' }}">
+                            <a href="{{ route('salecategories.retailler') }}" class="nav-link {{ request()->routeIs('salecategories.retailler') ? 'active' : '' }}">
                                 <p>Retailler</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('salecategories.wholeseller') }}"
-                                class="nav-link {{ request()->routeIs('salecategories.wholeseller') ? 'active' : '' }}">
+                            <a href="{{ route('salecategories.wholeseller') }}" class="nav-link {{ request()->routeIs('salecategories.wholeseller') ? 'active' : '' }}">
                                 <p>Wholeseller</p>
                             </a>
                         </li>
@@ -259,27 +245,23 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('installation-queue.index', 'counter_sales') }}"
-                                    class="nav-link @if (request()->routeIs('installation-queue.index') && request()->route('sale_type') === 'counter_sales') active @endif">
+                                <a href="{{ route('installation-queue.index', 'counter_sales') }}" class="nav-link @if (request()->routeIs('installation-queue.index') && request()->route('sale_type') === 'counter_sales') active @endif">
                                     <p>Installation Queue</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-assign.index', 'counter_sales') }}"
-                                    class="nav-link @if (request()->routeIs('installation-assign.index') && request()->route('sale_type') === 'counter_sales') active @endif">
+                                <a href="{{ route('installation-assign.index', 'counter_sales') }}" class="nav-link @if (request()->routeIs('installation-assign.index') && request()->route('sale_type') === 'counter_sales') active @endif">
                                     <p>Installation Assign</p>
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a href="{{ route('installation.complete', 'counter_sales') }}"
-                                    class="nav-link @if (request()->routeIs('installation.complete') && request()->route('sale_type') === 'counter_sales') active @endif">
+                                <a href="{{ route('installation.complete', 'counter_sales') }}" class="nav-link @if (request()->routeIs('installation.complete') && request()->route('sale_type') === 'counter_sales') active @endif">
                                     <p>Installation Complete</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation.reports', 'counter_sales') }}"
-                                    class="nav-link @if (request()->routeIs('installation.reports') && request()->route('sale_type') === 'counter_sales') active @endif">
+                                <a href="{{ route('installation.reports', 'counter_sales') }}" class="nav-link @if (request()->routeIs('installation.reports') && request()->route('sale_type') === 'counter_sales') active @endif">
                                     <p>Installation Reports</p>
                                 </a>
                             </li>
@@ -302,26 +284,22 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('installation-queue.index', 'retailler') }}"
-                                    class="nav-link @if (request()->routeIs('installation-queue.index') && request()->route('sale_type') === 'retailler') active @endif">
+                                <a href="{{ route('installation-queue.index', 'retailler') }}" class="nav-link @if (request()->routeIs('installation-queue.index') && request()->route('sale_type') === 'retailler') active @endif">
                                     <p>Installation Queue</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-assign.index', 'retailler') }}"
-                                    class="nav-link @if (request()->routeIs('installation-assign.index') && request()->route('sale_type') === 'retailler') active @endif">
+                                <a href="{{ route('installation-assign.index', 'retailler') }}" class="nav-link @if (request()->routeIs('installation-assign.index') && request()->route('sale_type') === 'retailler') active @endif">
                                     <p>Installation Assign</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation.complete', 'retailler') }}"
-                                    class="nav-link @if (request()->routeIs('installation.complete') && request()->route('sale_type') === 'retailler') active @endif">
+                                <a href="{{ route('installation.complete', 'retailler') }}" class="nav-link @if (request()->routeIs('installation.complete') && request()->route('sale_type') === 'retailler') active @endif">
                                     <p>Installation Complete</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation.reports', 'retailler') }}"
-                                    class="nav-link @if (request()->routeIs('installation.reports') && request()->route('sale_type') === 'retailler') active @endif">
+                                <a href="{{ route('installation.reports', 'retailler') }}" class="nav-link @if (request()->routeIs('installation.reports') && request()->route('sale_type') === 'retailler') active @endif">
                                     <p>Installation Reports</p>
                                 </a>
                             </li>
@@ -345,26 +323,22 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('installation-queue.index', 'wholeseller') }}"
-                                    class="nav-link @if (request()->routeIs('installation-queue.index') && request()->route('sale_type') === 'wholeseller') active @endif">
+                                <a href="{{ route('installation-queue.index', 'wholeseller') }}" class="nav-link @if (request()->routeIs('installation-queue.index') && request()->route('sale_type') === 'wholeseller') active @endif">
                                     <p>Installation Queue</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-assign.index', 'wholeseller') }}"
-                                    class="nav-link @if (request()->routeIs('installation-assign.index') && request()->route('sale_type') === 'wholeseller') active @endif">
+                                <a href="{{ route('installation-assign.index', 'wholeseller') }}" class="nav-link @if (request()->routeIs('installation-assign.index') && request()->route('sale_type') === 'wholeseller') active @endif">
                                     <p>Installation Assign</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation.complete', 'wholeseller') }}"
-                                    class="nav-link @if (request()->routeIs('installation.complete') && request()->route('sale_type') === 'wholeseller') active @endif">
+                                <a href="{{ route('installation.complete', 'wholeseller') }}" class="nav-link @if (request()->routeIs('installation.complete') && request()->route('sale_type') === 'wholeseller') active @endif">
                                     <p>Installation Complete</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation.reports', 'wholeseller') }}"
-                                    class="nav-link @if (request()->routeIs('installation.reports') && request()->route('sale_type') === 'wholeseller') active @endif">
+                                <a href="{{ route('installation.reports', 'wholeseller') }}" class="nav-link @if (request()->routeIs('installation.reports') && request()->route('sale_type') === 'wholeseller') active @endif">
                                     <p>Installation Reports</p>
                                 </a>
                             </li>
@@ -390,28 +364,24 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('installation-category-queue.index', 'retailler') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
+                                <a href="{{ route('installation-category-queue.index', 'retailler') }}" class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
                                                 request()->route('installation_category') === 'retailler') active @endif">
                                     <p>Installation Queue</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category-assign.index', 'retailler') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
+                                <a href="{{ route('installation-category-assign.index', 'retailler') }}" class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
                                                 request()->route('installation_category') === 'retailler') active @endif">
                                     <p>Installation Assign</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category.complete', 'retailler') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'retailler') active @endif">
+                                <a href="{{ route('installation-category.complete', 'retailler') }}" class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'retailler') active @endif">
                                     <p>Installation Complete</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category.reports', 'retailler') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'retailler') active @endif">
+                                <a href="{{ route('installation-category.reports', 'retailler') }}" class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'retailler') active @endif">
                                     <p>Installation Reports</p>
                                 </a>
                             </li>
@@ -434,28 +404,24 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('installation-category-queue.index', 'commercial') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
+                                <a href="{{ route('installation-category-queue.index', 'commercial') }}" class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
                                                 request()->route('installation_category') === 'commercial') active @endif">
                                     <p>Installation Queue</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category-assign.index', 'commercial') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
+                                <a href="{{ route('installation-category-assign.index', 'commercial') }}" class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
                                                 request()->route('installation_category') === 'commercial') active @endif">
                                     <p>Installation Assign</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category.complete', 'commercial') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'commercial') active @endif">
+                                <a href="{{ route('installation-category.complete', 'commercial') }}" class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'commercial') active @endif">
                                     <p>Installation Complete</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category.reports', 'commercial') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'commercial') active @endif">
+                                <a href="{{ route('installation-category.reports', 'commercial') }}" class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'commercial') active @endif">
                                     <p>Installation Reports</p>
                                 </a>
                             </li>
@@ -478,28 +444,24 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('installation-category-queue.index', 'industrial') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
+                                <a href="{{ route('installation-category-queue.index', 'industrial') }}" class="nav-link @if (request()->routeIs('installation-category-queue.index') &&
                                                 request()->route('installation_category') === 'industrial') active @endif">
                                     <p>Installation Queue</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category-assign.index', 'industrial') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
+                                <a href="{{ route('installation-category-assign.index', 'industrial') }}" class="nav-link @if (request()->routeIs('installation-category-assign.index') &&
                                                 request()->route('installation_category') === 'industrial') active @endif">
                                     <p>Installation Assign</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category.complete', 'industrial') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'industrial') active @endif">
+                                <a href="{{ route('installation-category.complete', 'industrial') }}" class="nav-link @if (request()->routeIs('installation-category.complete') && request()->route('installation_category') === 'industrial') active @endif">
                                     <p>Installation Complete</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('installation-category.reports', 'industrial') }}"
-                                    class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'industrial') active @endif">
+                                <a href="{{ route('installation-category.reports', 'industrial') }}" class="nav-link @if (request()->routeIs('installation-category.reports') && request()->route('installation_category') === 'industrial') active @endif">
                                     <p>Installation Reports</p>
                                 </a>
                             </li>
@@ -513,63 +475,54 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                 </li>
 
                 <li class="nav-item {{ request()->routeIs('ticket.index') ? 'menu-open' : '' }}">
-                    <a href="{{ route('ticket.index') }}"
-                        class="nav-link {{ request()->routeIs('ticket.index') ? 'active' : '' }}">
+                    <a href="{{ route('ticket.index') }}" class="nav-link {{ request()->routeIs('ticket.index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>Ticketing</p>
                     </a>
                 </li>
                 {{-- Register Customer --}}
                 <li class="nav-item">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs(['supportdashboard.*', 'registercustomer-ticket.*']) ? 'active' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs(['supportdashboard.*', 'registercustomer-ticket.*']) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>
-                            Register
+                            Register Customer
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('registercustomer-ticket.dashboard') }}"
-                                class="nav-link {{ request()->routeIs('registercustomer-ticket.dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('registercustomer-ticket.dashboard') }}" class="nav-link {{ request()->routeIs('registercustomer-ticket.dashboard') ? 'active' : '' }}">
                                 <p>Dashboard</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('registercustomer-ticket.regular') }}"
-                                class="nav-link {{ request()->routeIs('registercustomer-ticket.regular') ? 'active' : '' }}">
+                            <a href="{{ route('registercustomer-ticket.regular') }}" class="nav-link {{ request()->routeIs('registercustomer-ticket.regular') ? 'active' : '' }}">
                                 <p>Warrenty In Service</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('registercustomer-ticket.warrenty') }}"
-                                class="nav-link {{ request()->routeIs('registercustomer-ticket.warrenty') ? 'active' : '' }}">
+                            <a href="{{ route('registercustomer-ticket.warrenty') }}" class="nav-link {{ request()->routeIs('registercustomer-ticket.warrenty') ? 'active' : '' }}">
                                 <p>Warrenty Out Service</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('registercustomer-ticket.queue') }}"
-                                class="nav-link {{ request()->routeIs('registercustomer-ticket.queue') ? 'active' : '' }}">
-                                <p>Ticket Queue</p>
+                            <a href="{{ route('registercustomer-ticket.queue') }}" class="nav-link {{ request()->routeIs('registercustomer-ticket.queue') ? 'active' : '' }}">
+                                <p>Queue</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('registercustomer-ticket.assign') }}"
-                                class="nav-link {{ request()->routeIs('registercustomer-ticket.assign') ? 'active' : '' }}">
-                                <p>Ticket Assign</p>
+                            <a href="{{ route('registercustomer-ticket.assign') }}" class="nav-link {{ request()->routeIs('registercustomer-ticket.assign') ? 'active' : '' }}">
+                                <p>Assign</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('registercustomer-ticket.complete') }}"
-                                class="nav-link {{ request()->routeIs('registercustomer-ticket.complete') ? 'active' : '' }}">
-                                <p>Ticket Complete</p>
+                            <a href="{{ route('registercustomer-ticket.complete') }}" class="nav-link {{ request()->routeIs('registercustomer-ticket.complete') ? 'active' : '' }}">
+                                <p>Complete</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('registercustomer-ticket.report') }}"
-                                class="nav-link {{ request()->routeIs('registercustomer-ticket.report') ? 'active' : '' }}">
-                                <p>Ticket Report</p>
+                            <a href="{{ route('registercustomer-ticket.report') }}" class="nav-link {{ request()->routeIs('registercustomer-ticket.report') ? 'active' : '' }}">
+                                <p>Report</p>
                             </a>
                         </li>
                     </ul>
@@ -577,67 +530,57 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
 
                 {{-- Amc Customer --}}
                 <li class="nav-item">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs(['supportdashboard.*', 'amccustomer-ticket.*', 'amcassign.*', 'amc.*']) ? 'active' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs(['supportdashboard.*', 'amccustomer-ticket.*', 'amcassign.*', 'amc.*']) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>
-                            AMC
+                            AMC Customer
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('amccustomer-ticket.dashboard') }}"
-                                class="nav-link {{ request()->routeIs('amccustomer-ticket.dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('amccustomer-ticket.dashboard') }}" class="nav-link {{ request()->routeIs('amccustomer-ticket.dashboard') ? 'active' : '' }}">
                                 <p>Dashboard</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amc.index') }}"
-                                class="nav-link {{ request()->routeIs('amc.index') ? 'active' : '' }}">
+                            <a href="{{ route('amc.index') }}" class="nav-link {{ request()->routeIs('amc.index') ? 'active' : '' }}">
                                 <p>Amc Policy</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amcassign.index') }}"
-                                class="nav-link {{ request()->routeIs('amcassign.index') ? 'active' : '' }}">
+                            <a href="{{ route('amcassign.index') }}" class="nav-link {{ request()->routeIs('amcassign.index') ? 'active' : '' }}">
                                 <p>Customer Add</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amccustomer-ticket.inservice') }}"
-                                class="nav-link {{ request()->routeIs('amccustomer-ticket.inservice') ? 'active' : '' }}">
+                            <a href="{{ route('amccustomer-ticket.inservice') }}" class="nav-link {{ request()->routeIs('amccustomer-ticket.inservice') ? 'active' : '' }}">
                                 <p>AMC In Service</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amccustomer-ticket.outservice') }}"
-                                class="nav-link {{ request()->routeIs('amccustomer-ticket.outservice') ? 'active' : '' }}">
+                            <a href="{{ route('amccustomer-ticket.outservice') }}" class="nav-link {{ request()->routeIs('amccustomer-ticket.outservice') ? 'active' : '' }}">
                                 <p>AMC Out Service</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amccustomer-ticket.queue') }}"
-                                class="nav-link {{ request()->routeIs('amccustomer-ticket.queue') ? 'active' : '' }}">
-                                <p>Ticket Queue</p>
+                            <a href="{{ route('amccustomer-ticket.queue') }}" class="nav-link {{ request()->routeIs('amccustomer-ticket.queue') ? 'active' : '' }}">
+                                <p>Queue</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amccustomer-ticket.assign') }}"
-                                class="nav-link {{ request()->routeIs('amccustomer-ticket.assign') ? 'active' : '' }}">
-                                <p>Ticket Assign</p>
+                            <a href="{{ route('amccustomer-ticket.assign') }}" class="nav-link {{ request()->routeIs('amccustomer-ticket.assign') ? 'active' : '' }}">
+                                <p>Assign</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amccustomer-ticket.complete') }}"
-                                class="nav-link {{ request()->routeIs('amccustomer-ticket.complete') ? 'active' : '' }}">
-                                <p>Ticket Complete</p>
+                            <a href="{{ route('amccustomer-ticket.complete') }}" class="nav-link {{ request()->routeIs('amccustomer-ticket.complete') ? 'active' : '' }}">
+                                <p>Complete</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('amccustomer-ticket.report') }}"
-                                class="nav-link {{ request()->routeIs('amccustomer-ticket.report') ? 'active' : '' }}">
-                                <p>Ticket Report</p>
+                            <a href="{{ route('amccustomer-ticket.report') }}" class="nav-link {{ request()->routeIs('amccustomer-ticket.report') ? 'active' : '' }}">
+                                <p>Report</p>
                             </a>
                         </li>
                     </ul>
@@ -646,78 +589,47 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
 
                 {{-- Outsider Customer --}}
                 <li class="nav-item">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs(['supportdashboard.*', 'outsidercustomer-ticket.*']) ? 'active' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs(['supportdashboard.*', 'outsidercustomer-ticket.*']) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>
-                            Outsider
+                            Outsider Customer
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+
                         <li class="nav-item">
-                            <a href="{{ route('outsidercustomer-ticket.dashboard') }}"
-                                class="nav-link {{ request()->routeIs('outsidercustomer-ticket.dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('outsidercustomer-ticket.dashboard') }}" class="nav-link {{ request()->routeIs('outsidercustomer-ticket.dashboard') ? 'active' : '' }}">
                                 <p>Dashboard</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('outsidercustomer-ticket.queue') }}"
-                                class="nav-link {{ request()->routeIs('outsidercustomer-ticket.queue') ? 'active' : '' }}">
-                                <p>Ticket Queue</p>
+                            <a href="{{ route('outsidercustomer-ticket.regular-service') }}" class="nav-link {{ request()->routeIs('outsidercustomer-ticket.regular-service') ? 'active' : '' }}">
+                                <p>Regular Service</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('outsidercustomer-ticket.assign') }}"
-                                class="nav-link {{ request()->routeIs('outsidercustomer-ticket.assign') ? 'active' : '' }}">
-                                <p>Ticket Assign</p>
+                            <a href="{{ route('outsidercustomer-ticket.queue') }}" class="nav-link {{ request()->routeIs('outsidercustomer-ticket.queue') ? 'active' : '' }}">
+                                <p>Queue</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('outsidercustomer-ticket.complete') }}"
-                                class="nav-link {{ request()->routeIs('outsidercustomer-ticket.complete') ? 'active' : '' }}">
-                                <p>Ticket Complete</p>
+                            <a href="{{ route('outsidercustomer-ticket.assign') }}" class="nav-link {{ request()->routeIs('outsidercustomer-ticket.assign') ? 'active' : '' }}">
+                                <p>Assign</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('outsidercustomer-ticket.report') }}"
-                                class="nav-link {{ request()->routeIs('outsidercustomer-ticket.report') ? 'active' : '' }}">
-                                <p>Ticket Report</p>
+                            <a href="{{ route('outsidercustomer-ticket.complete') }}" class="nav-link {{ request()->routeIs('outsidercustomer-ticket.complete') ? 'active' : '' }}">
+                                <p>Complete</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('outsidercustomer-ticket.report') }}" class="nav-link {{ request()->routeIs('outsidercustomer-ticket.report') ? 'active' : '' }}">
+                                <p>Report</p>
                             </a>
                         </li>
                     </ul>
                 </li>
-
-                {{-- <div class="my-3 border-top border-success pt-1">
-                    <li class="nav-header text-primary"><b>AMC Dashboard</b></li>
-
-                    <li class="nav-item {{ request()->routeIs() ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs(['amc.*', 'amcassign.*']) ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-image"></i>
-                            <p>
-                                AMC
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('amc.index') }}"
-                                    class="nav-link {{ request()->routeIs('amc.index') ? 'active' : '' }}">
-                                    <p>List</p>
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a href="{{ route('amcassign.index') }}"
-                                    class="nav-link {{ request()->routeIs('amcassign.index') ? 'active' : '' }}">
-                                    <p>Assign</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                </div> --}}
 
                 <div class="border-top border-success"></div>
 
@@ -734,8 +646,7 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('branches.index') }}"
-                                class="nav-link {{ request()->routeIs('branches.index') ? 'active' : '' }}">
+                            <a href="{{ route('branches.index') }}" class="nav-link {{ request()->routeIs('branches.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Branch</p>
                             </a>
@@ -758,31 +669,27 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     <ul class="nav nav-treeview">
                         @if (auth()->user()->role['name'] === 'Super Admin')
                         <li class="nav-item">
-                            <a href="{{ route('attendance.all') }}"
-                                class="nav-link @if (request()->routeIs('attendance.all')) active @endif">
+                            <a href="{{ route('attendance.all') }}" class="nav-link @if (request()->routeIs('attendance.all')) active @endif">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Attendance</p>
                             </a>
                         </li>
                         @else
                         <li class="nav-item">
-                            <a href="{{ route('attendance.index') }}"
-                                class="nav-link @if (request()->routeIs('attendance.index')) active @endif">
+                            <a href="{{ route('attendance.index') }}" class="nav-link @if (request()->routeIs('attendance.index')) active @endif">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>My Attendance</p>
                             </a>
                         </li>
                         @endif
                         <li class="nav-item">
-                            <a href="{{ route('attendance.checkin') }}"
-                                class="nav-link @if (request()->routeIs('attendance.checkin')) active @endif">
+                            <a href="{{ route('attendance.checkin') }}" class="nav-link @if (request()->routeIs('attendance.checkin')) active @endif">
 
                                 <p>Check-In Request</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('attendance.checkout') }}"
-                                class="nav-link @if (request()->routeIs('attendance.checkout')) active @endif">
+                            <a href="{{ route('attendance.checkout') }}" class="nav-link @if (request()->routeIs('attendance.checkout')) active @endif">
 
                                 <p>Check-Out Request</p>
                             </a>
@@ -802,15 +709,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('setsalary.index') }}"
-                                class="nav-link @if (request()->routeIs('setsalary.index')) active @endif">
+                            <a href="{{ route('setsalary.index') }}" class="nav-link @if (request()->routeIs('setsalary.index')) active @endif">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Set Salary</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('setsalary.payslip.index') }}"
-                                class="nav-link @if (request()->routeIs('setsalary.payslip.index')) active @endif">
+                            <a href="{{ route('setsalary.payslip.index') }}" class="nav-link @if (request()->routeIs('setsalary.payslip.index')) active @endif">
 
                                 <p>Payslip</p>
                             </a>
@@ -830,15 +735,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('sliders.index') }}"
-                                class="nav-link {{ request()->routeIs('sliders.index') ? 'active' : '' }}">
+                            <a href="{{ route('sliders.index') }}" class="nav-link {{ request()->routeIs('sliders.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Sliders</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('sliders.create') }}"
-                                class="nav-link {{ request()->routeIs('sliders.create') ? 'active' : '' }}">
+                            <a href="{{ route('sliders.create') }}" class="nav-link {{ request()->routeIs('sliders.create') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Create Sliders</p>
                             </a>
@@ -858,32 +761,27 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('products-categories.index') }}"
-                                class="nav-link @if (request()->routeIs('products-categories.index')) active @endif">
+                            <a href="{{ route('products-categories.index') }}" class="nav-link @if (request()->routeIs('products-categories.index')) active @endif">
                                 <p>Categories</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('products-brands.index') }}"
-                                class="nav-link @if (request()->routeIs('products-brands.index')) active @endif">
+                            <a href="{{ route('products-brands.index') }}" class="nav-link @if (request()->routeIs('products-brands.index')) active @endif">
                                 <p>Brands</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('products-machineries.index') }}"
-                                class="nav-link @if (request()->routeIs('products-machineries.index')) active @endif">
+                            <a href="{{ route('products-machineries.index') }}" class="nav-link @if (request()->routeIs('products-machineries.index')) active @endif">
                                 <p>Machineries</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('products-accessories.index') }}"
-                                class="nav-link @if (request()->routeIs('products-accessories.index')) active @endif">
+                            <a href="{{ route('products-accessories.index') }}" class="nav-link @if (request()->routeIs('products-accessories.index')) active @endif">
                                 <p>Accessories</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('technicaltools.index') }}"
-                                class="nav-link {{ request()->routeIs('technicaltools.index') ? 'active' : '' }}">
+                            <a href="{{ route('technicaltools.index') }}" class="nav-link {{ request()->routeIs('technicaltools.index') ? 'active' : '' }}">
                                 <p>Technical Tools</p>
                             </a>
                         </li>
@@ -891,10 +789,8 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                 </li>
                 @endcan
                 {{-- Inventory --}}
-                <li
-                    class="nav-item {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'menu-is-opening menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-boxes"></i>
                         <p>
                             Inventory
@@ -903,40 +799,34 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('suppliers.index') }}"
-                                class="nav-link {{ request()->routeIs('suppliers.index') ? 'active' : '' }}">
+                            <a href="{{ route('suppliers.index') }}" class="nav-link {{ request()->routeIs('suppliers.index') ? 'active' : '' }}">
                                 <p>Suppliers</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('device-purchases.index') }}"
-                                class="nav-link {{ request()->routeIs('device-purchases.index') ? 'active' : '' }}">
+                            <a href="{{ route('device-purchases.index') }}" class="nav-link {{ request()->routeIs('device-purchases.index') ? 'active' : '' }}">
                                 <p>Device Purchases</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('inventries') }}"
-                                class="nav-link {{ request()->routeIs('inventries') ? 'active' : '' }}">
+                            <a href="{{ route('inventries') }}" class="nav-link {{ request()->routeIs('inventries') ? 'active' : '' }}">
                                 <p>Inventries</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('sales.index') }}"
-                                class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
+                            <a href="{{ route('sales.index') }}" class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
                                 <p>Sales</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('stock-transfers.index') }}"
-                                class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
+                            <a href="{{ route('stock-transfers.index') }}" class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
                                 <p>Stock Transfer</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('stock-issue.index') }}"
-                                class="nav-link {{ request()->routeIs('stock-issue.index') ? 'active' : '' }}">
+                            <a href="{{ route('stock-issue.index') }}" class="nav-link {{ request()->routeIs('stock-issue.index') ? 'active' : '' }}">
                                 <p>stock issue</p>
                             </a>
                         </li>
@@ -954,14 +844,12 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('services_category.index') }}"
-                                class="nav-link @if (request()->routeIs('services_category.index')) active @endif">
+                            <a href="{{ route('services_category.index') }}" class="nav-link @if (request()->routeIs('services_category.index')) active @endif">
                                 <p>Category</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('services.index') }}"
-                                class="nav-link @if (request()->routeIs('services.index')) active @endif">
+                            <a href="{{ route('services.index') }}" class="nav-link @if (request()->routeIs('services.index')) active @endif">
                                 <p>Services</p>
                             </a>
                         </li>
@@ -980,15 +868,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('blogs.index') }}"
-                                class="nav-link {{ request()->routeIs('blogs.index') ? 'active' : '' }}">
+                            <a href="{{ route('blogs.index') }}" class="nav-link {{ request()->routeIs('blogs.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Blog</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('blogs.create') }}"
-                                class="nav-link {{ request()->routeIs('blogs.create') ? 'active' : '' }}">
+                            <a href="{{ route('blogs.create') }}" class="nav-link {{ request()->routeIs('blogs.create') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Create Blogs</p>
                             </a>
@@ -999,31 +885,28 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
 
                 {{-- <li
                     class="nav-item {{ request()->routeIs(['expenses.*', 'expenses-categories.*']) ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs(['expenses.*', 'expenses-categories.*']) ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-newspaper"></i>
-                        <p>
-                            Expenses
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('expenses-categories.index') }}"
-                                class="nav-link {{ request()->routeIs('expenses-categories.index') ? 'active' : '' }}">
+                <a href="#" class="nav-link {{ request()->routeIs(['expenses.*', 'expenses-categories.*']) ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-newspaper"></i>
+                    <p>
+                        Expenses
+                        <i class="right fas fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ route('expenses-categories.index') }}" class="nav-link {{ request()->routeIs('expenses-categories.index') ? 'active' : '' }}">
 
-                                <p>Category</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('expenses.index') }}"
-                                class="nav-link {{ request()->routeIs('expenses.index') ? 'active' : '' }}">
+                            <p>Category</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('expenses.index') }}" class="nav-link {{ request()->routeIs('expenses.index') ? 'active' : '' }}">
 
-                                <p>Expenses</p>
-                            </a>
-                        </li>
+                            <p>Expenses</p>
+                        </a>
+                    </li>
 
-                    </ul>
+                </ul>
                 </li> --}}
 
                 @can('access_pettycash')
@@ -1055,38 +938,32 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('expenses-categories.index') }}"
-                                class="nav-link {{ request()->routeIs('expenses-categories.index') ? 'active' : '' }}">
+                            <a href="{{ route('expenses-categories.index') }}" class="nav-link {{ request()->routeIs('expenses-categories.index') ? 'active' : '' }}">
                                 <p>Add Category</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('pettycash-addcash.index') }}"
-                                class="nav-link {{ request()->routeIs('pettycash-addcash.index') ? 'active' : '' }}">
+                            <a href="{{ route('pettycash-addcash.index') }}" class="nav-link {{ request()->routeIs('pettycash-addcash.index') ? 'active' : '' }}">
                                 <p>Add Cash</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('pettycash-request.index') }}"
-                                class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
+                            <a href="{{ route('pettycash-request.index') }}" class="nav-link {{ request()->routeIs('pettycash-request.index') ? 'active' : '' }}">
                                 <p>Cash Request</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('pettycash-transfer.index') }}"
-                                class="nav-link {{ request()->routeIs('pettycash-transfer.index') ? 'active' : '' }}">
+                            <a href="{{ route('pettycash-transfer.index') }}" class="nav-link {{ request()->routeIs('pettycash-transfer.index') ? 'active' : '' }}">
                                 <p>Cash Verification</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('petty.expenses.index') }}"
-                                class="nav-link {{ request()->routeIs('petty.expenses.index') ? 'active' : '' }}">
+                            <a href="{{ route('petty.expenses.index') }}" class="nav-link {{ request()->routeIs('petty.expenses.index') ? 'active' : '' }}">
                                 <p>Petty Cash Expenses</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('pettycash-transaction.index') }}"
-                                class="nav-link {{ request()->routeIs('pettycash-transaction.index') ? 'active' : '' }}">
+                            <a href="{{ route('pettycash-transaction.index') }}" class="nav-link {{ request()->routeIs('pettycash-transaction.index') ? 'active' : '' }}">
                                 <p>Petty Cash Transaction</p>
                             </a>
                         </li>
@@ -1097,8 +974,7 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                 {{-- Vehicle MGNT --}}
                 @can('access_vehicle')
                 <li class="nav-item {{ request()->routeIs('PetrolMGNT.*') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs(['bike.*', 'petrol.*', 'service.*']) ? 'active' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs(['bike.*', 'petrol.*', 'service.*']) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>
                             Vehicle Mgnt
@@ -1107,22 +983,19 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('bike.index') }}"
-                                class="nav-link {{ request()->routeIs('bike.index') ? 'active' : '' }}">
+                            <a href="{{ route('bike.index') }}" class="nav-link {{ request()->routeIs('bike.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Bike</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('petrol.index') }}"
-                                class="nav-link {{ request()->routeIs('petrol.index') ? 'active' : '' }}">
+                            <a href="{{ route('petrol.index') }}" class="nav-link {{ request()->routeIs('petrol.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Petrol </p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('service.index') }}"
-                                class="nav-link {{ request()->routeIs('service.index') ? 'active' : '' }}">
+                            <a href="{{ route('service.index') }}" class="nav-link {{ request()->routeIs('service.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Service</p>
                             </a>
@@ -1133,8 +1006,7 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                 {{-- Finance --}}
                 @can('access_finance')
                 <li class="nav-item {{ request()->routeIs('finance.*') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#"
-                        class="nav-link {{ request()->routeIs(['firstbill.*', 'payment-verification.*', 'finance.*', 'daily.*']) ? 'active' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs(['firstbill.*', 'payment-verification.*', 'finance.*', 'daily.*']) ? 'active' : '' }}">
                         <i class="nav-icon fas fa-image"></i>
                         <p>
                             Finance
@@ -1143,8 +1015,7 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('firstbill.index') }}"
-                                class="nav-link {{ request()->routeIs('firstbill.index') ? 'active' : '' }}">
+                            <a href="{{ route('firstbill.index') }}" class="nav-link {{ request()->routeIs('firstbill.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>First Bill</p>
                             </a>
@@ -1157,16 +1028,14 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('finance.index') }}"
-                                class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
+                            <a href="{{ route('finance.index') }}" class="nav-link {{ request()->routeIs('finance.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Payment Entry</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('daily.index') }}"
-                                class="nav-link {{ request()->routeIs('daily.index') ? 'active' : '' }}">
+                            <a href="{{ route('daily.index') }}" class="nav-link {{ request()->routeIs('daily.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Daily Collection</p>
                             </a>
@@ -1188,15 +1057,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('advertisements.index') }}"
-                                class="nav-link {{ request()->routeIs('advertisements.index') ? 'active' : '' }}">
+                            <a href="{{ route('advertisements.index') }}" class="nav-link {{ request()->routeIs('advertisements.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Advertisements</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('advertisements.create') }}"
-                                class="nav-link {{ request()->routeIs('advertisements.create') ? 'active' : '' }}">
+                            <a href="{{ route('advertisements.create') }}" class="nav-link {{ request()->routeIs('advertisements.create') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Create Advertisements</p>
                             </a>
@@ -1216,15 +1083,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('teams.index') }}"
-                                class="nav-link {{ request()->routeIs('teams.index') ? 'active' : '' }}">
+                            <a href="{{ route('teams.index') }}" class="nav-link {{ request()->routeIs('teams.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Teams</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('teams.create') }}"
-                                class="nav-link {{ request()->routeIs('teams.create') ? 'active' : '' }}">
+                            <a href="{{ route('teams.create') }}" class="nav-link {{ request()->routeIs('teams.create') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Create Teams</p>
                             </a>
@@ -1244,15 +1109,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('faqs.index') }}"
-                                class="nav-link {{ request()->routeIs('faqs.index') ? 'active' : '' }}">
+                            <a href="{{ route('faqs.index') }}" class="nav-link {{ request()->routeIs('faqs.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>FAQs</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('faqs.create') }}"
-                                class="nav-link {{ request()->routeIs('faqs.create') ? 'active' : '' }}">
+                            <a href="{{ route('faqs.create') }}" class="nav-link {{ request()->routeIs('faqs.create') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Create FAQs</p>
                             </a>
@@ -1272,15 +1135,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('testimonials.index') }}"
-                                class="nav-link {{ request()->routeIs('testimonials.index') ? 'active' : '' }}">
+                            <a href="{{ route('testimonials.index') }}" class="nav-link {{ request()->routeIs('testimonials.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Testimonials</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('testimonials.create') }}"
-                                class="nav-link {{ request()->routeIs('testimonials.create') ? 'active' : '' }}">
+                            <a href="{{ route('testimonials.create') }}" class="nav-link {{ request()->routeIs('testimonials.create') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Create Testimonials</p>
                             </a>
@@ -1300,15 +1161,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('vacancies.index') }}"
-                                class="nav-link {{ request()->routeIs('vacancies.index') ? 'active' : '' }}">
+                            <a href="{{ route('vacancies.index') }}" class="nav-link {{ request()->routeIs('vacancies.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Vacancies</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('vacancies.create') }}"
-                                class="nav-link {{ request()->routeIs('vacancies.create') ? 'active' : '' }}">
+                            <a href="{{ route('vacancies.create') }}" class="nav-link {{ request()->routeIs('vacancies.create') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Create Vacancy</p>
                             </a>
@@ -1319,8 +1178,7 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                 {{-- Gallery --}}
                 @can('access_gallery')
                 <li class="nav-item">
-                    <a href="{{ route('galleries.index') }}"
-                        class="nav-link {{ request()->routeIs('galleries.index') ? 'active' : '' }}">
+                    <a href="{{ route('galleries.index') }}" class="nav-link {{ request()->routeIs('galleries.index') ? 'active' : '' }}">
                         <i class="far fa-image nav-icon"></i>
                         <p>Gallery</p>
                     </a>
@@ -1338,15 +1196,13 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('leave-types.index') }}"
-                                class="nav-link {{ request()->routeIs('leave-types.index') ? 'active' : '' }}">
+                            <a href="{{ route('leave-types.index') }}" class="nav-link {{ request()->routeIs('leave-types.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Types</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('leaves.index') }}"
-                                class="nav-link {{ request()->routeIs('leaves.index') ? 'active' : '' }}">
+                            <a href="{{ route('leaves.index') }}" class="nav-link {{ request()->routeIs('leaves.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Leaves</p>
                             </a>
@@ -1358,8 +1214,7 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                 {{-- Inquiries --}}
                 @can('access_inquiries')
                 <li class="nav-item">
-                    <a href="{{ route('inquires.index') }}"
-                        class="nav-link {{ request()->routeIs('inquires.index') ? 'active' : '' }}">
+                    <a href="{{ route('inquires.index') }}" class="nav-link {{ request()->routeIs('inquires.index') ? 'active' : '' }}">
                         <i class="far fa-address-book nav-icon"></i>
                         <p>Inquiries</p>
                     </a>
@@ -1377,22 +1232,19 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('company.index') }}"
-                                class="nav-link {{ request()->routeIs('company.index') ? 'active' : '' }}">
+                            <a href="{{ route('company.index') }}" class="nav-link {{ request()->routeIs('company.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Company Profile</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('whyus.index') }}"
-                                class="nav-link {{ request()->routeIs('whyus.index') ? 'active' : '' }}">
+                            <a href="{{ route('whyus.index') }}" class="nav-link {{ request()->routeIs('whyus.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Why Choose Us</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('logs.index') }}"
-                                class="nav-link {{ request()->routeIs('logs.index') ? 'active' : '' }}">
+                            <a href="{{ route('logs.index') }}" class="nav-link {{ request()->routeIs('logs.index') ? 'active' : '' }}">
                                 {{-- <i class="far fa-circle nav-icon"></i> --}}
                                 <p>Logs</p>
                             </a>

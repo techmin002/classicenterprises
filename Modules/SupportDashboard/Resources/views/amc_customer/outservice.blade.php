@@ -16,7 +16,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Service</h1>
+                    <h1>Amc Customer Service Out</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -72,17 +72,15 @@
                                             {{ \Carbon\Carbon::parse($customer->next_service_date)->format('d M, Y') }}
                                         </td>
                                         <td class="text-center">{{ $customer->amc->title ?? '' }}</td>
-                                        <td class="text-center">{{ $customer->duration_months }} Years</td>
+                                        <td class="text-center">{{ $customer->amc->year }} Years</td>
                                         <td class="text-center">
                                             <span class="badge bg-danger">Service Out</span>
                                         </td>
                                         <td>
-                                            <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                data-target="#exampleModalamc{{ $customer['id'] }}">
+                                            <a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalamc{{ $customer['id'] }}">
                                                 Create Ticket
                                             </a>
-                                            <div class="modal fade" id="exampleModalamc{{ $customer['id'] }}"
-                                                tabindex="-1">
+                                            <div class="modal fade" id="exampleModalamc{{ $customer['id'] }}" tabindex="-1">
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content border-0 shadow">
 
@@ -91,27 +89,21 @@
                                                                 <i class="fa fa-headset mr-2"></i>
                                                                 Create Support Ticket
                                                             </h5>
-                                                            <button type="button" class="close text-white"
-                                                                data-dismiss="modal">
+                                                            <button type="button" class="close text-white" data-dismiss="modal">
                                                                 &times;
                                                             </button>
                                                         </div>
 
-                                                        <form action="{{ route('amccustomer-ticket.store') }}"
-                                                            method="POST">
+                                                        <form action="{{ route('amccustomer-ticket.store') }}" method="POST">
                                                             @csrf
                                                             <div class="modal-body">
                                                                 <input type="hidden" name='type' value="amc">
-                                                                <input type="hidden" name="id"
-                                                                    value="{{ $customer['id'] }}">
-                                                                <input type="hidden" name="customer_id"
-                                                                    value="{{ $customer->customer_id }}">
+                                                                <input type="hidden" name="id" value="{{ $customer['id'] }}">
+                                                                <input type="hidden" name="customer_id" value="{{ $customer->customer_id }}">
                                                                 <div class="form-group">
-                                                                    <label for="support_type"
-                                                                        class="font-weight-bold">Support
+                                                                    <label for="support_type" class="font-weight-bold">Support
                                                                         Type</label>
-                                                                    <select name="support_type" id="support_type"
-                                                                        class="form-control">
+                                                                    <select name="support_type" id="support_type" class="form-control">
                                                                         <option value="" selected disabled>
                                                                             Select Support Type</option>
                                                                         <option value="normal_service">
@@ -129,10 +121,8 @@
                                                                 </div>
 
                                                                 <div class="form-group">
-                                                                    <label for="priority"
-                                                                        class="font-weight-bold">Priority</label>
-                                                                    <select name="priority" id="priority"
-                                                                        class="form-control">
+                                                                    <label for="priority" class="font-weight-bold">Priority</label>
+                                                                    <select name="priority" id="priority" class="form-control">
                                                                         <option value="" selected disabled>
                                                                             Select Priority</option>
                                                                         <option value="high">High
@@ -143,44 +133,19 @@
                                                                     </select>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <label for="amc"
-                                                                        class="font-weight-bold">AMC</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="amc_display" value="AMC In" readonly>
-                                                                    <input type="hidden" name="amc" value="in">
-                                                                </div>
-                                                                @php
-                                                                $isWarrantyIn = false;
-                                                                if ($customer->customer) {
-                                                                $warrantyExpiryDate = \Carbon\Carbon::parse(
-                                                                $customer->customer->created_at,
-                                                                )->addYear();
-                                                                $isWarrantyIn = \Carbon\Carbon::now()->lt(
-                                                                $warrantyExpiryDate,
-                                                                );
-                                                                }
-                                                                @endphp
-                                                                <div class="form-group">
-                                                                    <label for="warranty"
-                                                                        class="font-weight-bold">Warranty</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="warranty" name="warranty"
-                                                                        value="{{ $isWarrantyIn ? 'in' : 'out' }}"
-                                                                        readonly>
+                                                                    <label for="amc" class="font-weight-bold">AMC</label>
+                                                                    <input type="text" class="form-control" value="Out" readonly>
+                                                                    <input type="hidden" name="amc" value="out">
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <label for="message"
-                                                                        class="font-weight-bold">Message</label>
-                                                                    <textarea name="message" id="message"
-                                                                        class="form-control" rows="4"
-                                                                        placeholder="Enter message..."></textarea>
+                                                                    <label for="message" class="font-weight-bold">Message</label>
+                                                                    <textarea name="message" id="message" class="form-control" rows="4" placeholder="Enter message..."></textarea>
                                                                 </div>
                                                             </div>
 
                                                             <!-- Modal Footer -->
                                                             <div class="modal-footer bg-light">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-dismiss="modal">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                                                     <i class="fa fa-times mr-1"></i> Close
                                                                 </button>
                                                                 <button type="submit" class="btn btn-success">
@@ -227,7 +192,8 @@
 </div>
 <script>
     $(function() {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
 </script>
 @endsection
