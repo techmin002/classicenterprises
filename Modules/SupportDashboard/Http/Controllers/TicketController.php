@@ -3,18 +3,13 @@
 namespace Modules\SupportDashboard\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Log;
 use Carbon\Carbon;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Modules\AMC\Entities\AMC;
 use Modules\AMC\Entities\AmcCustomer;
-use Modules\AMC\Entities\OutsiderCustomerAMC;
-use Modules\AMC\Entities\RegisterCustomerAMC;
 use Modules\Lead\Entities\Customer;
 use Modules\SupportDashboard\Entities\CustomerTicket;
-use Modules\SupportDashboard\Entities\RegisterCustomerTicket;
+use Modules\SupportDashboard\Entities\OutsiderCustomer;
 
 class TicketController extends Controller
 {
@@ -40,10 +35,7 @@ class TicketController extends Controller
             $customer->amc_status = $this->getAmcStatus($customer);
         }
 
-
-        $outsider = CustomerTicket::with('amc')
-            ->where('branch_id', $branch_id)
-            ->where('outsider_type', 'yes')
+        $outsider = OutsiderCustomer::where('branch_id', $branch_id)
             ->where(function ($query) {
                 $query->whereIn('status', ['complete', 'report', 'create'])
                     ->orWhereNull('status');
@@ -57,28 +49,27 @@ class TicketController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('customer_id')
-            ->map(fn($row) => $row->first())
+            ->map(fn ($row) => $row->first())
             ->values();
 
         return view('supportdashboard::ticket.index', compact('register', 'outsider', 'amccustomers'));
     }
 
-
     private function getAmcStatus($customer)
     {
         // Agar AMC customer table me entry hi nahi hai
-        if (!$customer->registerAmc) {
+        if (! $customer->registerAmc) {
             // dd('hello');
 
-            return "No AMC";
+            return 'No AMC';
         }
 
         $amcCustomer = $customer->registerAmc; // AmcCustomer table
         $amc = $amcCustomer->amc;              // AMC table
 
-        if (!$amc) {
+        if (! $amc) {
             // dd('hii');
-            return "No AMC";
+            return 'No AMC';
         }
 
         // AMC start date
@@ -97,13 +88,11 @@ class TicketController extends Controller
         // Check expired or active
         if ($today->greaterThan($expiryDate)) {
             // dd('expire');
-            return "AMC Out";   // Expired
+            return 'AMC Out';   // Expired
         }
 
-        return "AMC In";        // Active
+        return 'AMC In';        // Active
     }
-
-
 
     /**
      * Show the form for creating a new resource.
@@ -112,7 +101,6 @@ class TicketController extends Controller
     {
         return view('supportdashboard::create');
     }
-
 
     public function edit($id)
     {
@@ -141,17 +129,16 @@ class TicketController extends Controller
         $customer = CustomerTicket::with([
             'customer',
             'payments',
-            'accessories.accessory'
+            'accessories.accessory',
         ])->where('id', $id)->firstOrFail();
         $customer->created_time = $this->formatTimeDifference($customer->created_at);
 
         return view('supportdashboard::ticket.details', compact('customer'));
     }
 
-
     private function formatTimeDifference($dateTime)
     {
-        if (!$dateTime) {
+        if (! $dateTime) {
             return 'N/A';
         }
 
@@ -169,22 +156,38 @@ class TicketController extends Controller
         $parts = [];
 
         if ($years > 0) {
-            $parts[] = $years . ' year' . ($years > 1 ? 's' : '');
-            if ($months > 0) $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
+            $parts[] = $years.' year'.($years > 1 ? 's' : '');
+            if ($months > 0) {
+                $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            }
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
         } elseif ($months > 0) {
-            $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
-            if ($days > 0) $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
+            $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            if ($days > 0) {
+                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            }
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
         } elseif ($days > 0) {
-            $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         } else {
-            if ($hours > 0) $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
-            if ($minutes > 0) $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            if ($hours > 0) {
+                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+            }
         }
 
-        return $parts ? implode(' ', $parts) . ' ago' : 'Just now';
+        return $parts ? implode(' ', $parts).' ago' : 'Just now';
     }
 }

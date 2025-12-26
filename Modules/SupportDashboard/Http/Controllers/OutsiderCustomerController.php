@@ -14,6 +14,7 @@ use Modules\Lead\Entities\CustomerAccessory;
 use Modules\SupportDashboard\Entities\CustomerTicket;
 use Modules\SupportDashboard\Entities\CustomerTicketAccessory;
 use Modules\SupportDashboard\Entities\CustomerTicketPayment;
+use Modules\SupportDashboard\Entities\OutsiderCustomer;
 use Modules\SupportDashboard\Entities\TicketNote;
 
 class OutsiderCustomerController extends Controller
@@ -45,6 +46,56 @@ class OutsiderCustomerController extends Controller
         return view('supportdashboard::outsider_customer.dashboard', compact('totalcustomer', 'queuecount', 'assigncount', 'completecount'));
     }
 
+    public function ticketcreate(Request $request, $id)
+    {
+
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $branch_id = session('branch_id');
+        } else {
+            $branch_id = auth()->user()->branch_id;
+        }
+
+        $customer = OutsiderCustomer::findOrFail($id);
+        $customer = OutsiderCustomer::where('id', $request->customer_id)->first();
+        if ($customer) {
+            $customer->status = 'queue';
+            $customer->save();
+        }
+
+        $ticket = CustomerTicket::create([
+            'customer_id' => $customer->id,
+            'customer_name' => $customer->name,
+            'contact' => $customer->contact_no,
+            'email' => $customer->email,
+            'address' => $customer->address,
+            'product_name' => $customer->product_name,
+            'outsider_type' => 'yes',
+            'branch_id' => $branch_id,
+            'support_type' => $request->support_type,
+            'priority' => $request->priority,
+            'amc' => 'out',
+            'warranty' => 'out',
+
+            'message' => $request->message,
+            'status' => 'queue',
+        ]);
+        TicketNote::create([
+            'ticket_id' => $ticket->id,
+            'note' => $request->message,
+        ]);
+
+        Log::create([
+            'perform' => auth()->user()->name
+                .' Outsider Customer Ticket  Created:'
+                .' at '.now(),
+            'user_id' => auth()->user()->id,
+            'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
+            'url' => url()->current(),
+        ]);
+
+        return redirect()->route('outsidercustomer-ticket.queue')->with('success', 'OutSider Customer Ticket Created Successfully.');
+    }
+
     public function regular_service()
     {
         $branchId = auth()->user()->role->name === 'Super Admin'
@@ -53,10 +104,9 @@ class OutsiderCustomerController extends Controller
 
         $today = Carbon::now()->toDateString();
 
-        $outsider = CustomerTicket::where('branch_id', $branchId)
-            ->where('outsider_type', 'yes')
+        $outsider = OutsiderCustomer::where('branch_id', $branchId)
             ->whereIn('status', ['complete', 'report'])
-            ->whereRaw('DATE_ADD(updated_at, INTERVAL 4 MONTH) <= ?', [$today])
+            ->whereRaw('DATE_ADD(last_service_date, INTERVAL 4 MONTH) <= ?', [$today])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -71,9 +121,21 @@ class OutsiderCustomerController extends Controller
         } else {
             $branch_id = auth()->user()->branch_id;
         }
+
+        $customer = OutsiderCustomer::create([
+            'customer_id' => $request->customer_id,
+            'name' => $request->customer_name,
+            'contact_no' => $request->contact,
+            'landline' => $request->landline,
+            'email' => $request->email,
+            'address' => $request->address,
+            'product_name' => $request->product_name,
+            'branch_id' => $branch_id,
+            'status' => 'queue',
+        ]);
         // dd($request->all());
         $ticket = CustomerTicket::create([
-            'customer_id' => $request->customer_id,
+            'customer_id' => $customer->id,
             'customer_name' => $request->customer_name,
             'contact' => $request->contact,
             'landline' => $request->landline,
@@ -148,7 +210,7 @@ class OutsiderCustomerController extends Controller
 
     public function assignStore(Request $request, $id)
     {
-        // dd('Assign');
+        // dd($request->all());
 
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -168,6 +230,12 @@ class OutsiderCustomerController extends Controller
             'ticket_id' => $ticket->id,
             'note' => $request->message,
         ]);
+
+        $customer = OutsiderCustomer::where('id', $request->customer_id)->first();
+        if ($customer) {
+            $customer->status = 'assign';
+            $customer->save();
+        }
 
         Log::create([
             'perform' => auth()->user()->name.' Assign Lead to : '
@@ -328,6 +396,21 @@ class OutsiderCustomerController extends Controller
                 'warranty_card' => $warrantyFileName,
             ]);
 
+            $customer = OutsiderCustomer::where('id', $request->customer_id)->first();
+
+            if ($customer) {
+                $customer->update([
+                    'status' => 'complete',
+                    'contact_no' => $request->mobile,
+                    'address' => $request->address,
+                ]);
+            }
+            if ($ticket->support_type == 'regular_servicing') {
+                $customers = OutsiderCustomer::where('id', $request->customer_id)->first();
+                $customers->last_service_date = now();
+                $customers->save();
+            }
+
             // 🔁 Store Accessories
             if ($request->has('accessories_id') && is_array($request->accessories_id)) {
                 foreach ($request->accessories_id as $index => $accessoryId) {
@@ -402,12 +485,44 @@ class OutsiderCustomerController extends Controller
             $branch_id = auth()->user()->branch_id;
         }
         $users = User::where('branch_id', $branch_id)->get();
-        $customers = CustomerTicket::with(['amc', 'customer', 'user'])->where('branch_id', $branch_id)->where('outsider_type', 'yes')->where('status', 'complete')->latest()->get();
-        foreach ($customers as $customer) {
-            $customer->created_time = $this->formatTimeDifference($customer->updated_at);
-        }
+        // Maintanance
+        $maintanance = CustomerTicket::with(['amc', 'customer', 'user'])
+            ->where('branch_id', $branch_id)
+            ->where('outsider_type', 'yes')
+            ->where('support_type', 'maintenance')
+            ->where('status', 'complete')->latest()->get();
 
-        return view('supportdashboard::outsider_customer.report', compact('customers', 'users'));
+        // Filter
+        $filter = CustomerTicket::with(['amc', 'customer', 'user'])
+            ->where('branch_id', $branch_id)
+            ->where('outsider_type', 'yes')
+            ->where('support_type', 'filter_leakage')
+            ->where('status', 'complete')->latest()->get();
+
+        // Location
+        $location = CustomerTicket::with(['amc', 'customer', 'user'])
+            ->where('branch_id', $branch_id)
+            ->where('outsider_type', 'yes')
+            ->where('support_type', 'location_shifting')
+            ->where('status', 'complete')->latest()->get();
+
+        // Regular
+        $regular = CustomerTicket::with(['amc', 'customer', 'user'])
+            ->where('branch_id', $branch_id)
+            ->where('outsider_type', 'yes')
+            ->where('support_type', 'regular_servicing')
+            ->where('status', 'complete')->latest()->get();
+        $installation = CustomerTicket::with(['amc', 'customer', 'user'])
+            ->where('branch_id', $branch_id)
+            ->where('outsider_type', 'yes')
+            ->where('support_type', 'installation')
+            ->where('status', 'complete')->latest()->get();
+
+        // foreach ($customers as $customer) {
+        //     $customer->created_time = $this->formatTimeDifference($customer->updated_at);
+        // }
+
+        return view('supportdashboard::outsider_customer.report', compact('maintanance', 'filter', 'location', 'regular', 'users', 'installation'));
     }
 
     public function complete()

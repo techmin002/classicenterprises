@@ -141,8 +141,8 @@ class RegisterCustomerController extends Controller
 
         Log::create([
             'perform' => auth()->user()->name
-                .' Task '.$request->support_type.' Created:'
-                .' at '.now(),
+                . ' Task ' . $request->support_type . ' Created:'
+                . ' at ' . now(),
             'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
             'url' => url()->current(),
@@ -234,7 +234,7 @@ class RegisterCustomerController extends Controller
 
         // Log entry
         Log::create([
-            'perform' => auth()->user()->name.' Assign Lead to : '.$user->name.' at '.now(),
+            'perform' => auth()->user()->name . ' Assign Lead to : ' . $user->name . ' at ' . now(),
             'user_id' => auth()->user()->id,
             'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
             'url' => url()->current(),
@@ -295,7 +295,7 @@ class RegisterCustomerController extends Controller
 
             // Check in customers table
             while (Customer::where('user_name', $username)->exists()) {
-                $username = $originalUsername.$counter;
+                $username = $originalUsername . $counter;
                 $counter++;
             }
             // 🧾 Handle Receipts
@@ -479,7 +479,7 @@ class RegisterCustomerController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return back()->withInput()->with('error', 'Error creating installation: '.$e->getMessage());
+            return back()->withInput()->with('error', 'Error creating installation: ' . $e->getMessage());
         }
     }
 
@@ -749,38 +749,38 @@ class RegisterCustomerController extends Controller
         $parts = [];
 
         if ($years > 0) {
-            $parts[] = $years.' year'.($years > 1 ? 's' : '');
+            $parts[] = $years . ' year' . ($years > 1 ? 's' : '');
             if ($months > 0) {
-                $parts[] = $months.' month'.($months > 1 ? 's' : '');
+                $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
             }
             if ($days > 0) {
-                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+                $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
             }
         } elseif ($months > 0) {
-            $parts[] = $months.' month'.($months > 1 ? 's' : '');
+            $parts[] = $months . ' month' . ($months > 1 ? 's' : '');
             if ($days > 0) {
-                $parts[] = $days.' day'.($days > 1 ? 's' : '');
+                $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
             }
             if ($hours > 0) {
-                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+                $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
             }
         } elseif ($days > 0) {
-            $parts[] = $days.' day'.($days > 1 ? 's' : '');
+            $parts[] = $days . ' day' . ($days > 1 ? 's' : '');
             if ($hours > 0) {
-                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+                $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
             }
             if ($minutes > 0) {
-                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+                $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
             }
         } else {
             if ($hours > 0) {
-                $parts[] = $hours.' hour'.($hours > 1 ? 's' : '');
+                $parts[] = $hours . ' hour' . ($hours > 1 ? 's' : '');
             }
             if ($minutes > 0) {
-                $parts[] = $minutes.' minute'.($minutes > 1 ? 's' : '');
+                $parts[] = $minutes . ' minute' . ($minutes > 1 ? 's' : '');
             }
         }
 
-        return $parts ? implode(' ', $parts).' ago' : 'Just now';
+        return $parts ? implode(' ', $parts) . ' ago' : 'Just now';
     }
 }

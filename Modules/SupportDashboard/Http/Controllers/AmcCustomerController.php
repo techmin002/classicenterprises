@@ -570,9 +570,68 @@ class AmcCustomerController extends Controller
             $branch_id = auth()->user()->branch_id;
         }
         $users = User::where('branch_id', $branch_id)->get();
-        $customers = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])->where('branch_id', $branch_id)->where('amc_type', 'yes')->where('status', 'complete')->latest()->get();
 
-        return view('supportdashboard::amc_customer.report', compact('customers', 'users'));
+        // Maintanance
+        $maintanancein = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])
+            ->where('branch_id', $branch_id)
+            ->where('support_type', 'maintenance')
+            ->where('amc_type', 'yes')
+            ->where('amc', 'yes')
+            ->where('status', 'complete')->latest()->get();
+
+        $maintananceout = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])
+            ->where('branch_id', $branch_id)
+            ->where('support_type', 'maintenance')
+            ->where('amc_type', 'yes')
+            ->where('amc', 'no')
+            ->where('status', 'complete')->latest()->get();
+
+        // Filter
+        $filterin = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])
+            ->where('branch_id', $branch_id)
+            ->where('support_type', 'filter_leakage')
+            ->where('amc_type', 'yes')
+            ->where('amc', 'yes')
+            ->where('status', 'complete')->latest()->get();
+
+        $filterout = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])
+            ->where('branch_id', $branch_id)
+            ->where('support_type', 'filter_leakage')
+            ->where('amc_type', 'yes')
+            ->where('amc', 'no')
+            ->where('status', 'complete')->latest()->get();
+
+        // Location
+        $locationin = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])
+            ->where('branch_id', $branch_id)
+            ->where('support_type', 'location_shifting')
+            ->where('amc_type', 'yes')
+            ->where('amc', 'yes')
+            ->where('status', 'complete')->latest()->get();
+
+        $locationout = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])
+            ->where('branch_id', $branch_id)
+            ->where('support_type', 'location_shifting')
+            ->where('amc_type', 'yes')
+            ->where('amc', 'no')
+            ->where('status', 'complete')->latest()->get();
+
+        // Regular
+        $regularin = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])
+            ->where('branch_id', $branch_id)
+            ->where('support_type', 'regular_servicing')
+            ->where('amc_type', 'yes')
+            ->where('amc', 'yes')
+            ->where('status', 'complete')->latest()->get();
+
+        $regularout = CustomerTicket::with(['amc', 'customer', 'user', 'amccustomer'])
+            ->where('branch_id', $branch_id)
+            ->where('support_type', 'regular_servicing')
+            ->where('amc_type', 'yes')
+            ->where('amc', 'no')
+            ->where('status', 'complete')->latest()->get();
+
+        return view('supportdashboard::amc_customer.report', compact('maintanancein', 'maintananceout', 'users', 'filterin', 'filterout', 'locationin', 'locationout', 'regularin', 'regularout'));
     }
 
     public function complete()

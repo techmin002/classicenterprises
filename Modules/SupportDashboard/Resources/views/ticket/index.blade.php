@@ -121,7 +121,7 @@
                                                                                     Filter Leakage</option>
                                                                                 <option value="location_shifting">
                                                                                     Location Shifting</option>
-                                                                                <option value="regular_servicing">
+                                                                                <option value="regular_servicing" disabled>
                                                                                     Regular Servicing</option>
 
                                                                             </select>
@@ -340,7 +340,8 @@
                                                                                 Location Shifting</option>
                                                                             <option value="regular_servicing">
                                                                                 Regular Servicing</option>
-
+                                                                            <option value="installation">
+                                                                                Installation</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -384,6 +385,126 @@
                                 </div>
                                 <!-- /.card-header -->
                                 <div class="card-body">
+                                    <div class="card-body">
+                                        <table id="example4" class="table table-bordered table-striped datatable-custom">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">S.N</th>
+                                                    <th class="text-center">Name</th>
+                                                    <th class="text-center">Mobile</th>
+                                                    <th class="text-center">Address</th>
+                                                    <th class="text-center">Product</th>
+                                                    <th class="text-center">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($outsider as $key => $customer)
+                                                <tr>
+                                                    <td class="text-center">{{ $loop->iteration }}</td>
+                                                    <td class="text-center">
+                                                        {{ $customer->name }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $customer->contact_no }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $customer->address }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ $customer->product_name }}
+                                                    </td>
+                                                    <td>
+                                                        <a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModaloutsider{{ $customer->id }}"> Create
+                                                            Ticket</a>
+
+                                                        <div class="modal fade" id="exampleModaloutsider{{ $customer->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg" role="document">
+                                                                <div class="modal-content border-0 shadow">
+
+                                                                    <!-- Modal Header -->
+                                                                    <div class="modal-header bg-primary text-white">
+                                                                        <div>
+                                                                            <h5 class="modal-title mb-0" id="exampleModalLabel">
+                                                                                <i class="fa fa-headset mr-2"></i>Outsider Customer Ticket Create
+                                                                            </h5>
+                                                                            <small>Customer:
+                                                                                <strong>{{ ucfirst($customer->name)
+                                                                                }}</strong></small>
+                                                                        </div>
+                                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+
+                                                                    <!-- Modal Body -->
+                                                                    <form action="{{ route('outsider-ticket.create',$customer->id) }}" method="POST">
+                                                                        @csrf
+                                                                        <div class="modal-body">
+                                                                            <input type="hidden" name="customer_id" value="{{ $customer->id }}">
+                                                                            <div class="form-group">
+                                                                                <label for="support_type" class="font-weight-bold">Support
+                                                                                    Category</label>
+                                                                                <select name="support_type" id="support_type" class="form-control">
+                                                                                    <option value="" selected disabled>
+                                                                                        Select Support Category
+                                                                                    </option>
+                                                                                    <option value="maintenance">
+                                                                                        Maintenance</option>
+                                                                                    <option value="filter_leakage">
+                                                                                        Filter Leakage</option>
+                                                                                    <option value="location_shifting">
+                                                                                        Location Shifting</option>
+                                                                                    <option value="regular_servicing">
+                                                                                        Regular Servicing</option>
+
+                                                                                </select>
+                                                                            </div>
+
+                                                                            <div class="form-group">
+                                                                                <label for="priority" class="font-weight-bold">Priority</label>
+                                                                                <select name="priority" id="priority" class="form-control">
+                                                                                    <option value="" selected disabled>
+                                                                                        Select Priority</option>
+                                                                                    <option value="high">High
+                                                                                    </option>
+                                                                                    <option value="medium">Medium
+                                                                                    </option>
+                                                                                    <option value="low">Low</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label for="message" class="font-weight-bold">Message</label>
+                                                                                <textarea name="message" id="message" class="form-control" rows="4" placeholder="Enter message..."></textarea>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Modal Footer -->
+                                                                        <div class="modal-footer bg-light justify-content-start">
+                                                                            <button type="submit" class="btn btn-success">Submit
+                                                                            </button>
+                                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel
+                                                                            </button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th class="text-center">S.N</th>
+                                                    <th class="text-center">Name</th>
+                                                    <th class="text-center">Mobile</th>
+                                                    <th class="text-center">Address</th>
+                                                    <th class="text-center">Product</th>
+                                                    <th class="text-center">Action</th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
                                 </div>
                                 <!-- /.card-body -->
                             </div>
@@ -502,7 +623,7 @@
                                                                                     Filter Leakage</option>
                                                                                 <option value="location_shifting">
                                                                                     Location Shifting</option>
-                                                                                <option value="regular_servicing">
+                                                                                <option value="regular_servicing" disabled>
                                                                                     Regular Servicing</option>
 
                                                                             </select>

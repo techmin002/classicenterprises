@@ -3,181 +3,180 @@
 @section('title', 'Create Customer')
 
 @section('breadcrumb')
-    <ol class="breadcrumb border-0 m-0">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active"> Create Customer</li>
-    </ol>
+<ol class="breadcrumb border-0 m-0">
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+    <li class="breadcrumb-item active"> Create Customer</li>
+</ol>
 @endsection
 
 @section('content')
-    <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Create Customer</h1>
-                    </div>
+<div class="content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Create Customer</h1>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Customers Detail's</h3>
-                            </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Customers Detail's</h3>
+                        </div>
 
-                            <form action="{{ route('leads.convert.store') }}" id="expenseForm" method="post"
-                                enctype="multipart/form-data">
-                                @csrf
-                                <div class="modal-body">
-                                    <div class="container-fluid">
-                                        <div class="row gy-3 mt-2">
-                                            <div class="mt-3 col-lg-4">
-                                                <label>Name <strong class="text-danger">*</strong></label>
-                                                <input class="form-control" placeholder="Enter name" type="text"
-                                                    value="{{ $lead->name }}" name="name" id="name">
-                                            </div>
-                                            <div class="mt-3 col-lg-4">
-                                                <label>Address <strong class="text-danger">*</strong></label>
-                                                <input class="form-control" type="text" value="{{ $lead->address }}"
-                                                    name="address">
-                                            </div>
-                                            <div class="mt-3 col-lg-4">
-                                                <div class="form-group">
-                                                    <label>Sales Convert <strong class="text-danger">*</strong></label>
-                                                    <select name="converted_by" class="form-control" required>
-                                                        <option value="">Select Staff</option>
-                                                        @foreach ($staffs as $staff)
-                                                            <option value="{{ $staff['id'] }}">{{ $staff['name'] }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            {{-- <div class="mt-3 col-lg-6">
-                                                <label>Email <strong class="text-danger">*</strong></label>
-                                                <input class="form-control" type="email" value="{{ $lead->email }}"
-                                                    name="email">
-                                            </div> --}}
-                                            <input type="hidden" value="{{ $lead->id }}" name="lead_id">
-                                            <div class="mt-3 col-lg-6">
-                                                <label>Contact Number <strong class="text-danger">*</strong></label>
-                                                <input class="form-control" placeholder="Enter mobile number" type="tel"
-                                                    value="{{ $lead->mobile }}"
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
-                                                    pattern="\d{10}" maxlength="10" name="mobile">
-                                            </div>
-                                            <div class="mt-3 col-lg-6">
-                                                <label>Alternate Contact Number <small
-                                                        class="text-success">(Optional)</small></label>
-                                                <input class="form-control" placeholder="Alternate number" type="tel"
-                                                    value="{{ $lead->landline }}"
-                                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
-                                                    pattern="\d{10}" maxlength="10" name="landline">
+                        <form action="{{ route('leads.convert.store') }}" id="expenseForm" method="post"
+                            enctype="multipart/form-data">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="container-fluid">
+                                    <div class="row gy-3 mt-2">
+                                        <div class="mt-3 col-lg-4">
+                                            <label>Name <strong class="text-danger">*</strong></label>
+                                            <input class="form-control" placeholder="Enter name" type="text"
+                                                value="{{ $lead->name }}" name="name" id="name">
+                                        </div>
+                                        <div class="mt-3 col-lg-4">
+                                            <label>Address <strong class="text-danger">*</strong></label>
+                                            <input class="form-control" type="text" value="{{ $lead->address }}"
+                                                name="address">
+                                        </div>
+                                        <div class="mt-3 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Sales Convert <strong class="text-danger">*</strong></label>
+                                                <select name="converted_by" class="form-control" required>
+                                                    <option value="">Select Staff</option>
+                                                    @foreach ($staffs as $staff)
+                                                    <option value="{{ $staff['id'] }}">{{ $staff['name'] }}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
+                                        {{-- <div class="mt-3 col-lg-6">
+                                            <label>Email <strong class="text-danger">*</strong></label>
+                                            <input class="form-control" type="email" value="{{ $lead->email }}"
+                                                name="email">
+                                        </div> --}}
+                                        <input type="hidden" value="{{ $lead->id }}" name="lead_id">
+                                        <div class="mt-3 col-lg-6">
+                                            <label>Contact Number <strong class="text-danger">*</strong></label>
+                                            <input class="form-control" placeholder="Enter mobile number" type="tel"
+                                                value="{{ $lead->mobile }}"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
+                                                pattern="\d{10}" maxlength="10" name="mobile">
+                                        </div>
+                                        <div class="mt-3 col-lg-6">
+                                            <label>Alternate Contact Number <small
+                                                    class="text-success">(Optional)</small></label>
+                                            <input class="form-control" placeholder="Alternate number" type="tel"
+                                                value="{{ $lead->landline }}"
+                                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"
+                                                pattern="\d{10}" maxlength="10" name="landline">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+                            <div class="card-header">
+                                <h3 class="card-title">Product Detail's</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row gy-3">
+                                    <div class="col-md-12">
+                                        <label>Product <strong class="text-danger">*</strong></label>
+                                        <div id="productContainer"></div>
+                                        <button type="button" id="addProduct" class="badge badge-primary mt-3">Add
+                                            Product</button> <br>
+                                        <small id="productError" class="text-danger" style="display:none;">Please
+                                            select at least one product.</small>
                                     </div>
                                 </div>
 
                                 <hr>
-                                <div class="card-header">
-                                    <h3 class="card-title">Product Detail's</h3>
+                                <label>Accessories</label>
+                                <div id="accessoryContainer"></div>
+                                <button type="button" id="addAccessory" class="badge badge-primary mt-3">Add
+                                    Accessory</button>
+
+
+                                <hr>
+                                <!-- Exchange Dropdown -->
+                                <div class="form-group">
+                                    <label>Exchange <strong class="text-danger">*</strong></label>
+                                    <select name="is_exchange" id="exchangeSelect" class="form-control" required>
+                                        <option value="" selected disabled>Select</option>
+                                        <option value="no">No</option>
+                                        <option value="yes">Yes</option>
+                                    </select>
                                 </div>
-                                <div class="card-body">
-                                    <div class="row gy-3">
-                                        <div class="col-md-12">
-                                            <label>Product <strong class="text-danger">*</strong></label>
-                                            <div id="productContainer"></div>
-                                            <button type="button" id="addProduct" class="badge badge-primary mt-3">Add
-                                                Product</button> <br>
-                                            <small id="productError" class="text-danger" style="display:none;">Please
-                                                select at least one product.</small>
-                                        </div>
-                                    </div>
-
-                                    <hr>
-                                    <label>Accessories</label>
-                                    <div id="accessoryContainer"></div>
-                                    <button type="button" id="addAccessory" class="badge badge-primary mt-3">Add
-                                        Accessory</button>
 
 
-                                    <hr>
-                                    <!-- Exchange Dropdown -->
-                                    <div class="form-group">
-                                        <label>Exchange <strong class="text-danger">*</strong></label>
-                                        <select name="is_exchange" id="exchangeSelect" class="form-control" required>
-                                            <option value="" selected disabled>Select</option>
-                                            <option value="no">No</option>
-                                            <option value="yes">Yes</option>
-                                        </select>
-                                    </div>
-
-
-                                    <div id="exchangeSection" style="display: none;">
-                                        <label>Exchange Items</label>
-                                        <div id="exchangeContainer"></div>
-                                        <button type="button" id="addExchange" class="badge badge-primary mt-3">Add New
-                                            Item</button>
-
-                                        <div class="mt-3">
-                                            <label>Total Exchange Amount:</label>
-                                            <input type="text" name="total_exchange" id="totalExchangeAmount"
-                                                class="form-control" readonly />
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <!-- Skim Dropdown -->
-                                    <div class="form-group">
-                                        <label>Skim <strong class="text-danger">*</strong></label>
-                                        <select name="is_skim" id="skimSelect" class="form-control" required>
-                                            <option value="" selected disabled>Select</option>
-                                            <option value="no">No</option>
-                                            <option value="yes">Yes</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Skim Items Section -->
-                                    <div id="skimSection" style="display: none;">
-                                        <label>Enter Skim Item</label>
-                                        <div id="skimContainer"></div>
-                                        <button type="button" id="addSkim" class="badge badge-primary mt-3">Add
-                                            New Item</button>
-                                    </div>
+                                <div id="exchangeSection" style="display: none;">
+                                    <label>Exchange Items</label>
+                                    <div id="exchangeContainer"></div>
+                                    <button type="button" id="addExchange" class="badge badge-primary mt-3">Add New
+                                        Item</button>
 
                                     <div class="mt-3">
-                                        <label>Amount:</label>
-                                        <input type="text" name="grand_total" id="overallTotal" class="form-control"
-                                            readonly />
-                                    </div>
-                                    <hr>
-                                    <div class="form-group">
-                                        <label>Remark</label>
-                                        <textarea name="remark" class="form-control" required></textarea>
+                                        <label>Total Exchange Amount:</label>
+                                        <input type="text" name="total_exchange" id="totalExchangeAmount"
+                                            class="form-control" readonly />
                                     </div>
                                 </div>
-                                <div class="card-footer justify-content-start">
-                                    <button type="submit" name="submit" class="btn btn-success">Submit</button>
-                                    <button type="button" class="btn btn-danger"
-                                        onclick="history.back();">Cancel</button>
+                                <hr>
+                                <!-- Skim Dropdown -->
+                                <div class="form-group">
+                                    <label>Skim <strong class="text-danger">*</strong></label>
+                                    <select name="is_skim" id="skimSelect" class="form-control" required>
+                                        <option value="" selected disabled>Select</option>
+                                        <option value="no">No</option>
+                                        <option value="yes">Yes</option>
+                                    </select>
                                 </div>
-                            </form>
-                        </div>
+
+                                <!-- Skim Items Section -->
+                                <div id="skimSection" style="display: none;">
+                                    <label>Enter Skim Item</label>
+                                    <div id="skimContainer"></div>
+                                    <button type="button" id="addSkim" class="badge badge-primary mt-3">Add
+                                        New Item</button>
+                                </div>
+
+                                <div class="mt-3">
+                                    <label>Amount:</label>
+                                    <input type="text" name="grand_total" id="overallTotal" class="form-control"
+                                        readonly />
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                    <label>Remark</label>
+                                    <textarea name="remark" class="form-control" required></textarea>
+                                </div>
+                            </div>
+                            <div class="card-footer justify-content-start">
+                                <button type="submit" name="submit" class="btn btn-success">Submit</button>
+                                <button type="button" class="btn btn-danger" onclick="history.back();">Cancel</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </section>
-    </div>
+        </div>
+    </section>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
             let productIndex = 0,
                 accessoryIndex = 0,
                 exchangeIndex = 0;
@@ -365,10 +364,10 @@
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         });
-    </script>
+</script>
 
-    <script>
-        const skimSelect = document.getElementById('skimSelect');
+<script>
+    const skimSelect = document.getElementById('skimSelect');
         const skimSection = document.getElementById('skimSection');
         const skimContainer = document.getElementById('skimContainer');
         const addSkimButton = document.getElementById('addSkim');
@@ -414,5 +413,5 @@
                 e.target.closest('.skim-item').remove();
             }
         });
-    </script>
+</script>
 @endsection

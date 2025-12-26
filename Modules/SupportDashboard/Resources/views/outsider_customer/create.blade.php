@@ -345,7 +345,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <input type="hidden" name='customer_id' value="{{ $customer->id }}">
+                                    <input type="hidden" name='customer_id' value="{{ $customer->customer_id }}">
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Username</label>

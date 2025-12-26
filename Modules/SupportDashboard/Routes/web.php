@@ -55,6 +55,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/dashboard', [OutsiderCustomerController::class, 'dashboard'])->name('outsidercustomer-ticket.dashboard');
         Route::get('/regular-service', [OutsiderCustomerController::class, 'regular_service'])->name('outsidercustomer-ticket.regular-service');
         Route::post('/customer-create', [OutsiderCustomerController::class, 'customercreate'])->name('outsidercustomer-ticket.customer-create');
+
         Route::post('/ticket/store/{id}', [OutsiderCustomerController::class, 'store'])->name('outsidercustomer-ticket.store');
         Route::get('/queue', [OutsiderCustomerController::class, 'queue'])->name('outsidercustomer-ticket.queue');
         Route::put('/messageupdate/{id}', [OutsiderCustomerController::class, 'messageupdate'])->name('outsidercustomer-ticket.message.update');
@@ -65,6 +66,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/ticket/report', [OutsiderCustomerController::class, 'report'])->name('outsidercustomer-ticket.report');
         Route::get('/ticket/complete', [OutsiderCustomerController::class, 'complete'])->name('outsidercustomer-ticket.complete');
         Route::post('/ticket_create', [OutsiderCustomerController::class, 'ticket_create'])->name('outsidercustomer-ticket.ticket_create');
+
+        Route::post('/ticket/create/{id}', [OutsiderCustomerController::class, 'ticketcreate'])->name('outsider-ticket.create');
 
     });
 
