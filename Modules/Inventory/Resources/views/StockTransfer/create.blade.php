@@ -49,9 +49,9 @@
                                     <label for="status" class="form-label12 fw-semibold">Status</label>
                                     <select class="form-control border-primary shadow-sm" id="status" name="status" required>
                                         <option value="pending" selected>Pending</option>
-                                        <option value="in_transit">In Transit</option>
+                                        {{-- <option value="in_transit">In Transit</option> --}}
                                         <option value="completed">Completed</option>
-                                        <option value="cancelled">Cancelled</option>
+                                        {{-- <option value="cancelled">Cancelled</option> --}}
                                     </select>
                                     <div class="invalid-feedback">Please select a status</div>
                                 </div>

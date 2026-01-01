@@ -54,18 +54,23 @@
                                         </select>
                                     </div>
                                     <div class="col-lg-4">
-                                        <label class="form-label12 fw-semibold">Branch ID</label>
+                                        <label class="form-label12 fw-semibold">Branch</label>
                                         <select class="form-control border-primary shadow-sm" name="branch_id">
-                                            @if (auth()->user()->role['name'] === 'Super Admin')
+                                            {{-- @if (auth()->user()->role['name'] === 'Super Admin')
                                             <option value="">Select Branch</option>
                                             @foreach ($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                            <option value="{{ $branch->id }}" {{ $branch->id == old('branch_id', $devicePurchase->branch_id) ? 'selected' : '' }}>
+                                            {{ $branch->name }}
+                                            </option>
                                             @endforeach
                                             @else
                                             <option value="{{ $branchId }}" selected>
                                                 {{ $branchName }}
                                             </option>
-                                            @endif
+                                            @endif --}}
+                                            <option value="{{ $branchId }}" selected>
+                                                {{ $branchName }}
+                                            </option>
                                         </select>
                                     </div>
                                     <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
@@ -105,7 +110,7 @@
                             <div class="container-fluid">
                                 @foreach ($purchaseAccessories as $acc)
                                 <div class="row gy-4 item-row accessory-row" id="accessory-row-{{ $acc->id }}">
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-4">
                                         <label class="form-label12 fw-semibold">Accessory Name</label>
                                         <select class="form-control border-success shadow-sm accessory-name" name="accessories[{{ $acc->id }}][id]">
                                             <option value="">Select Accessory</option>
@@ -124,25 +129,11 @@
                                         <label class="form-label12 fw-semibold">Unit Price</label>
                                         <input class="form-control border-success shadow-sm accessory-price" name="accessories[{{ $acc->id }}][price]" value="{{ $acc['unit_price'] }}" type="number" step="0.01" placeholder="Price">
                                     </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-3">
                                         <label class="form-label12 fw-semibold">Total</label>
                                         <input class="form-control border-success shadow-sm accessory-total" name="accessories[{{ $acc->id }}][total]" type="number" value="{{ $acc['total'] }}" step="0.01" readonly>
                                     </div>
-                                    <div class="col-lg-1">
-                                        <label class="form-label12 fw-semibold">Branch</label>
-                                        <select class="form-control border-success shadow-sm" name="accessories[{{ $acc->id }}][branch_id]">
-                                            @if (auth()->user()->role['name'] === 'Super Admin')
-                                            <option value="">Select Branch</option>
-                                            @foreach ($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                            @endforeach
-                                            @else
-                                            <option value="{{ $branchId }}" selected>
-                                                {{ $branchName }}
-                                            </option>
-                                            @endif
-                                        </select>
-                                    </div>
+
                                     <div class="col-lg-1 d-flex align-items-end">
                                         <button type="button" class="btn btn-sm btn-danger remove-item" data-row="accessory-row-{{ $acc->id }}">
                                             <i class="bi bi-trash"></i>
@@ -173,7 +164,7 @@
                                 <div id="machineryContainer">
                                     @foreach ($purchaseMachineries as $mach)
                                     <div class="row gy-4 item-row machinery-row" id="machinery-row-{{ $mach->id }}">
-                                        <div class="col-lg-3">
+                                        <div class="col-lg-4">
                                             <label class="form-label12 fw-semibold">Machinery Name</label>
                                             <select class="form-control border-warning shadow-sm machinery-name" name="machineries[{{ $mach->id }}][id]">
                                                 <option value="">Select Machinery</option>
@@ -192,47 +183,108 @@
                                             <label class="form-label12 fw-semibold">Unit Price</label>
                                             <input class="form-control border-warning shadow-sm machinery-price" name="machineries[{{ $mach->id }}][price]" type="number" value="{{ $mach['unit_price'] }}" step="0.01" placeholder="Price">
                                         </div>
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-3">
                                             <label class="form-label12 fw-semibold">Total</label>
                                             <input class="form-control border-warning shadow-sm machinery-total" name="machineries[{{ $mach->id }}][total]" type="number" value="{{ $mach['total'] }}" step="0.01" readonly>
                                         </div>
-                                        <div class="col-lg-1">
+                                        {{-- <div class="col-lg-1">
                                             <label class="form-label12 fw-semibold">Branch</label>
                                             <select class="form-control border-warning shadow-sm" name="machineries[{{ $mach->id }}][branch_id]">
 
-                                                @if (auth()->user()->role['name'] === 'Super Admin')
-                                                <option value="">Select Branch</option>
-                                                @foreach ($branches as $branch)
-                                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                                @endforeach
-                                                @else
-                                                <option value="{{ $branchId }}" selected>
-                                                    {{ $branchName }}
-                                                </option>
-                                                @endif
-                                            </select>
+                                        @if (auth()->user()->role['name'] === 'Super Admin')
+                                        <option value="">Select Branch</option>
+                                        @foreach ($branches as $branch)
+                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                        @else
+                                        <option value="{{ $branchId }}" selected>
+                                            {{ $branchName }}
+                                        </option>
+                                        @endif
+                                        </select>
 
-                                        </div>
-                                        <div class="col-lg-1 d-flex align-items-end">
-                                            <button type="button" class="btn btn-sm btn-danger remove-item" data-row="machinery-row-{{ $mach->id }}">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </div>
+                                    </div> --}}
+                                    <div class="col-lg-1 d-flex align-items-end">
+                                        <button type="button" class="btn btn-sm btn-danger remove-item" data-row="machinery-row-{{ $mach->id }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </div>
-                                    @endforeach
                                 </div>
-                                <button type="button" id="addMachinery" class="btn btn-outline-warning mt-3">
-                                    <i class="bi bi-plus-circle"></i> Add Machinery
-                                </button>
+                                @endforeach
+                            </div>
+                            <button type="button" id="addMachinery" class="btn btn-outline-warning mt-3">
+                                <i class="bi bi-plus-circle"></i> Add Machinery
+                            </button>
 
-                                <div class="row mt-3">
-                                    <div class="col-md-3 offset-md-9">
-                                        <label class="form-label12 fw-semibold">Machinery Subtotal</label>
-                                        <input class="form-control border-warning shadow-sm" type="number" step="0.01" name="machinery_subtotal" id="machinery_subtotal" readonly>
-                                    </div>
+                            <div class="row mt-3">
+                                <div class="col-md-3 offset-md-9">
+                                    <label class="form-label12 fw-semibold">Machinery Subtotal</label>
+                                    <input class="form-control border-warning shadow-sm" type="number" step="0.01" name="machinery_subtotal" id="machinery_subtotal" readonly>
                                 </div>
                             </div>
                     </div>
+
+                    <h3 class="mt-5 mb-3 text-info border-bottom pb-2 section-title">
+                        <i class="bi bi-tools me-2"></i>
+                        Technical Tools Purchase
+                    </h3>
+
+                    <div class="container-fluid">
+                        <div id="technicalToolsContainer">
+
+                            @foreach ($purchaseTechnicalTools as $tool)
+                            <div class="row gy-4 item-row technicaltool-row" id="technicaltool-row-{{ $tool->id }}">
+
+                                <div class="col-lg-4">
+                                    <label class="form-label12 fw-semibold">Tool Name</label>
+                                    <select class="form-control border-info shadow-sm technicaltool-name" name="technicaltools[{{ $tool->id }}][id]">
+                                        <option value="">Select Tool</option>
+                                        @foreach ($technicaltools as $t)
+                                        <option value="{{ $t->id }}" data-price="{{ $t->price }}" {{ $t->id == $tool->technical_tool_id ? 'selected' : '' }}>
+                                            {{ $t->tool_name }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-lg-2">
+                                    <label class="form-label12 fw-semibold">Quantity</label>
+                                    <input class="form-control border-info shadow-sm technicaltool-quantity" name="technicaltools[{{ $tool->id }}][quantity]" type="number" min="1" value="{{ $tool->quantity }}">
+                                </div>
+
+                                <div class="col-lg-2">
+                                    <label class="form-label12 fw-semibold">Unit Price</label>
+                                    <input class="form-control border-info shadow-sm technicaltool-price" name="technicaltools[{{ $tool->id }}][price]" type="number" step="0.01" value="{{ $tool->unit_price }}">
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <label class="form-label12 fw-semibold">Total</label>
+                                    <input class="form-control border-info shadow-sm technicaltool-total" type="number" step="0.01" value="{{ $tool->total }}" readonly>
+                                </div>
+
+                                <div class="col-lg-1 d-flex align-items-end">
+                                    <button type="button" class="btn btn-sm btn-danger remove-item" data-row="technicaltool-row-{{ $tool->id }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            @endforeach
+
+                        </div>
+
+                        <button type="button" id="addTechnicalTool" class="btn btn-outline-info mt-3">
+                            <i class="bi bi-plus-circle"></i> Add Technical Tool
+                        </button>
+
+                        <div class="row mt-3">
+                            <div class="col-md-3 offset-md-9">
+                                <label class="form-label12 fw-semibold">Technical Tools Subtotal</label>
+                                <input class="form-control border-info shadow-sm" type="number" step="0.01" id="technicaltools_subtotal" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <div class="modal-footer justify-content-start modal-footer-advanced">
                         <button type="submit" name="submit" id="btnSubmit" class="btn btn-success px-5 py-2 fw-bold shadow-sm">
                             <i class="bi bi-save me-2"></i>Save Device Purchase
@@ -254,13 +306,14 @@
 </section>
 <!-- /.content -->
 </div>
+
+
 <script>
     $(function() {
         $('[data-toggle="tooltip"]').tooltip()
     })
 
 </script>
-@endsection
 
 <!-- Bootstrap Icons CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -389,144 +442,160 @@
 
 <script>
     $(document).ready(function() {
+
         let accessoryIndex = 0;
         let machineryIndex = 0;
+        let technicalIndex = 0;
 
-        // Function to calculate totals
+        /* ================= CALCULATE TOTALS ================= */
         function calculateTotals() {
             let accessoriesTotal = 0;
             let machineryTotal = 0;
+            let technicalTotal = 0;
 
-            // Calculate accessories subtotal
+            // Accessories
             $('.accessory-row').each(function() {
-                const qty = parseFloat($(this).find('.accessory-quantity').val()) || 0;
-                const price = parseFloat($(this).find('.accessory-price').val()) || 0;
-                const total = qty * price;
+                let qty = parseFloat($(this).find('.accessory-quantity').val()) || 0;
+                let price = parseFloat($(this).find('.accessory-price').val()) || 0;
+                let total = qty * price;
                 $(this).find('.accessory-total').val(total.toFixed(2));
                 accessoriesTotal += total;
             });
 
-            // Calculate machinery subtotal
+            // Machineries
             $('.machinery-row').each(function() {
-                const qty = parseFloat($(this).find('.machinery-quantity').val()) || 0;
-                const price = parseFloat($(this).find('.machinery-price').val()) || 0;
-                const total = qty * price;
+                let qty = parseFloat($(this).find('.machinery-quantity').val()) || 0;
+                let price = parseFloat($(this).find('.machinery-price').val()) || 0;
+                let total = qty * price;
                 $(this).find('.machinery-total').val(total.toFixed(2));
                 machineryTotal += total;
             });
 
-            // Update subtotals
+            // Technical Tools
+            $('.technicaltool-row').each(function() {
+                let qty = parseFloat($(this).find('.technicaltool-quantity').val()) || 0;
+                let price = parseFloat($(this).find('.technicaltool-price').val()) || 0;
+                let total = qty * price;
+                $(this).find('.technicaltool-total').val(total.toFixed(2));
+                technicalTotal += total;
+            });
+
+            // Subtotals
             $('#accessories_subtotal').val(accessoriesTotal.toFixed(2));
             $('#machinery_subtotal').val(machineryTotal.toFixed(2));
+            $('#technicaltools_subtotal').val(technicalTotal.toFixed(2));
 
-            // Update grand total
-            const grandTotal = accessoriesTotal + machineryTotal;
+            // Grand Total
+            let grandTotal = accessoriesTotal + machineryTotal + technicalTotal;
             $('#total_amount').val(grandTotal.toFixed(2));
         }
 
-        // Add accessory row
+        /* ================= ADD ACCESSORY ================= */
         $('#addAccessory').click(function() {
             accessoryIndex++;
-            const row = `
-
+            let row = `
         <div class="row gy-4 item-row accessory-row" id="accessory-row-${accessoryIndex}">
-            <div class="col-lg-3">
-                <label class="form-label12 fw-semibold">Accessory Name</label>
-                <select class="form-control border-success shadow-sm accessory-name" name="accessories[${accessoryIndex}][id]">
+            <div class="col-lg-4">
+                <select class="form-control accessory-name" name="accessories[${accessoryIndex}][id]">
                     <option value="">Select Accessory</option>
-                    @foreach ($accessories as $accessory)
-                        <option value="{{ $accessory->id }}" data-price="{{ $accessory->price }}">{{ $accessory->name }}</option>
+                    @foreach ($accessories as $a)
+                        <option value="{{ $a->id }}" data-price="{{ $a->price }}">{{ $a->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="col-lg-2">
-                <label class="form-label12 fw-semibold">Quantity</label>
-                <input class="form-control border-success shadow-sm accessory-quantity" name="accessories[${accessoryIndex}][quantity]" type="number" value="1" min="1">
+                <input class="form-control accessory-quantity" type="number" value="1">
             </div>
             <div class="col-lg-2">
-                <label class="form-label12 fw-semibold">Unit Price</label>
-                <input class="form-control border-success shadow-sm accessory-price" name="accessories[${accessoryIndex}][price]" type="number" step="0.01" placeholder="Price">
+                <input class="form-control accessory-price" type="number" step="0.01">
             </div>
-            <div class="col-lg-2">
-                <label class="form-label12 fw-semibold">Total</label>
-                <input class="form-control border-success shadow-sm accessory-total" name="accessories[${accessoryIndex}][total]" type="number" step="0.01" readonly>
+            <div class="col-lg-3">
+                <input class="form-control accessory-total" readonly>
             </div>
-
-            <div class="col-lg-1 d-flex align-items-end">
-                <button type="button" class="btn btn-sm btn-danger remove-item" data-row="accessory-row-${accessoryIndex}">
-                    <i class="bi bi-trash"></i>
-                </button>
+            <div class="col-lg-1">
+                <button type="button" class="btn btn-danger remove-item" data-row="accessory-row-${accessoryIndex}"><i class="bi bi-trash"></i></button>
             </div>
         </div>`;
             $('#accessoriesContainer').append(row);
-
-            // Set price when accessory is selected
-            $(`#accessory-row-${accessoryIndex} .accessory-name`).change(function() {
-                const price = $(this).find(':selected').data('price');
-                $(this).closest('.accessory-row').find('.accessory-price').val(price).trigger(
-                    'input');
-            });
         });
 
-        // Add machinery row
+        /* ================= ADD MACHINERY ================= */
         $('#addMachinery').click(function() {
             machineryIndex++;
-            const row = `
+            let row = `
         <div class="row gy-4 item-row machinery-row" id="machinery-row-${machineryIndex}">
-            <div class="col-lg-3">
-                <label class="form-label12 fw-semibold">Machinery Name</label>
-                <select class="form-control border-warning shadow-sm machinery-name" name="machineries[${machineryIndex}][id]">
+            <div class="col-lg-4">
+                <select class="form-control machinery-name" name="machineries[${machineryIndex}][id]">
                     <option value="">Select Machinery</option>
-                    @foreach ($machineries as $machinery)
-                        <option value="{{ $machinery->id }}" data-price="{{ $machinery->price }}">{{ $machinery->name }}</option>
+                    @foreach ($machineries as $m)
+                        <option value="{{ $m->id }}" data-price="{{ $m->price }}">{{ $m->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="col-lg-2">
-                <label class="form-label12 fw-semibold">Quantity</label>
-                <input class="form-control border-warning shadow-sm machinery-quantity" name="machineries[${machineryIndex}][quantity]" type="number" value="1" min="1">
+                <input class="form-control machinery-quantity" type="number" value="1">
             </div>
             <div class="col-lg-2">
-                <label class="form-label12 fw-semibold">Unit Price</label>
-                <input class="form-control border-warning shadow-sm machinery-price" name="machineries[${machineryIndex}][price]" type="number" step="0.01" placeholder="Price">
+                <input class="form-control machinery-price" type="number" step="0.01">
             </div>
-            <div class="col-lg-2">
-                <label class="form-label12 fw-semibold">Total</label>
-                <input class="form-control border-warning shadow-sm machinery-total" name="machineries[${machineryIndex}][total]" type="number" step="0.01" readonly>
+            <div class="col-lg-3">
+                <input class="form-control machinery-total" readonly>
             </div>
-
-            <div class="col-lg-1 d-flex align-items-end">
-                <button type="button" class="btn btn-sm btn-danger remove-item" data-row="machinery-row-${machineryIndex}">
-                    <i class="bi bi-trash"></i>
-                </button>
+            <div class="col-lg-1">
+                <button type="button" class="btn btn-danger remove-item" data-row="machinery-row-${machineryIndex}"><i class="bi bi-trash"></i></button>
             </div>
         </div>`;
             $('#machineryContainer').append(row);
-
-            // Set price when machinery is selected
-            $(`#machinery-row-${machineryIndex} .machinery-name`).change(function() {
-                const price = $(this).find(':selected').data('price');
-                $(this).closest('.machinery-row').find('.machinery-price').val(price).trigger(
-                    'input');
-            });
         });
 
-        // Remove row
-        $(document).on('click', '.remove-item', function() {
-            const rowId = $(this).data('row');
-            $(`#${rowId}`).remove();
+        /* ================= ADD TECHNICAL TOOL ================= */
+        $('#addTechnicalTool').click(function() {
+            technicalIndex++;
+            let row = `
+        <div class="row gy-4 item-row technicaltool-row" id="technicaltool-row-${technicalIndex}">
+            <div class="col-lg-4">
+                <select class="form-control technicaltool-name" name="technicaltools[${technicalIndex}][id]">
+                    <option value="">Select Tool</option>
+                    @foreach ($technicaltools as $t)
+                        <option value="{{ $t->id }}" data-price="{{ $t->price }}">{{ $t->tool_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <input class="form-control technicaltool-quantity" type="number" value="1">
+            </div>
+            <div class="col-lg-2">
+                <input class="form-control technicaltool-price" type="number" step="0.01">
+            </div>
+            <div class="col-lg-3">
+                <input class="form-control technicaltool-total" readonly>
+            </div>
+            <div class="col-lg-1">
+                <button type="button" class="btn btn-danger remove-item" data-row="technicaltool-row-${technicalIndex}"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>`;
+            $('#technicalToolsContainer').append(row);
+        });
+
+        /* ================= AUTO PRICE SET ================= */
+        $(document).on('change', '.accessory-name, .machinery-name, .technicaltool-name', function() {
+            let price = $(this).find(':selected').data('price') || 0;
+            $(this).closest('.item-row').find('input[type="number"]').eq(1).val(price);
             calculateTotals();
         });
 
-        // Calculate totals when quantity or price changes
-        $(document).on('input', '.accessory-quantity, .accessory-price, .machinery-quantity, .machinery-price'
-            , function() {
-                calculateTotals();
-            });
+        /* ================= INPUT CHANGE ================= */
+        $(document).on('input', '.accessory-quantity, .accessory-price, .machinery-quantity, .machinery-price, .technicaltool-quantity, .technicaltool-price', function() {
+            calculateTotals();
+        });
 
-        // Add first row for each section
-        $('#addAccessory').trigger('click');
-        $('#addMachinery').trigger('click');
+        /* ================= REMOVE ROW ================= */
+        $(document).on('click', '.remove-item', function() {
+            $('#' + $(this).data('row')).remove();
+            calculateTotals();
+        });
+
     });
 
 </script>
+@endsection
