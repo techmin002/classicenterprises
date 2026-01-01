@@ -2,39 +2,64 @@
 
 namespace Modules\Inventory\Http\Controllers;
 
-use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Modules\Inventory\Entities\StockTransfer;
-use Modules\Inventory\Entities\Branch;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Modules\Inventory\Entities\Accessories;
+use Modules\Inventory\Entities\Branch;
+use Modules\Inventory\Entities\Inventory;
 use Modules\Inventory\Entities\Machineries;
+use Modules\Inventory\Entities\StockTransfer;
 use Modules\Inventory\Entities\StockTransferAccessories;
 use Modules\Inventory\Entities\StockTransferMachineries;
-use Modules\Inventory\Entities\Inventory;
+use Modules\Inventory\Entities\StockTransferTechnicalTool;
 use Modules\Inventory\Entities\User;
-use Illuminate\Validation\ValidationException;
+use Modules\Product\Entities\TechnicalTools;
 
 class StockController extends Controller
 {
     public function index()
     {
-        $accessories = Accessories::all();
-        $machineries = Machineries::all();
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $branchId = session('branch_id');
+        } else {
+            $branchId = auth()->user()->branch_id;
+        }
+
+        $branch = Branch::find($branchId);
+        $branchName = $branch?->name;
+
+        $machineries = Machineries::with(['inventory' => function ($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        }])->get();
+        $accessories = Accessories::with(['inventory' => function ($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        }])->get();
+        $technicaltools = TechnicalTools::with(['inventory' => function ($q) use ($branchId) {
+            $q->where('branch_id', $branchId);
+        }])->get();
+        // dd($technicaltools);
         $branches = Branch::all();
         $user = User::all();
-        $stockTransfers = StockTransfer::with(['accessories', 'machineries', 'fromBranch', 'toBranch'])->get();
+        $stockTransfers = StockTransfer::with(['accessories', 'machineries', 'technicaltools', 'fromBranch', 'toBranch', 'user'])->get();
         $stockaccessories = StockTransferAccessories::with('accessory')->get();
         $stockmachineries = StockTransferMachineries::with('machinery')->get();
+        $stocktechnicaltools = StockTransferTechnicalTool::with('technicaltools')->get();
+
         return view('inventory::stocktransfer.index', compact(
             'stockTransfers',
             'accessories',
             'machineries',
+            'technicaltools',
             'branches',
             'stockaccessories',
             'stockmachineries',
-            'user'
+            'stocktechnicaltools',
+            'user',
+            'branchId',
+            'branchName'
         ));
     }
 
@@ -48,16 +73,25 @@ class StockController extends Controller
                 'transfer_date' => 'required|date',
                 'status' => 'required|in:pending,in_transit,completed,cancelled',
                 'remarks' => 'nullable|string',
+
                 'accessories' => 'sometimes|array',
                 'accessories.*.accessory_id' => 'required_with:accessories|exists:accessories,id',
                 'accessories.*.quantity' => 'required_with:accessories|integer|min:1',
                 'accessories.*.serial_numbers' => 'nullable|string',
                 'accessories.*.condition' => 'required_with:accessories|in:new,used,refurbished,damaged',
+
                 'machineries' => 'sometimes|array',
                 'machineries.*.machinery_id' => 'required_with:machineries|exists:machineries,id',
                 'machineries.*.quantity' => 'required_with:machineries|integer|min:1',
                 'machineries.*.serial_numbers' => 'nullable|string',
                 'machineries.*.condition' => 'required_with:machineries|in:new,used,refurbished,damaged',
+
+                'technicaltools' => 'sometimes|array',
+                'technicaltools.*.technical_tool_id' => 'required_with:technicaltools|exists:technical_tools,id',
+                'technicaltools.*.quantity' => 'required_with:technicaltools|integer|min:1',
+                'technicaltools.*.serial_numbers' => 'nullable|string',
+                'technicaltools.*.condition' => 'required_with:technicaltools|in:new,used,refurbished,damaged',
+
             ]);
 
             // Validate stock availability
@@ -76,27 +110,76 @@ class StockController extends Controller
             ]);
 
             // Process accessories
-            if (!empty($validated['accessories'])) {
+            if (! empty($validated['accessories'])) {
                 foreach ($validated['accessories'] as $accessory) {
+
                     $this->createTransferAccessory($stockTransfer, $accessory);
+
+                    // FROM branch → reduce
                     $this->updateInventory(
                         null,
                         $accessory['accessory_id'],
                         $validated['from_branch_id'],
                         -$accessory['quantity']
                     );
+
+                    // TO branch → increase ✅
+                    $this->updateInventory(
+                        null,
+                        $accessory['accessory_id'],
+                        $validated['to_branch_id'],
+                        +$accessory['quantity']
+                    );
                 }
             }
 
             // Process machineries
-            if (!empty($validated['machineries'])) {
+            if (! empty($validated['machineries'])) {
                 foreach ($validated['machineries'] as $machinery) {
+
                     $this->createTransferMachinery($stockTransfer, $machinery);
+
+                    // FROM branch → reduce
                     $this->updateInventory(
                         $machinery['machinery_id'],
                         null,
                         $validated['from_branch_id'],
                         -$machinery['quantity']
+                    );
+
+                    // TO branch → increase ✅
+                    $this->updateInventory(
+                        $machinery['machinery_id'],
+                        null,
+                        $validated['to_branch_id'],
+                        +$machinery['quantity']
+                    );
+                }
+            }
+
+            // Process technical tools
+            if (! empty($validated['technicaltools'])) {
+                foreach ($validated['technicaltools'] as $tool) {
+
+                    // Create pivot record
+                    $this->createTransferTechnicalTool($stockTransfer, $tool);
+
+                    // FROM branch → reduce
+                    $this->updateInventory(
+                        null,                         // machinery_id
+                        null,                         // accessory_id
+                        $validated['from_branch_id'], // branch
+                        -$tool['quantity'],           // reduce
+                        $tool['technical_tool_id']    // technical_tool_id
+                    );
+
+                    // TO branch → increase
+                    $this->updateInventory(
+                        null,
+                        null,
+                        $validated['to_branch_id'],
+                        +$tool['quantity'],
+                        $tool['technical_tool_id']
                     );
                 }
             }
@@ -112,8 +195,9 @@ class StockController extends Controller
                 ->with('error', 'Please fix the errors below.');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->route('stock-transfers.index')
-                ->with('error', 'Error creating stock transfer: ' . $e->getMessage())
+                ->with('error', 'Error creating stock transfer: '.$e->getMessage())
                 ->withInput();
         }
     }
@@ -123,7 +207,7 @@ class StockController extends Controller
         $errors = [];
 
         // Check accessories stock
-        if (!empty($validatedData['accessories'])) {
+        if (! empty($validatedData['accessories'])) {
             foreach ($validatedData['accessories'] as $index => $accessory) {
                 $availableQuantity = $this->getAvailableAccessoryQuantity(
                     $accessory['accessory_id'],
@@ -138,7 +222,7 @@ class StockController extends Controller
         }
 
         // Check machinery stock
-        if (!empty($validatedData['machineries'])) {
+        if (! empty($validatedData['machineries'])) {
             foreach ($validatedData['machineries'] as $index => $machinery) {
                 $availableQuantity = $this->getAvailableMachineryQuantity(
                     $machinery['machinery_id'],
@@ -152,7 +236,23 @@ class StockController extends Controller
             }
         }
 
-        if (!empty($errors)) {
+        // Check technical tools stock
+        if (! empty($validatedData['technicaltools'])) {
+            foreach ($validatedData['technicaltools'] as $index => $tool) {
+                $availableQuantity = $this->getAvailableTechnicalToolQuantity(
+                    $tool['technical_tool_id'],
+                    $validatedData['from_branch_id']
+                );
+
+                if ($tool['quantity'] > $availableQuantity) {
+                    $toolName = TechnicalTools::find($tool['technical_tool_id'])->name;
+                    $errors["technicaltools.$index.quantity"]
+                        = "Insufficient stock for $toolName. Available: $availableQuantity";
+                }
+            }
+        }
+
+        if (! empty($errors)) {
             throw ValidationException::withMessages($errors);
         }
     }
@@ -167,6 +267,13 @@ class StockController extends Controller
     protected function getAvailableMachineryQuantity($machineryId, $branchId)
     {
         return Inventory::where('machinery_id', $machineryId)
+            ->where('branch_id', $branchId)
+            ->value('quantity') ?? 0;
+    }
+
+    protected function getAvailableTechnicalToolQuantity($toolId, $branchId)
+    {
+        return Inventory::where('technical_tool_id', $toolId)
             ->where('branch_id', $branchId)
             ->value('quantity') ?? 0;
     }
@@ -193,6 +300,19 @@ class StockController extends Controller
         ]);
     }
 
+    protected function createTransferTechnicalTool(
+        StockTransfer $stockTransfer,
+        array $toolData
+    ) {
+        return StockTransferTechnicalTool::create([
+            'stock_transfer_id' => $stockTransfer->id,
+            'technical_tool_id' => $toolData['technical_tool_id'],
+            'quantity' => $toolData['quantity'],
+            'serial_numbers' => $toolData['serial_numbers'] ?? null,
+            'condition' => $toolData['condition'],
+        ]);
+    }
+
     protected function updateInventory(?int $machineryId, ?int $accessoryId, int $branchId, int $quantityChange)
     {
         $inventory = Inventory::firstOrNew([
@@ -201,7 +321,7 @@ class StockController extends Controller
             'branch_id' => $branchId,
         ]);
 
-        if (!$inventory->exists) {
+        if (! $inventory->exists) {
             $inventory->opening_quantity = 0;
             $inventory->quantity = 0;
         }
@@ -209,7 +329,7 @@ class StockController extends Controller
         $inventory->quantity += $quantityChange;
 
         if ($inventory->quantity < 0) {
-            throw new \Exception("Insufficient stock for transfer");
+            throw new \Exception('Insufficient stock for transfer');
         }
 
         $inventory->updated_by = Auth::id();
@@ -219,7 +339,7 @@ class StockController extends Controller
     public function updateStatus(Request $request, StockTransfer $stockTransfer)
     {
         $request->validate([
-            'status' => 'required|in:pending,in_transit,completed,cancelled'
+            'status' => 'required|in:pending,in_transit,completed,cancelled',
         ]);
 
         DB::beginTransaction();
@@ -230,7 +350,7 @@ class StockController extends Controller
 
             $stockTransfer->update([
                 'status' => $newStatus,
-                'updated_by' => Auth::id()
+                'updated_by' => Auth::id(),
             ]);
 
             // Handle inventory changes based on status
@@ -252,7 +372,8 @@ class StockController extends Controller
             return back()->with('success', 'Status updated successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Error updating status: ' . $e->getMessage());
+
+            return back()->with('error', 'Error updating status: '.$e->getMessage());
         }
     }
 
@@ -277,6 +398,7 @@ class StockController extends Controller
                 $machinery->quantity * $multiplier
             );
         }
+
     }
 
     public function update(Request $request, $id)
@@ -306,7 +428,7 @@ class StockController extends Controller
             'new_machineries.*.id' => 'required_with:new_machineries|exists:machineries,id',
             'new_machineries.*.quantity' => 'required_with:new_machineries|integer|min:1',
             'new_machineries.*.condition' => 'required_with:new_machineries|in:new,used,refurbished,damaged',
-            'new_machineries.*.serial_numbers' => 'nullable|string'
+            'new_machineries.*.serial_numbers' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -314,7 +436,7 @@ class StockController extends Controller
         try {
             $transfer = StockTransfer::with(['accessories', 'machineries'])->findOrFail($id);
 
-            if (!in_array($transfer->status, ['pending', 'in_transit'])) {
+            if (! in_array($transfer->status, ['pending', 'in_transit'])) {
                 throw new \Exception('Only pending or in-transit transfers can be modified');
             }
 
@@ -329,7 +451,7 @@ class StockController extends Controller
                 'transfer_date' => $validated['transfer_date'],
                 'status' => $validated['status'],
                 'remarks' => $validated['remarks'],
-                'updated_by' => auth()->id()
+                'updated_by' => auth()->id(),
             ]);
 
             if (isset($validated['accessories'])) {
@@ -341,7 +463,7 @@ class StockController extends Controller
                     $accessoriesData[$accessoryId] = [
                         'quantity' => $accessory['quantity'],
                         'condition' => $accessory['condition'],
-                        'serial_numbers' => $accessory['serial_numbers'] ?? null
+                        'serial_numbers' => $accessory['serial_numbers'] ?? null,
                     ];
 
                     if ($quantityChange != 0) {
@@ -362,7 +484,7 @@ class StockController extends Controller
                         'accessory_id' => $accessory['id'],
                         'quantity' => $accessory['quantity'],
                         'condition' => $accessory['condition'],
-                        'serial_numbers' => $accessory['serial_numbers'] ?? null
+                        'serial_numbers' => $accessory['serial_numbers'] ?? null,
                     ]);
 
                     $this->updateInventory(
@@ -383,7 +505,7 @@ class StockController extends Controller
                     $machineriesData[$machineryId] = [
                         'quantity' => $machinery['quantity'],
                         'condition' => $machinery['condition'],
-                        'serial_numbers' => $machinery['serial_numbers'] ?? null
+                        'serial_numbers' => $machinery['serial_numbers'] ?? null,
                     ];
 
                     if ($quantityChange != 0) {
@@ -404,7 +526,7 @@ class StockController extends Controller
                         'machinery_id' => $machinery['id'],
                         'quantity' => $machinery['quantity'],
                         'condition' => $machinery['condition'],
-                        'serial_numbers' => $machinery['serial_numbers'] ?? null
+                        'serial_numbers' => $machinery['serial_numbers'] ?? null,
                     ]);
 
                     $this->updateInventory(
@@ -424,8 +546,9 @@ class StockController extends Controller
                 ->with('success', 'Stock transfer updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()->withInput()
-                ->with('error', 'Error updating transfer: ' . $e->getMessage());
+                ->with('error', 'Error updating transfer: '.$e->getMessage());
         }
     }
 
@@ -442,10 +565,10 @@ class StockController extends Controller
                 if ($quantityChange > 0) {
                     $inventory = Inventory::where([
                         'accessory_id' => $accessory['id'],
-                        'branch_id' => $fromBranchId
+                        'branch_id' => $fromBranchId,
                     ])->first();
 
-                    if (!$inventory || $inventory->quantity < $quantityChange) {
+                    if (! $inventory || $inventory->quantity < $quantityChange) {
                         $errors["accessories.$index.quantity"] = 'Insufficient stock for selected accessory';
                     }
                 }
@@ -456,10 +579,10 @@ class StockController extends Controller
             foreach ($data['new_accessories'] as $index => $accessory) {
                 $inventory = Inventory::where([
                     'accessory_id' => $accessory['id'],
-                    'branch_id' => $fromBranchId
+                    'branch_id' => $fromBranchId,
                 ])->first();
 
-                if (!$inventory || $inventory->quantity < $accessory['quantity']) {
+                if (! $inventory || $inventory->quantity < $accessory['quantity']) {
                     $errors["new_accessories.$index.quantity"] = 'Insufficient stock for selected accessory';
                 }
             }
@@ -473,10 +596,10 @@ class StockController extends Controller
                 if ($quantityChange > 0) {
                     $inventory = Inventory::where([
                         'machinery_id' => $machinery['id'],
-                        'branch_id' => $fromBranchId
+                        'branch_id' => $fromBranchId,
                     ])->first();
 
-                    if (!$inventory || $inventory->quantity < $quantityChange) {
+                    if (! $inventory || $inventory->quantity < $quantityChange) {
                         $errors["machineries.$index.quantity"] = 'Insufficient stock for selected machinery';
                     }
                 }
@@ -487,16 +610,16 @@ class StockController extends Controller
             foreach ($data['new_machineries'] as $index => $machinery) {
                 $inventory = Inventory::where([
                     'machinery_id' => $machinery['id'],
-                    'branch_id' => $fromBranchId
+                    'branch_id' => $fromBranchId,
                 ])->first();
 
-                if (!$inventory || $inventory->quantity < $machinery['quantity']) {
+                if (! $inventory || $inventory->quantity < $machinery['quantity']) {
                     $errors["new_machineries.$index.quantity"] = 'Insufficient stock for selected machinery';
                 }
             }
         }
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             throw ValidationException::withMessages($errors);
         }
     }
@@ -508,7 +631,7 @@ class StockController extends Controller
         )->toArray();
 
         foreach ($originalAccessories as $accessory) {
-            if (!in_array($accessory->id, $currentAccessoryIds)) {
+            if (! in_array($accessory->id, $currentAccessoryIds)) {
                 $this->updateInventory(
                     null,
                     $accessory->id,
@@ -523,7 +646,7 @@ class StockController extends Controller
         )->toArray();
 
         foreach ($originalMachineries as $machinery) {
-            if (!in_array($machinery->id, $currentMachineryIds)) {
+            if (! in_array($machinery->id, $currentMachineryIds)) {
                 $this->updateInventory(
                     $machinery->id,
                     null,
@@ -540,6 +663,7 @@ class StockController extends Controller
         $accessories = Accessories::all();
         $machineries = Machineries::all();
         $transfer = StockTransfer::find($id);
+
         return view('inventory::StockTransfer.edit', compact('transfer', 'branches', 'accessories', 'machineries'));
     }
 
@@ -564,8 +688,9 @@ class StockController extends Controller
                 ->with('success', 'Stock transfer deleted successfully');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return back()
-                ->with('error', 'Error deleting transfer: ' . $e->getMessage());
+                ->with('error', 'Error deleting transfer: '.$e->getMessage());
         }
     }
 }

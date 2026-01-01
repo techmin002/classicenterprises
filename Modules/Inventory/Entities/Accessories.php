@@ -51,11 +51,11 @@ class Accessories extends Model
             DevicePurchase::class,              // Related model
             'device_purchase_accessories',     // Pivot table name
             'accessory_id',                    // Foreign key on pivot for Accessories
-            'device_purchase_id'   
-                        // Foreign key on pivot for DevicePurchase
+            'device_purchase_id'
+            // Foreign key on pivot for DevicePurchase
         )
-        ->withPivot(['quantity', 'unit_price', 'total', 'branch_id'])
-        ->withTimestamps();
+            ->withPivot(['quantity', 'unit_price', 'total', 'branch_id'])
+            ->withTimestamps();
     }
 
     /**
@@ -75,9 +75,13 @@ class Accessories extends Model
         return $query->where('status', 'on');
     }
 
-     public function stockTransfers()
-{
-    return $this->belongsToMany(StockTransfer::class, 'stock_transfer_accessories')
-        ->withPivot(['quantity', 'serial_numbers', 'condition']);
-}
+    public function stockTransfers()
+    {
+        return $this->belongsToMany(StockTransfer::class, 'stock_transfer_accessories')
+            ->withPivot(['quantity', 'serial_numbers', 'condition']);
+    }
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class, 'accessory_id');
+    }
 }

@@ -1,22 +1,14 @@
-<div class="modal fade" id="viewTransfer{{ $transfer->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
+<!-- View Modal -->
+<div class="modal fade" id="StockSendModal{{ $tool->id }}" tabindex="-1" role="dialog" aria-labelledby="StockSendModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content shadow-lg border-0 rounded-3 overflow-hidden">
             <div class="modal-header bg-gradient-primary text-white align-items-center">
-                <div class="d-flex align-items-center">
-                    <span class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center mr-3" style="width:40px;height:40px;">
-                        <i class="fas fa-exchange-alt fa-lg"></i>
-                    </span>
-                    <div>
-                        <h5 class="modal-title mb-0 font-weight-bold">
-                            Transfer Details <span class="text-light">#{{ $transfer->id }}</span>
-                        </h5>
-                        <small class="text-white-50">Detailed view of stock transfer</small>
-                    </div>
-                </div>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true" style="font-size:2rem;">&times;</span>
                 </button>
             </div>
+            @forelse($issue->stockTransfers as $transfer)
+
             <div class="modal-body bg-light px-4 py-4">
                 <div class="row mb-4">
                     <div class="col-md-6 mb-3 mb-md-0">
@@ -88,8 +80,7 @@
                                             <tr>
                                                 <th>Name</th>
                                                 <th>Quantity</th>
-                                                <th>Condition</th>
-                                                <th>Serial Numbers</th>
+                                                <th>Image</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -98,16 +89,11 @@
                                                 <td>{{ $accessory->name }}</td>
                                                 <td><span class="badge badge-secondary px-2">{{ $accessory->pivot->quantity }}</span></td>
                                                 <td>
-                                                    <span class="badge badge-pill
-                                                        @if($accessory->pivot->condition == 'good') badge-success
-                                                        @elseif($accessory->pivot->condition == 'fair') badge-warning
-                                                        @else badge-secondary
-                                                        @endif">
-                                                        {{ ucfirst($accessory->pivot->condition) }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span class="text-monospace">{{ $accessory->pivot->serial_numbers ?? 'N/A' }}</span>
+                                                    @if (!empty($accessory->image))
+                                                    <img src="{{ asset('upload/images/accessory/' . $accessory->image) }}" alt="Accessory Image" width="60">
+                                                    @else
+                                                    N/A
+                                                    @endif
                                                 </td>
                                             </tr>
                                             @empty
@@ -134,8 +120,7 @@
                                             <tr>
                                                 <th>Name</th>
                                                 <th>Quantity</th>
-                                                <th>Condition</th>
-                                                <th>Serial Numbers</th>
+                                                <th>Image</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -144,16 +129,11 @@
                                                 <td>{{ $machinery->name }}</td>
                                                 <td><span class="badge badge-secondary px-2">{{ $machinery->pivot->quantity }}</span></td>
                                                 <td>
-                                                    <span class="badge badge-pill
-                                                        @if($machinery->pivot->condition == 'good') badge-success
-                                                        @elseif($machinery->pivot->condition == 'fair') badge-warning
-                                                        @else badge-secondary
-                                                        @endif">
-                                                        {{ ucfirst($machinery->pivot->condition) }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span class="text-monospace">{{ $machinery->pivot->serial_numbers ?? 'N/A' }}</span>
+                                                    @if ($machinery->image ?? false)
+                                                    <img src="{{ asset('upload/images/machinery/' . $machinery->image) }}" alt="Machinery Image" width="60">
+                                                    @else
+                                                    N/A
+                                                    @endif
                                                 </td>
                                             </tr>
                                             @empty
@@ -180,8 +160,7 @@
                                             <tr>
                                                 <th>Name</th>
                                                 <th>Quantity</th>
-                                                <th>Condition</th>
-                                                <th>Serial Numbers</th>
+                                                <th>Image</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -190,16 +169,11 @@
                                                 <td>{{ $data->tool_name }}</td>
                                                 <td><span class="badge badge-secondary px-2">{{ $data->pivot->quantity }}</span></td>
                                                 <td>
-                                                    <span class="badge badge-pill
-                                                        @if($data->pivot->condition == 'good') badge-success
-                                                        @elseif($data->pivot->condition == 'fair') badge-warning
-                                                        @else badge-secondary
-                                                        @endif">
-                                                        {{ ucfirst($data->pivot->condition) }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span class="text-monospace">{{ $data->pivot->serial_numbers ?? 'N/A' }}</span>
+                                                    @if ($data->image ?? false)
+                                                    <img src="{{ asset('upload/images/technicaltools/' . $data->image) }}" alt="Tool Image" width="60">
+                                                    @else
+                                                    N/A
+                                                    @endif
                                                 </td>
                                             </tr>
                                             @empty
@@ -215,6 +189,12 @@
                     </div>
                 </div>
             </div>
+
+            @empty
+            <div class="text-center text-muted py-4">
+                No Stock Transfer found for this Stock Issue
+            </div>
+            @endforelse
             <div class="modal-footer bg-gradient-light border-0">
                 <button type="button" class="btn btn-outline-secondary px-4" data-dismiss="modal">
                     <i class="fas fa-times mr-1"></i>Close

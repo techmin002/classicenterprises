@@ -2,8 +2,9 @@
 
 namespace Modules\Product\Entities;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Modules\Inventory\Entities\Inventory;
 use Modules\Product\Database\factories\TechnicalToolsFactory;
 
 class TechnicalTools extends Model
@@ -25,6 +26,11 @@ class TechnicalTools extends Model
 
     protected static function newFactory()
     {
-        //return TechnicalToolsFactory::new();
+        // return TechnicalToolsFactory::new();
+    }
+
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class, 'technical_tool_id');
     }
 }

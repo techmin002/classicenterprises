@@ -14,18 +14,25 @@ class DevicePurchaseAccessory extends Model
     {
         return $this->belongsTo(DevicePurchase::class);
     }
-    public function accessories()
-{
-    return $this->belongsTo(Accessories::class);
-}
+    //     public function accessories()
+    // {
+    //     return $this->belongsTo(Accessories::class);
+    // }
 
     public function branch()
     {
         return $this->belongsTo(Branch::class);
     }
 
-
-    public function accessory(){
-        return $this->belongsTo(Accessories::class,'accessory_id','id');
+    public function accessory()
+    {
+        return $this->belongsTo(Accessories::class, 'accessory_id', 'id');
     }
+
+    public function accessories()
+    {
+        return $this->belongsTo(Accessories::class, 'accessory_id', 'id');
+    }
+
+    
 }

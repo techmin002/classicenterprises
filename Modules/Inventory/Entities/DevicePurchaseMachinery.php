@@ -14,14 +14,15 @@ class DevicePurchaseMachinery extends Model
     {
         return $this->belongsTo(DevicePurchase::class);
     }
+
     public function machinery()
-{
-    return $this->hasOne(Machineries::class , 'id', 'machinery_id');
-}
+    {
+        return $this->hasOne(Machineries::class, 'id', 'machinery_id');
+    }
 
     public function accessories()
     {
-        return $this->hasMany(Accessories::class,);
+        return $this->hasMany(Accessories::class);
     }
 
     public function branch()
@@ -31,8 +32,6 @@ class DevicePurchaseMachinery extends Model
 
     public function machineries()
     {
-        return $this->belongsTo(Machineries::class);
+        return $this->belongsTo(Machineries::class, 'machinery_id', 'id');
     }
-
-    
 }

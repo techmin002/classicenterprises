@@ -631,7 +631,56 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </ul>
                 </li>
 
-                <div class="border-top border-success"></div>
+
+                <li class="nav-header text-primary border-top border-success pt-1 mt-2">
+                    <strong>Inventory</strong>
+                </li>
+                {{-- Inventory --}}
+                <li class="nav-item {{ request()->routeIs('inventries','inventory.*', 'suppliers.*','suppliers_edit', 'device-purchases.*','device_purchase_machineries_accessories','device_purchase_edit', 'sales.*', 'stock-transfers.*','stock-issue.*') ? 'menu-is-opening menu-open' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('inventries','inventory.*', 'suppliers.*','suppliers_edit', 'device-purchases.*','device_purchase_machineries_accessories','device_purchase_edit', 'sales.*', 'stock-transfers.*','stock-issue.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-boxes"></i>
+                        <p>
+                            Inventory
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('suppliers.index') }}" class="nav-link {{ request()->routeIs('suppliers.index','suppliers_edit') ? 'active' : '' }}">
+                                <p>Suppliers</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('device-purchases.index') }}" class="nav-link {{ request()->routeIs('device-purchases.index', 'device_purchase_edit','device_purchase_machineries_accessories') ? 'active' : '' }}">
+                                <p>Stock Purchases</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('inventries') }}" class="nav-link {{ request()->routeIs('inventries','inventory.*') ? 'active' : '' }}">
+                                <p>Inventries</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('sales.index') }}" class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
+                                <p>Sales</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('stock-transfers.index') }}" class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
+                                <p>Stock Transfer</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ route('stock-issue.index') }}" class="nav-link {{ request()->routeIs('stock-issue.index') ? 'active' : '' }}">
+                                <p>stock issue</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <div class="border-top border-success mt-2"></div>
 
                 @if (auth()->user()->access_type === 'Admin')
                 @else
@@ -788,50 +837,7 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                     </ul>
                 </li>
                 @endcan
-                {{-- Inventory --}}
-                <li class="nav-item {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'menu-is-opening menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ request()->routeIs('inventory.*', 'suppliers.*', 'purchases.*', 'sales.*', 'stock-transfers.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-boxes"></i>
-                        <p>
-                            Inventory
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('suppliers.index') }}" class="nav-link {{ request()->routeIs('suppliers.index') ? 'active' : '' }}">
-                                <p>Suppliers</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('device-purchases.index') }}" class="nav-link {{ request()->routeIs('device-purchases.index') ? 'active' : '' }}">
-                                <p>Device Purchases</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('inventries') }}" class="nav-link {{ request()->routeIs('inventries') ? 'active' : '' }}">
-                                <p>Inventries</p>
-                            </a>
-                        </li>
 
-                        <li class="nav-item">
-                            <a href="{{ route('sales.index') }}" class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
-                                <p>Sales</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('stock-transfers.index') }}" class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
-                                <p>Stock Transfer</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{ route('stock-issue.index') }}" class="nav-link {{ request()->routeIs('stock-issue.index') ? 'active' : '' }}">
-                                <p>stock issue</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
                 {{-- Services --}}
                 @can('access_sliders')
                 <li class="nav-item @if (request()->routeIs('services.*')) menu-is-opening menu-open @endif">

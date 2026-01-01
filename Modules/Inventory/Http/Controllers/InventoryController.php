@@ -5,7 +5,12 @@ namespace Modules\Inventory\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Modules\Inventory\Entities\DevicePurchaseAccessory;
+use Modules\Inventory\Entities\DevicePurchaseMachinery;
+use Modules\Inventory\Entities\DevicePurchaseTechnicalTool;
+use Modules\Inventory\Entities\StockTransferAccessories;
+use Modules\Inventory\Entities\StockTransferMachineries;
+use Modules\Inventory\Entities\StockTransferTechnicalTool;
 
 class InventoryController extends Controller
 {
@@ -36,9 +41,89 @@ class InventoryController extends Controller
     /**
      * Show the specified resource.
      */
-    public function show($id)
+    public function accessories_details($id)
     {
-        return view('inventory::show');
+
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $branchId = session('branch_id');
+        } else {
+            $branchId = auth()->user()->branch_id;
+        }
+        $accessories = DevicePurchaseAccessory::with(['accessories', 'branch'])
+            ->where('accessory_id', $id)
+            ->where('branch_id', $branchId)
+            ->get();
+        $transferAccessories = StockTransferAccessories::with([
+            'accessory',
+            'stockTransfer.fromBranch',
+            'stockTransfer.toBranch',
+            'stockTransfer.user',
+        ])
+            ->where('accessory_id', $id)
+            ->whereHas('stockTransfer', function ($q) use ($branchId) {
+                $q->where('to_branch_id', $branchId);
+            })
+            ->get();
+
+        return view('inventory::inventories.accessories_details', compact('accessories', 'transferAccessories'));
+    }
+
+    public function machineries_details($id)
+    {
+
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $branchId = session('branch_id');
+        } else {
+            $branchId = auth()->user()->branch_id;
+        }
+
+        $machineries = DevicePurchaseMachinery::with(['machineries', 'branch'])
+            ->where('machinery_id', $id)
+            ->where('branch_id', $branchId)
+            ->get();
+        $transferMachineries = StockTransferMachineries::with([
+            'machinery',
+            'stockTransfer.fromBranch',
+            'stockTransfer.toBranch',
+            'stockTransfer.user',
+        ])
+            ->where('machinery_id', $id)
+            ->whereHas('stockTransfer', function ($q) use ($branchId) {
+                $q->where('to_branch_id', $branchId);
+            })
+            ->get();
+
+        return view('inventory::inventories.machineries_details', compact('machineries', 'transferMachineries'));
+    }
+
+    public function technicaltools_details($id)
+    {
+
+        // dd($id);
+        if (auth()->user()->role['name'] === 'Super Admin') {
+            $branchId = session('branch_id');
+        } else {
+            $branchId = auth()->user()->branch_id;
+        }
+
+        $technicaltools = DevicePurchaseTechnicalTool::with(['technicaltools', 'branch'])
+            ->where('technical_tool_id', $id)
+            ->where('branch_id', $branchId)
+            ->get();
+
+        $transferTechnicaltools = StockTransferTechnicalTool::with([
+            'technicaltools',
+            'stockTransfer.fromBranch',
+            'stockTransfer.toBranch',
+            'stockTransfer.user',
+        ])
+            ->where('technical_tool_id', $id)
+            ->whereHas('stockTransfer', function ($q) use ($branchId) {
+                $q->where('to_branch_id', $branchId);
+            })
+            ->get();
+
+        return view('inventory::inventories.technical_tools_details', compact('technicaltools', 'transferTechnicaltools'));
     }
 
     /**

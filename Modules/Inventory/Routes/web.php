@@ -1,13 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Inventory\Entities\StockIssue;
-use Modules\Inventory\Http\Controllers\InventoryController;
-use Modules\Inventory\Http\Controllers\SupplierController;
 use Modules\Inventory\Http\Controllers\DevicePurchaseController;
+use Modules\Inventory\Http\Controllers\InventoryController;
 use Modules\Inventory\Http\Controllers\SalesController;
 use Modules\Inventory\Http\Controllers\StockController;
 use Modules\Inventory\Http\Controllers\StockIssueController;
+use Modules\Inventory\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +39,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('inventries', [DevicePurchaseController::class, 'getInventories'])->name('inventries');
     Route::get('device_purchase_machineries_accessories/{id}', [DevicePurchaseController::class, 'showMachineriesAccessories'])
         ->name('device_purchase_machineries_accessories');
+
+    Route::get('inventries/accessories_details/{id}', [InventoryController::class, 'accessories_details'])->name('inventory.accessories');
+    Route::get('inventries/machineries_details/{id}', [InventoryController::class, 'machineries_details'])->name('inventory.machineries');
+    Route::get('inventries/technicaltools_details/{id}', [InventoryController::class, 'technicaltools_details'])->name('inventory.technicaltools');
 
     // Sales Routes
     Route::resource('sales', SalesController::class)->names('sales');

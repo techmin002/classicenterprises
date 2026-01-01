@@ -2,8 +2,8 @@
 
 namespace Modules\Inventory\Entities;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Inventory\Database\factories\StockIssueFactory;
 
 class StockIssue extends Model
@@ -21,8 +21,9 @@ class StockIssue extends Model
 
     protected static function newFactory()
     {
-        //return StockIssueFactory::new();
+        // return StockIssueFactory::new();
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'requested_by');
@@ -41,5 +42,10 @@ class StockIssue extends Model
     public function technicalTools()
     {
         return $this->hasMany(StockIssueTechnicalTool::class);
+    }
+
+    public function stockTransfers()
+    {
+        return $this->hasMany(StockTransfer::class, 'stock_issue_id');
     }
 }

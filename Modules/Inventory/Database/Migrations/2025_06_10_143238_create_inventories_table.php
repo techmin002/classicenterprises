@@ -10,16 +10,25 @@ class CreateInventoriesTable extends Migration
     {
         Schema::create('inventories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('machinery_id')->nullable()->constrained('machineries')->nullOnDelete();
-            $table->foreignId('accessory_id')->nullable()->constrained('accessories')->nullOnDelete();
+
+            $table->unsignedBigInteger('machinery_id')->nullable();
+            $table->unsignedBigInteger('accessory_id')->nullable();
+            $table->unsignedBigInteger('technical_tool_id')->nullable();
+
             $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
+
             $table->integer('quantity')->default(0);
             $table->integer('opening_quantity')->default(0);
+
             $table->foreignId('updated_by')->constrained('users')->cascadeOnDelete();
             $table->boolean('status')->default(true);
+
             $table->timestamps();
 
-            $table->unique(['machinery_id', 'accessory_id', 'branch_id'], 'inventory_unique');
+            $table->unique(
+                ['machinery_id', 'accessory_id', 'technical_tool_id', 'branch_id'],
+                'inventory_unique'
+            );
         });
     }
 

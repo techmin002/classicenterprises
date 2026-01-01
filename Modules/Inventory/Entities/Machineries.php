@@ -2,8 +2,8 @@
 
 namespace Modules\Inventory\Entities;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Modules\Inventory\Database\factories\MachineriesFactory;
 
 class Machineries extends Model
@@ -14,7 +14,7 @@ class Machineries extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [];
-    
+
     protected static function newFactory(): MachineriesFactory
     {
         return MachineriesFactory::new();
@@ -41,11 +41,13 @@ class Machineries extends Model
     }
 
     public function stockTransfers()
-{
-    return $this->belongsToMany(StockTransfer::class, 'stock_transfer_machineries')
-        ->withPivot(['quantity', 'serial_numbers', 'condition']);
-}
+    {
+        return $this->belongsToMany(StockTransfer::class, 'stock_transfer_machineries')
+            ->withPivot(['quantity', 'serial_numbers', 'condition']);
+    }
 
-
-    
+    public function inventory()
+    {
+        return $this->hasOne(Inventory::class, 'machinery_id');
+    }
 }

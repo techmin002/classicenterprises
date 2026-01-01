@@ -1,5 +1,4 @@
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-    aria-hidden="true">
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="border-radius: 8px;">
             <div class="modal-header justify-content-center" style="background-color: #08A4A4; color: #ffff;">
@@ -21,8 +20,7 @@
                             </div>
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Contact Number</label>
-                                <input class="form-control" placeholder="Enter contact number" type="tel" name="contact" id="contact"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);" maxlength="15">
+                                <input class="form-control" placeholder="Enter contact number" type="tel" name="contact" id="contact" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15);" maxlength="15">
                             </div>
                             <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Address</label>
@@ -36,13 +34,20 @@
                                 <label class="form-label12">VAT</label>
                                 <input class="form-control" placeholder="Enter VAT number" type="text" name="vat" id="vat">
                             </div>
-                              <div class="mt-3 col-lg-6">
+                            <div class="mt-3 col-lg-6">
                                 <label class="form-label12">Branch ID</label>
                                 <select class="form-control" name="branch_id">
+                                    @if (auth()->user()->role['name'] === 'Super Admin')
                                     <option value="">Select Branch</option>
+                                    <option value="">Select Source Branch</option>
                                     @foreach ($branches as $branch)
-                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                     @endforeach
+                                    @else
+                                    <option value="{{ $branchId }}" selected>
+                                        {{ $branchName }}
+                                    </option>
+                                    @endif
                                 </select>
                             </div>
                             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
@@ -54,7 +59,7 @@
                                     <option value="0">Inactive</option>
                                 </select>
                             </div>
-                             <div class="mt-3 col-lg-12">
+                            <div class="mt-3 col-lg-12">
                                 <label class="form-label12">Description</label>
                                 <textarea name="discription" class="form-control" id="discription" rows="3" placeholder="Enter discription"></textarea>
                             </div>

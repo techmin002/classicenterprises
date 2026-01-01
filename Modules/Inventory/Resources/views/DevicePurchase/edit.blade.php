@@ -1,292 +1,265 @@
 @extends('setting::layouts.master')
 
-@section('title', 'Device Purchases')
+@section('title', 'Stock Purchases')
 @section('breadcrumb')
-    <ol class="breadcrumb border-0 m-0">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active">Device Purchases Edit</li>
-    </ol>
+<ol class="breadcrumb border-0 m-0">
+    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+    <li class="breadcrumb-item active">Stock Purchases Edit</li>
+</ol>
 @endsection
 
 @section('content')
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>Device Purchases Edit</h1>
-                    </div>
-                    <div class="col-sm-6">
-                        <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Device Purchases</li>
-                        </ol>
-                    </div>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Stock Purchases Edit</h1>
                 </div>
-            </div><!-- /.container-fluid -->
-        </section>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                        <li class="breadcrumb-item active">Stock Purchases</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
 
-        <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
 
-                        <!-- /.card -->
+                    <!-- /.card -->
 
-                        <div class="card">
-                            <!-- /.card-header -->
-                            <form action="{{ route('device_purchases_update', $devicePurchase->id) }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                @method('PUT')
+                    <div class="card">
+                        <!-- /.card-header -->
+                        <form action="{{ route('device_purchases_update', $devicePurchase->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
 
-                                <div class="container-fluid">
-                                    <div class="row gy-4">
-                                        <div class="col-lg-4">
-                                            <label class="form-label12 fw-semibold">Supplier</label>
-                                            <select class="form-control border-primary shadow-sm" name="supplier_id">
-                                                <option value="">Select Supplier</option>
-                                                @foreach ($suppliers as $supplier)
-                                                    <option value="{{ $supplier->id }}"
-                                                        {{ $supplier->id == $devicePurchase->supplier_id ? 'selected' : '' }}>
-                                                        {{ $supplier->name }}</option>
+                            <div class="container-fluid">
+                                <div class="row gy-4">
+                                    <div class="col-lg-4">
+                                        <label class="form-label12 fw-semibold">Supplier</label>
+                                        <select class="form-control border-primary shadow-sm" name="supplier_id">
+                                            <option value="">Select Supplier</option>
+                                            @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}" {{ $supplier->id == $devicePurchase->supplier_id ? 'selected' : '' }}>
+                                                {{ $supplier->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <label class="form-label12 fw-semibold">Branch ID</label>
+                                        <select class="form-control border-primary shadow-sm" name="branch_id">
+                                            @if (auth()->user()->role['name'] === 'Super Admin')
+                                            <option value="">Select Branch</option>
+                                            @foreach ($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                            @endforeach
+                                            @else
+                                            <option value="{{ $branchId }}" selected>
+                                                {{ $branchName }}
+                                            </option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
+                                    <div class="col-lg-4">
+                                        <label class="form-label12 fw-semibold">Bill No.</label>
+                                        <input class="form-control border-primary shadow-sm" placeholder="Enter bill number" type="text" name="bill_no" id="bill_no" value="{{ $devicePurchase->bill_no }}">
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <label class="form-label12 fw-semibold">Total Amount</label>
+                                        <input class="form-control border-primary shadow-sm" type="number" step="0.01" name="total_amount" id="total_amount" value="{{ $devicePurchase->total_amount }}" placeholder="Enter total amount">
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <label class="form-label12 fw-semibold">Receipt</label>
+                                        <input class="form-control border-primary shadow-sm" type="file" name="receipt" id="receipt" accept=".jpg, .jpeg, .png, .pdf">
+
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <label class="form-label12 fw-semibold">Status</label>
+                                        <select class="form-control border-primary shadow-sm" name="status">
+                                            <option value="0" {{ $devicePurchase->status == 0 ? 'selected' : '' }}>
+                                                Pending</option>
+                                            <option value="1" {{ $devicePurchase->status == 1 ? 'selected' : '' }}>
+                                                Completed</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <label class="form-label12 fw-semibold">Description</label>
+                                        <textarea class="form-control border-primary shadow-sm" name="description" id="description" rows="3">{{ $devicePurchase->description }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3 class="mt-5 mb-3 text-success border-bottom pb-2 section-title">
+                                <i class="bi bi-plug me-2"></i>
+                                Accessories Purchase
+                            </h3>
+                            <div class="container-fluid">
+                                @foreach ($purchaseAccessories as $acc)
+                                <div class="row gy-4 item-row accessory-row" id="accessory-row-{{ $acc->id }}">
+                                    <div class="col-lg-3">
+                                        <label class="form-label12 fw-semibold">Accessory Name</label>
+                                        <select class="form-control border-success shadow-sm accessory-name" name="accessories[{{ $acc->id }}][id]">
+                                            <option value="">Select Accessory</option>
+                                            @foreach ($accessories as $accessory)
+                                            <option value="{{ $accessory->id }}" data-price="{{ $accessory->price }}" @if ($accessory->id == $acc->accessory_id) selected @endif>
+                                                {{ $accessory->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label class="form-label12 fw-semibold">Quantity</label>
+                                        <input class="form-control border-success shadow-sm accessory-quantity" name="accessories[{{ $acc->id }}][quantity]" type="number" value="{{ $acc['quantity'] }}" min="1">
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label class="form-label12 fw-semibold">Unit Price</label>
+                                        <input class="form-control border-success shadow-sm accessory-price" name="accessories[{{ $acc->id }}][price]" value="{{ $acc['unit_price'] }}" type="number" step="0.01" placeholder="Price">
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label class="form-label12 fw-semibold">Total</label>
+                                        <input class="form-control border-success shadow-sm accessory-total" name="accessories[{{ $acc->id }}][total]" type="number" value="{{ $acc['total'] }}" step="0.01" readonly>
+                                    </div>
+                                    <div class="col-lg-1">
+                                        <label class="form-label12 fw-semibold">Branch</label>
+                                        <select class="form-control border-success shadow-sm" name="accessories[{{ $acc->id }}][branch_id]">
+                                            @if (auth()->user()->role['name'] === 'Super Admin')
+                                            <option value="">Select Branch</option>
+                                            @foreach ($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                            @endforeach
+                                            @else
+                                            <option value="{{ $branchId }}" selected>
+                                                {{ $branchName }}
+                                            </option>
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-1 d-flex align-items-end">
+                                        <button type="button" class="btn btn-sm btn-danger remove-item" data-row="accessory-row-{{ $acc->id }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                @endforeach
+                                <div id="accessoriesContainer">
+
+                                </div>
+                                <button type="button" id="addAccessory" class="btn btn-outline-success mt-3">
+                                    <i class="bi bi-plus-circle"></i> Add Accessory
+                                </button>
+
+                                <div class="row mt-3">
+                                    <div class="col-md-3 offset-md-9">
+                                        <label class="form-label12 fw-semibold">Accessories Subtotal</label>
+                                        <input class="form-control border-success shadow-sm" type="number" step="0.01" name="accessories_subtotal" id="accessories_subtotal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3 class="mt-5 mb-3 text-warning border-bottom pb-2 section-title">
+                                <i class="bi bi-gear-wide-connected me-2"></i>
+                                Machinery Purchase
+                            </h3>
+                            <div class="container-fluid">
+                                <div id="machineryContainer">
+                                    @foreach ($purchaseMachineries as $mach)
+                                    <div class="row gy-4 item-row machinery-row" id="machinery-row-{{ $mach->id }}">
+                                        <div class="col-lg-3">
+                                            <label class="form-label12 fw-semibold">Machinery Name</label>
+                                            <select class="form-control border-warning shadow-sm machinery-name" name="machineries[{{ $mach->id }}][id]">
+                                                <option value="">Select Machinery</option>
+                                                @foreach ($machineries as $machinery)
+                                                <option value="{{ $machinery->id }}" data-price="{{ $machinery->price }}" {{ $machinery->id == $mach->machinery_id ? 'selected' : '' }}>
+                                                    {{ $machinery->name }}
+                                                </option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-lg-4">
-                                            <label class="form-label12 fw-semibold">Branch ID</label>
-                                            <select class="form-control border-primary shadow-sm" name="branch_id">
+                                        <div class="col-lg-2">
+                                            <label class="form-label12 fw-semibold">Quantity</label>
+                                            <input class="form-control border-warning shadow-sm machinery-quantity" name="machineries[{{ $mach->id }}][quantity]" type="number" value="{{ $mach['quantity'] }}" min="1">
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label class="form-label12 fw-semibold">Unit Price</label>
+                                            <input class="form-control border-warning shadow-sm machinery-price" name="machineries[{{ $mach->id }}][price]" type="number" value="{{ $mach['unit_price'] }}" step="0.01" placeholder="Price">
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <label class="form-label12 fw-semibold">Total</label>
+                                            <input class="form-control border-warning shadow-sm machinery-total" name="machineries[{{ $mach->id }}][total]" type="number" value="{{ $mach['total'] }}" step="0.01" readonly>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <label class="form-label12 fw-semibold">Branch</label>
+                                            <select class="form-control border-warning shadow-sm" name="machineries[{{ $mach->id }}][branch_id]">
+
+                                                @if (auth()->user()->role['name'] === 'Super Admin')
                                                 <option value="">Select Branch</option>
                                                 @foreach ($branches as $branch)
-                                                    <option value="{{ $branch->id }}"
-                                                        {{ $branch->id == $devicePurchase->branch_id ? 'selected' : '' }}>
-                                                        {{ $branch->name }}</option>
+                                                <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                                 @endforeach
+                                                @else
+                                                <option value="{{ $branchId }}" selected>
+                                                    {{ $branchName }}
+                                                </option>
+                                                @endif
                                             </select>
-                                        </div>
-                                        <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
-                                        <div class="col-lg-4">
-                                            <label class="form-label12 fw-semibold">Bill No.</label>
-                                            <input class="form-control border-primary shadow-sm"
-                                                placeholder="Enter bill number" type="text" name="bill_no" id="bill_no"
-                                                value="{{ $devicePurchase->bill_no }}">
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <label class="form-label12 fw-semibold">Total Amount</label>
-                                            <input class="form-control border-primary shadow-sm" type="number"
-                                                step="0.01" name="total_amount" id="total_amount"
-                                                value="{{ $devicePurchase->total_amount }}"
-                                                placeholder="Enter total amount">
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <label class="form-label12 fw-semibold">Receipt</label>
-                                            <input class="form-control border-primary shadow-sm" type="file"
-                                                name="receipt" id="receipt" accept=".jpg, .jpeg, .png, .pdf">
 
                                         </div>
-                                        <div class="col-lg-4">
-                                            <label class="form-label12 fw-semibold">Status</label>
-                                            <select class="form-control border-primary shadow-sm" name="status">
-                                                <option value="0"
-                                                    {{ $devicePurchase->status == 0 ? 'selected' : '' }}>
-                                                    Pending</option>
-                                                <option value="1"
-                                                    {{ $devicePurchase->status == 1 ? 'selected' : '' }}>
-                                                    Completed</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-lg-12">
-                                            <label class="form-label12 fw-semibold">Description</label>
-                                            <textarea class="form-control border-primary shadow-sm" name="description" id="description" rows="3">{{ $devicePurchase->description }}</textarea>
+                                        <div class="col-lg-1 d-flex align-items-end">
+                                            <button type="button" class="btn btn-sm btn-danger remove-item" data-row="machinery-row-{{ $mach->id }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
-
-                                <h3 class="mt-5 mb-3 text-success border-bottom pb-2 section-title">
-                                    <i class="bi bi-plug me-2"></i>
-                                    Accessories Purchase
-                                </h3>
-                                <div class="container-fluid">
-                                    @foreach ($purchaseAccessories as $acc)
-                                        <div class="row gy-4 item-row accessory-row"
-                                            id="accessory-row-{{ $acc->id }}">
-                                            <div class="col-lg-3">
-                                                <label class="form-label12 fw-semibold">Accessory Name</label>
-                                                <select class="form-control border-success shadow-sm accessory-name"
-                                                    name="accessories[{{ $acc->id }}][id]">
-                                                    <option value="">Select Accessory</option>
-                                                    @foreach ($accessories as $accessory)
-                                                        <option value="{{ $accessory->id }}"
-                                                            data-price="{{ $accessory->price }}"
-                                                            @if ($accessory->id == $acc->accessory_id) selected @endif>
-                                                            {{ $accessory->name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <label class="form-label12 fw-semibold">Quantity</label>
-                                                <input class="form-control border-success shadow-sm accessory-quantity"
-                                                    name="accessories[{{ $acc->id }}][quantity]" type="number"
-                                                    value="{{ $acc['quantity'] }}" min="1">
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <label class="form-label12 fw-semibold">Unit Price</label>
-                                                <input class="form-control border-success shadow-sm accessory-price"
-                                                    name="accessories[{{ $acc->id }}][price]"
-                                                    value="{{ $acc['unit_price'] }}" type="number" step="0.01"
-                                                    placeholder="Price">
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <label class="form-label12 fw-semibold">Total</label>
-                                                <input class="form-control border-success shadow-sm accessory-total"
-                                                    name="accessories[{{ $acc->id }}][total]" type="number"
-                                                    value="{{ $acc['total'] }}" step="0.01" readonly>
-                                            </div>
-                                            <div class="col-lg-1">
-                                                <label class="form-label12 fw-semibold">Branch</label>
-                                                <select class="form-control border-success shadow-sm"
-                                                    name="accessories[{{ $acc->id }}][branch_id]">
-                                                    <option value="">Select Branch</option>
-                                                    @foreach ($branches as $branch)
-                                                        <option value="{{ $branch->id }}"
-                                                            {{ $branch->id == $acc->branch_id ? 'selected' : '' }}>
-                                                            {{ $branch->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-1 d-flex align-items-end">
-                                                <button type="button" class="btn btn-sm btn-danger remove-item"
-                                                    data-row="accessory-row-{{ $acc->id }}">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </div>
-                                        </div>
                                     @endforeach
-                                    <div id="accessoriesContainer">
+                                </div>
+                                <button type="button" id="addMachinery" class="btn btn-outline-warning mt-3">
+                                    <i class="bi bi-plus-circle"></i> Add Machinery
+                                </button>
 
-                                    </div>
-                                    <button type="button" id="addAccessory" class="btn btn-outline-success mt-3">
-                                        <i class="bi bi-plus-circle"></i> Add Accessory
-                                    </button>
-
-                                    <div class="row mt-3">
-                                        <div class="col-md-3 offset-md-9">
-                                            <label class="form-label12 fw-semibold">Accessories Subtotal</label>
-                                            <input class="form-control border-success shadow-sm" type="number"
-                                                step="0.01" name="accessories_subtotal" id="accessories_subtotal"
-                                                readonly>
-                                        </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-3 offset-md-9">
+                                        <label class="form-label12 fw-semibold">Machinery Subtotal</label>
+                                        <input class="form-control border-warning shadow-sm" type="number" step="0.01" name="machinery_subtotal" id="machinery_subtotal" readonly>
                                     </div>
                                 </div>
-
-                                <h3 class="mt-5 mb-3 text-warning border-bottom pb-2 section-title">
-                                    <i class="bi bi-gear-wide-connected me-2"></i>
-                                    Machinery Purchase
-                                </h3>
-                                <div class="container-fluid">
-                                    <div id="machineryContainer">
-                                        @foreach ($purchaseMachineries as $mach)
-                                            <div class="row gy-4 item-row machinery-row"
-                                                id="machinery-row-{{ $mach->id }}">
-                                                <div class="col-lg-3">
-                                                    <label class="form-label12 fw-semibold">Machinery Name</label>
-                                                    <select class="form-control border-warning shadow-sm machinery-name"
-                                                        name="machineries[{{ $mach->id }}][id]">
-                                                        <option value="">Select Machinery</option>
-                                                        @foreach ($machineries as $machinery)
-                                                            <option value="{{ $machinery->id }}"
-                                                                data-price="{{ $machinery->price }}"
-                                                                {{ $machinery->id == $mach->machinery_id ? 'selected' : '' }}>
-                                                                {{ $machinery->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <label class="form-label12 fw-semibold">Quantity</label>
-                                                    <input class="form-control border-warning shadow-sm machinery-quantity"
-                                                        name="machineries[{{ $mach->id }}][quantity]" type="number"
-                                                        value="{{ $mach['quantity'] }}" min="1">
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <label class="form-label12 fw-semibold">Unit Price</label>
-                                                    <input class="form-control border-warning shadow-sm machinery-price"
-                                                        name="machineries[{{ $mach->id }}][price]" type="number"
-                                                        value="{{ $mach['unit_price'] }}" step="0.01"
-                                                        placeholder="Price">
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <label class="form-label12 fw-semibold">Total</label>
-                                                    <input class="form-control border-warning shadow-sm machinery-total"
-                                                        name="machineries[{{ $mach->id }}][total]" type="number"
-                                                        value="{{ $mach['total'] }}" step="0.01" readonly>
-                                                </div>
-                                                <div class="col-lg-1">
-                                                    <label class="form-label12 fw-semibold">Branch</label>
-                                                    <select class="form-control border-warning shadow-sm"
-                                                        name="machineries[{{ $mach->id }}][branch_id]">
-                                                        <option value="">Select Branch</option>
-                                                        @foreach ($branches as $branch)
-                                                            <option value="{{ $branch->id }}"
-                                                                {{ $branch->id == $mach->branch_id ? 'selected' : '' }}>
-                                                                {{ $branch->name }}</option>
-                                                        @endforeach
-                                                    </select>
-
-                                                </div>
-                                                <div class="col-lg-1 d-flex align-items-end">
-                                                    <button type="button" class="btn btn-sm btn-danger remove-item"
-                                                        data-row="machinery-row-{{ $mach->id }}">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>`;
-                                        @endforeach
-                                    </div>
-                                    <button type="button" id="addMachinery" class="btn btn-outline-warning mt-3">
-                                        <i class="bi bi-plus-circle"></i> Add Machinery
-                                    </button>
-
-                                    <div class="row mt-3">
-                                        <div class="col-md-3 offset-md-9">
-                                            <label class="form-label12 fw-semibold">Machinery Subtotal</label>
-                                            <input class="form-control border-warning shadow-sm" type="number"
-                                                step="0.01" name="machinery_subtotal" id="machinery_subtotal"
-                                                readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                        </div>
-                        <div class="modal-footer justify-content-start modal-footer-advanced">
-                            <button type="submit" name="submit" id="btnSubmit"
-                                class="btn btn-success px-5 py-2 fw-bold shadow-sm">
-                                <i class="bi bi-save me-2"></i>Save Device Purchase
-                            </button>
-                            <button type="button" data-dismiss="modal"
-                                class="btn btn-danger px-5 py-2 fw-bold shadow-sm">
-                                <i class="bi bi-x-circle me-2"></i>Cancel
-                            </button>
-                        </div>
-                        </form>
-                        <!-- /.card-body -->
+                            </div>
                     </div>
-                    <!-- /.card -->
+                    <div class="modal-footer justify-content-start modal-footer-advanced">
+                        <button type="submit" name="submit" id="btnSubmit" class="btn btn-success px-5 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-save me-2"></i>Save Device Purchase
+                        </button>
+                        <button type="button" data-dismiss="modal" class="btn btn-danger px-5 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-x-circle me-2"></i>Cancel
+                        </button>
+                    </div>
+                    </form>
+                    <!-- /.card-body -->
                 </div>
-                <!-- /.col -->
+                <!-- /.card -->
             </div>
-            <!-- /.row -->
-    </div>
-    <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-    </div>
-    <script>
-        $(function() {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+</div>
+<script>
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+</script>
 @endsection
 
 <!-- Bootstrap Icons CDN -->
@@ -411,6 +384,7 @@
             max-width: 98vw !important;
         }
     }
+
 </style>
 
 <script>
@@ -454,7 +428,7 @@
         $('#addAccessory').click(function() {
             accessoryIndex++;
             const row = `
-       
+
         <div class="row gy-4 item-row accessory-row" id="accessory-row-${accessoryIndex}">
             <div class="col-lg-3">
                 <label class="form-label12 fw-semibold">Accessory Name</label>
@@ -462,7 +436,7 @@
                     <option value="">Select Accessory</option>
                     @foreach ($accessories as $accessory)
                         <option value="{{ $accessory->id }}" data-price="{{ $accessory->price }}">{{ $accessory->name }}</option>
-                    @endforeach                   
+                    @endforeach
                 </select>
             </div>
             <div class="col-lg-2">
@@ -477,15 +451,7 @@
                 <label class="form-label12 fw-semibold">Total</label>
                 <input class="form-control border-success shadow-sm accessory-total" name="accessories[${accessoryIndex}][total]" type="number" step="0.01" readonly>
             </div>
-            <div class="col-lg-1">
-                <label class="form-label12 fw-semibold">Branch</label>
-                <select class="form-control border-success shadow-sm" name="accessories[${accessoryIndex}][branch_id]">
-                    <option value="">Select Branch</option>
-                    @foreach ($branches as $branch)
-                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+
             <div class="col-lg-1 d-flex align-items-end">
                 <button type="button" class="btn btn-sm btn-danger remove-item" data-row="accessory-row-${accessoryIndex}">
                     <i class="bi bi-trash"></i>
@@ -528,15 +494,7 @@
                 <label class="form-label12 fw-semibold">Total</label>
                 <input class="form-control border-warning shadow-sm machinery-total" name="machineries[${machineryIndex}][total]" type="number" step="0.01" readonly>
             </div>
-            <div class="col-lg-1">
-                <label class="form-label12 fw-semibold">Branch</label>
-                <select class="form-control border-warning shadow-sm" name="machineries[${machineryIndex}][branch_id]">
-                    <option value="">Select Branch</option>
-                    @foreach ($branches as $branch)
-                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+
             <div class="col-lg-1 d-flex align-items-end">
                 <button type="button" class="btn btn-sm btn-danger remove-item" data-row="machinery-row-${machineryIndex}">
                     <i class="bi bi-trash"></i>
@@ -561,8 +519,8 @@
         });
 
         // Calculate totals when quantity or price changes
-        $(document).on('input', '.accessory-quantity, .accessory-price, .machinery-quantity, .machinery-price',
-            function() {
+        $(document).on('input', '.accessory-quantity, .accessory-price, .machinery-quantity, .machinery-price'
+            , function() {
                 calculateTotals();
             });
 
@@ -570,4 +528,5 @@
         $('#addAccessory').trigger('click');
         $('#addMachinery').trigger('click');
     });
+
 </script>

@@ -643,7 +643,7 @@ class AmcCustomerController extends Controller
             $branch_id = auth()->user()->branch_id;
         }
         $users = User::where('branch_id', $branch_id)->get();
-        $customers = CustomerTicket::with(['amc', 'customer', 'user'])->where('branch_id', $branch_id)->where('type', 'amc')->where('status', 'complete')->where('due_amount', 0)->latest()->get();
+        $customers = CustomerTicket::with(['amc', 'customer', 'user'])->where('branch_id', $branch_id)->where('amc_type', 'yes')->where('status', 'complete')->where('due_amount', 0)->latest()->get();
 
         return view('supportdashboard::amc_customer.complete', compact('customers', 'users'));
     }
@@ -734,4 +734,4 @@ class AmcCustomerController extends Controller
 
         return $parts ? implode(' ', $parts).' ago' : 'Just now';
     }
-}
+}ss

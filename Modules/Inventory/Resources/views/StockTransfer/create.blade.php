@@ -20,10 +20,7 @@
                                 <div class="form-group">
                                     <label for="from_branch_id" class="form-label12 fw-semibold">From Branch</label>
                                     <select class="form-control border-primary shadow-sm" id="from_branch_id" name="from_branch_id" required>
-                                        <option value="">Select Source Branch</option>
-                                        @foreach ($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-                                        @endforeach
+                                        <option value="{{ $branchId }}" selected>{{ $branchName }}</option>
                                     </select>
                                     <div class="invalid-feedback">Please select a source branch</div>
                                 </div>
@@ -34,7 +31,7 @@
                                     <select class="form-control border-primary shadow-sm" id="to_branch_id" name="to_branch_id" required>
                                         <option value="">Select Destination Branch</option>
                                         @foreach ($branches as $branch)
-                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
                                         @endforeach
                                     </select>
                                     <div class="invalid-feedback">Please select a destination branch</div>
@@ -79,7 +76,8 @@
                         <button type="button" id="addMachinery" class="btn btn-warning mt-3">
                             <i class="bi bi-plus-circle"></i> Add Machinery
                         </button>
-                        <div id="machineryError" class="text-danger mt-2 d-none">At least one machinery item is required</div>
+                        <div id="machineryError" class="text-danger mt-2 d-none">At least one machinery item is required
+                        </div>
                     </div>
 
                     <div class="accessories-transfer-card p-4">
@@ -93,7 +91,27 @@
                         <button type="button" id="addAccessory" class="btn btn-success mt-3">
                             <i class="bi bi-plus-circle"></i> Add Accessory
                         </button>
-                        <div id="accessoryError" class="text-danger mt-2 d-none">At least one accessory item is required</div>
+                        <div id="accessoryError" class="text-danger mt-2 d-none">At least one accessory item is required
+                        </div>
+                    </div>
+
+                    <div class="technical-tools-transfer-card p-4 mt-4">
+                        <h3 class="mb-3 text-info border-bottom pb-2 section-title">
+                            <i class="bi bi-tools me-2"></i>
+                            Technical Tools Transfer
+                        </h3>
+
+                        <div id="technicalToolsContainer">
+                            <!-- Technical tool rows will be added here -->
+                        </div>
+
+                        <button type="button" id="addTechnicalTool" class="btn btn-info mt-3">
+                            <i class="bi bi-plus-circle"></i> Add Technical Tool
+                        </button>
+
+                        <div id="technicalToolError" class="text-danger mt-2 d-none">
+                            At least one technical tool item is required
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-start modal-footer-advanced">
@@ -268,14 +286,18 @@
     }
 
     @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+            transform: rotate(360deg);
+        }
     }
+
 </style>
 
 <script>
     $(document).ready(function() {
         let accessoryIndex = 0;
         let machineryIndex = 0;
+        let technicalToolIndex = 0;
         let isSubmitting = false;
 
         // Initialize form validation
@@ -292,8 +314,8 @@
                         <select class="form-control border-success shadow-sm" name="accessories[${accessoryIndex}][accessory_id]" required>
                             <option value="">Select Accessory</option>
                             @foreach ($accessories as $accessory)
-                                <option value="{{ $accessory->id }}" data-quantity="{{ $accessory->quantity }}">
-                                    {{ $accessory->name }} (Available: {{ $accessory->quantity }})
+                                <option value="{{ $accessory->id }}" data-quantity="{{ $accessory->inventory->quantity ?? 0 }}">
+                                    {{ $accessory->name }} (Available: {{ $accessory->inventory->quantity ?? 0 }})
                                 </option>
                             @endforeach
                         </select>
@@ -303,10 +325,10 @@
                 <div class="col-lg-2">
                     <div class="form-group">
                         <label class="form-label12 fw-semibold">Quantity</label>
-                        <input class="form-control border-success shadow-sm" 
-                               name="accessories[${accessoryIndex}][quantity]" 
-                               type="number" 
-                               value="1" 
+                        <input class="form-control border-success shadow-sm"
+                               name="accessories[${accessoryIndex}][quantity]"
+                               type="number"
+                               value="1"
                                min="1"
                                required>
                         <div class="invalid-feedback">Please enter a valid quantity</div>
@@ -315,9 +337,9 @@
                 <div class="col-lg-3">
                     <div class="form-group">
                         <label class="form-label12 fw-semibold">Serial Numbers</label>
-                        <input class="form-control border-success shadow-sm" 
-                               name="accessories[${accessoryIndex}][serial_numbers]" 
-                               type="text" 
+                        <input class="form-control border-success shadow-sm"
+                               name="accessories[${accessoryIndex}][serial_numbers]"
+                               type="text"
                                placeholder="Optional serial numbers">
                     </div>
                 </div>
@@ -354,8 +376,8 @@
                         <select class="form-control border-warning shadow-sm" name="machineries[${machineryIndex}][machinery_id]" required>
                             <option value="">Select Machinery</option>
                             @foreach ($machineries as $machinery)
-                                <option value="{{ $machinery->id }}" data-quantity="{{ $machinery->quantity }}">
-                                    {{ $machinery->name }} (Available: {{ $machinery->quantity }})
+                                <option value="{{ $machinery->id }}" data-quantity="{{ $machinery->inventory->quantity ?? 0 }}">
+                                    {{ $machinery->name }} (Available: {{ $machinery->inventory->quantity ?? 0 }})
                                 </option>
                             @endforeach
                         </select>
@@ -365,10 +387,10 @@
                 <div class="col-lg-2">
                     <div class="form-group">
                         <label class="form-label12 fw-semibold">Quantity</label>
-                        <input class="form-control border-warning shadow-sm" 
-                               name="machineries[${machineryIndex}][quantity]" 
-                               type="number" 
-                               value="1" 
+                        <input class="form-control border-warning shadow-sm"
+                               name="machineries[${machineryIndex}][quantity]"
+                               type="number"
+                               value="1"
                                min="1"
                                required>
                         <div class="invalid-feedback">Please enter a valid quantity</div>
@@ -377,9 +399,9 @@
                 <div class="col-lg-3">
                     <div class="form-group">
                         <label class="form-label12 fw-semibold">Serial Numbers</label>
-                        <input class="form-control border-warning shadow-sm" 
-                               name="machineries[${machineryIndex}][serial_numbers]" 
-                               type="text" 
+                        <input class="form-control border-warning shadow-sm"
+                               name="machineries[${machineryIndex}][serial_numbers]"
+                               type="text"
                                placeholder="Optional serial numbers">
                     </div>
                 </div>
@@ -405,11 +427,85 @@
             $('#machineryError').addClass('d-none');
         });
 
+        // Add Technical Tools row
+        $('#addTechnicalTool').on('click', function() {
+            technicalToolIndex++;
+            const row = `
+            <div class="row gy-3 item-row technicaltool-row" id="technicaltool-row-${technicalToolIndex}">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <label class="form-label12 fw-semibold">Technical Tool</label>
+                        <select class="form-control border-info shadow-sm"
+                                name="technicaltools[${technicalToolIndex}][technical_tool_id]"
+                                required>
+                            <option value="">Select Tool</option>
+                            @foreach ($technicaltools as $tool)
+                                <option value="{{ $tool->id }}" data-quantity="{{ $tool->inventory->quantity ?? 0 }}">
+                                    {{ $tool->tool_name }} (Available: {{ $tool->inventory->quantity ?? 0 }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback">Please select a technical tool</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label class="form-label12 fw-semibold">Quantity</label>
+                        <input class="form-control border-info shadow-sm"
+                            name="technicaltools[${technicalToolIndex}][quantity]"
+                            type="number"
+                            value="1"
+                            min="1"
+                            required>
+                        <div class="invalid-feedback">Please enter a valid quantity</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label class="form-label12 fw-semibold">Serial Numbers</label>
+                        <input class="form-control border-info shadow-sm"
+                            name="technicaltools[${technicalToolIndex}][serial_numbers]"
+                            type="text"
+                            placeholder="Optional serial numbers">
+                    </div>
+                </div>
+
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label class="form-label12 fw-semibold">Condition</label>
+                        <select class="form-control border-info shadow-sm"
+                                name="technicaltools[${technicalToolIndex}][condition]"
+                                required>
+                            <option value="new">New</option>
+                            <option value="used">Used</option>
+                            <option value="refurbished">Refurbished</option>
+                            <option value="damaged">Damaged</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a condition</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-1 d-flex align-items-end">
+                    <button type="button"
+                            class="btn btn-outline-danger remove-item"
+                            data-row="technicaltool-row-${technicalToolIndex}">
+                        <i class="bi bi-x-circle"></i> Remove
+                    </button>
+                </div>
+            </div>`;
+
+            $('#technicalToolsContainer').append(row);
+            $('#technicalToolError').addClass('d-none');
+        });
+
+
         // Remove row
         $(document).on('click', '.remove-item', function() {
             const rowId = $(this).data('row');
             const $row = $(`#${rowId}`);
-            
+
             $row.fadeOut(300, function() {
                 $(this).remove();
                 validateItemCount();
@@ -417,18 +513,23 @@
         });
 
         // Validate quantity against available stock
-        $(document).on('change', 'select[name*="[accessory_id]"], select[name*="[machinery_id]"]', function() {
-            const maxQuantity = $(this).find('option:selected').data('quantity');
-            const quantityInput = $(this).closest('.item-row').find('input[name*="[quantity]"]');
-            quantityInput.attr('max', maxQuantity);
-        });
+        $(document).on(
+            'change'
+            , 'select[name*="[accessory_id]"], select[name*="[machinery_id]"], select[name*="[technical_tool_id]"]'
+            , function() {
+                const maxQuantity = $(this).find('option:selected').data('quantity');
+                const quantityInput = $(this).closest('.item-row').find('input[name*="[quantity]"]');
+                quantityInput.attr('max', maxQuantity);
+            }
+        );
+
 
         // Form submission handler
         $('#stockTransferForm').on('submit', function(e) {
             e.preventDefault();
-            
+
             if (isSubmitting) return;
-            
+
             // Validate form
             if (!this.checkValidity()) {
                 e.stopPropagation();
@@ -436,20 +537,26 @@
                 validateItemCount();
                 return;
             }
-            
+
             // Validate at least one item exists
-            if ($('.accessory-row').length === 0 && $('.machinery-row').length === 0) {
+            if (
+                $('.accessory-row').length === 0 &&
+                $('.machinery-row').length === 0 &&
+                $('.technicaltool-row').length === 0
+            ) {
                 $('#accessoryError').removeClass('d-none');
                 $('#machineryError').removeClass('d-none');
+                $('#technicalToolError').removeClass('d-none');
                 return;
             }
-            
+
+
             // Add loading state
             isSubmitting = true;
             const $submitBtn = $('#submitBtn');
             $submitBtn.addClass('btn-loading');
             $submitBtn.prop('disabled', true);
-            
+
             // Submit form
             this.submit();
         });
@@ -464,10 +571,11 @@
                 }
                 $(this).addClass('was-validated');
             });
-            
+
             // Add first row for each section
             $('#addAccessory').trigger('click');
             $('#addMachinery').trigger('click');
+            $('#addTechnicalTool').trigger('click');
         }
 
         // Validate item count
@@ -477,11 +585,17 @@
             } else {
                 $('#accessoryError').addClass('d-none');
             }
-            
+
             if ($('.machinery-row').length === 0) {
                 $('#machineryError').removeClass('d-none');
             } else {
                 $('#machineryError').addClass('d-none');
+            }
+
+            if ($('.technicaltool-row').length === 0) {
+                $('#technicalToolError').removeClass('d-none');
+            } else {
+                $('#technicalToolError').addClass('d-none');
             }
         }
 
@@ -489,11 +603,12 @@
         $('#from_branch_id, #to_branch_id').change(function() {
             const fromBranch = $('#from_branch_id').val();
             const toBranch = $('#to_branch_id').val();
-            
+
             if (fromBranch && toBranch && fromBranch === toBranch) {
                 alert('Source and destination branches cannot be the same');
                 $(this).val('').focus();
             }
         });
     });
+
 </script>
