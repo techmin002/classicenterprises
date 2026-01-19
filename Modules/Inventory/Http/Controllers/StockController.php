@@ -41,7 +41,7 @@ class StockController extends Controller
             $q->where('branch_id', $branchId);
         }])->get();
         // dd($technicaltools);
-        $branches = Branch::all();
+        $branches = Branch::all(); 
         $user = User::all();
         $stockTransfers = StockTransfer::with(['accessories', 'machineries', 'technicaltools', 'fromBranch', 'toBranch', 'user'])->get();
         $stockaccessories = StockTransferAccessories::with('accessory')->get();
