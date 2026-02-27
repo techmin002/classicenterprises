@@ -525,12 +525,12 @@ class DevicePurchaseController extends Controller
         $user = auth()->user();
 
         $query = Inventory::with([
-            'accessories:id,name',
-            'technicaltools:id,tool_name',
-            'machineries:id,name',
-            'branch:id,name',
-            'user:id,name',
-        ])->where('branch_id', $branchId)->latest();
+    'accessories:id,name,units',
+    'technicaltools:id,tool_name',
+    'machineries:id,name',
+    'branch:id,name',
+    'user:id,name',
+])->where('branch_id', $branchId)->latest();
 
         if ($user->branch_id) {
             $query->where('branch_id', $user->branch_id);

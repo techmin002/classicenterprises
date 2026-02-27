@@ -30,9 +30,4 @@ class SaleMachinery extends Model
     {
         return $this->belongsTo(Machineries::class);
     }
-
-    protected static function newFactory()
-    {
-        return \Modules\Inventory\Database\factories\SaleMachineryFactory::new();
-    }
 }

@@ -1,175 +1,127 @@
 @extends('setting::layouts.master')
 
-@section('title', 'Inventories')
+@section('title', 'Accessory Movements')
 
 @section('content')
 <div class="content-wrapper">
 
-    <!-- Content Header -->
+    <!-- Header -->
     <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Inventories</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('home') }}">Home</a>
-                        </li>
-                        <li class="breadcrumb-item active">Inventories</li>
-                    </ol>
-                </div>
-            </div>
+        <div class="container-fluid mb-3">
+           <h1 class="fw-bold text-primary">
+    Movements of <span class="text-dark">{{ $accessoryName }}</span>
+</h1>
+
+            <ol class="breadcrumb float-sm-right bg-light rounded p-2 shadow-sm">
+                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active">Accessory Movements</li>
+            </ol>
         </div>
     </section>
 
-    <!-- Main content -->
+    <!-- Main Content -->
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
 
-                    <div class="card">
-
-                        <!-- Tabs -->
-                        <div class="card-header p-2">
-                            <h3>Accessories Details</h3>
-                            <ul class="nav nav-tabs" id="inventory-tabs" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="accessories-tab" data-toggle="tab" href="#accessories" role="tab">
-                                        Accessories In
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="machineries-tab" data-toggle="tab" href="#machineries" role="tab">
-                                        Accessories Out
-                                    </a>
-                                </li>
-                            </ul>
+            @if ($accessoryMovements->isEmpty())
+                <div class="alert alert-info rounded shadow-sm d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2 fs-4"></i> No movements found for this accessory.
+                </div>
+            @else
+                <!-- SUMMARY BOXES -->
+                <div class="row mb-4 g-3">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card shadow-lg border-0 text-white" style="background: linear-gradient(135deg,#28a745,#218838);">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-arrow-down fa-2x mb-2"></i>
+                                <h3 class="fw-bold">{{ number_format($totalIn) }}</h3>
+                                <p class="mb-0 fw-semibold">Total IN</p>
+                            </div>
                         </div>
+                    </div>
 
-                        <!-- Tab Content -->
-                        <div class="card-body">
-                            <div class="tab-content" id="inventory-tabs-content">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card shadow-lg border-0 text-white" style="background: linear-gradient(135deg,#dc3545,#c82333);">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-arrow-up fa-2x mb-2"></i>
+                                <h3 class="fw-bold">{{ number_format($totalOut) }}</h3>
+                                <p class="mb-0 fw-semibold">Total OUT</p>
+                            </div>
+                        </div>
+                    </div>
 
-                                <!-- Accessories Tab -->
-                                <div class="tab-pane fade show active" id="accessories" role="tabpanel">
-                                    @if($accessories->isEmpty())
-                                    <div class="alert alert-info">
-                                        <i class="fas fa-info-circle"></i>
-                                        No accessories inventory found
-                                    </div>
-                                    @else
-                                    <div class="table-responsive">
-                                        <table id="example1" class="table table-bordered table-striped table-hover text-center">
-                                            <thead class="thead-dark">
-                                                <tr>
-                                                    <th>SN</th>
-                                                    <th>Accessory Name</th>
-                                                    <th>Quantity</th>
-                                                    <th>Date</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @php $sn = 1; @endphp
-
-                                                {{-- Device Purchase Accessories --}}
-                                                @foreach ($accessories as $inventory)
-                                                <tr>
-                                                    <td>{{ $sn++ }}</td>
-                                                    <td>{{ $inventory->accessories->name ?? 'N/A' }}</td>
-                                                    <td>{{ number_format($inventory->quantity) }}</td>
-                                                    <td>{{ $inventory->created_at }}</td>
-                                                </tr>
-                                                @endforeach
-
-                                                {{-- Stock Transfer Accessories --}}
-                                                @foreach ($transferAccessories as $item)
-                                                <tr>
-                                                    <td>{{ $sn++ }}</td>
-                                                    <td>{{ $item->accessory->name }}</td>
-                                                    <td>{{ $item->quantity }}</td>
-                                                    <td>{{ $item->created_at }}</td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-
-                                        </table>
-                                    </div>
-                                    @endif
-                                </div>
-
-                                <!-- Machineries Tab -->
-                                <div class="tab-pane fade" id="machineries" role="tabpanel">
-                                    @if($accessories->isEmpty())
-                                    <div class="alert alert-info">
-                                        <i class="fas fa-info-circle"></i>
-                                        No accessories inventory found
-                                    </div>
-                                    @else
-                                    <div class="table-responsive">
-                                        <table id="example2" class="table table-bordered table-striped table-hover text-center">
-                                            <thead class="thead-dark">
-                                                <tr>
-                                                    <th>SN</th>
-                                                    <th>Accessory Name</th>
-                                                    <th>Quantity</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($accessories as $inventory)
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $inventory->accessories->name ?? 'N/A' }}</td>
-                                                    <td>
-                                                        {{ number_format($inventory->quantity) }}
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    @endif
-                                </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="card shadow-lg border-0 text-white" style="background: linear-gradient(135deg,#17a2b8,#117a8b);">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-boxes fa-2x mb-2"></i>
+                                <h3 class="fw-bold">{{ number_format($remaining) }}</h3>
+                                <p class="mb-0 fw-semibold">Remaining</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- TABLE -->
+                <div class="card shadow-lg rounded">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        <i class="fas fa-stream me-2"></i> Movement Details
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-hover table-striped table-bordered align-middle text-center" id="table-movements">
+                            <thead class="table-dark text-uppercase">
+                                <tr>
+                                    <th>SN</th>
+                                    <th>Quantity</th>
+                                    <th>Type</th>
+                                    <th>From Branch</th>
+                                    <th>To Branch</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($accessoryMovements as $key => $movement)
+                                    <tr>
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>
+                                            <span class="fw-bold">{{ number_format($movement->quantity) }}</span>
+                                            <br>
+                                            <span class="badge bg-secondary shadow-sm">{{ $movement->unit }}</span>
+                                        </td>
+                                        @php
+                                            $typeColor = match ($movement->movement_type) {
+                                                'Purchase','Transfer Received' => 'success',
+                                                'Transfer Sent','Sale' => 'danger',
+                                                'Used','Broken' => 'warning text-dark',
+                                                default => 'info',
+                                            };
+                                        @endphp
+                                        <td><span class="badge bg-{{ $typeColor }} shadow-sm">{{ $movement->movement_type }}</span></td>
+                                        <td>{{ $movement->from_branch ?? '-' }}</td>
+                                        <td>{{ $movement->to_branch ?? '-' }}</td>
+                                        <td>{{ optional($movement->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @endif
+
         </div>
     </section>
-
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    $(document).ready(function() {
-
-        // Accessories table
-        $('#example1').DataTable({
-            responsive: true
-            , autoWidth: false
-            , pageLength: 25
-            , dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>'
-        });
-
-        // Machineries table (load only when tab is opened)
-        $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-            if ($(e.target).attr('href') === '#machineries' &&
-                !$.fn.DataTable.isDataTable('#example2')) {
-
-                $('#example2').DataTable({
-                    responsive: true
-                    , autoWidth: false
-                    , pageLength: 25
-                    , dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>'
-                });
-            }
-        });
-
+$(function() {
+    $('#table-movements').DataTable({
+        responsive: true,
+        autoWidth: false,
+        pageLength: 25,
+        order: [[5, 'desc']],
+        dom: '<"top mb-2"<"float-left"l><"float-right"f>>rt<"bottom mt-2"<"float-left"i><"float-right"p>>'
     });
-
+});
 </script>
 @endpush

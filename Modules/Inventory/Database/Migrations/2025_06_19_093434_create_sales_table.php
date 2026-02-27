@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('invoice_number')->unique();
             $table->unsignedBigInteger('customer_id')->nullable();
+            $table->unsignedBigInteger('branch_id');
             $table->string('customer_name');
             $table->string('contact')->nullable();
             $table->string('landline')->nullable();
@@ -26,9 +27,10 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->text('remarks')->nullable();
             $table->unsignedBigInteger('created_by');
-            $table->timestamps();
-            
+            $table->timestamps();     
             $table->foreign('created_by')->references('id')->on('users');
+            $table->foreign('branch_id')->references('id')->on('branches');
+
         });
     }
 

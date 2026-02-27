@@ -25,14 +25,9 @@ class SaleAccessory extends Model
     {
         return $this->belongsTo(Sale::class);
     }
-
+ 
     public function accessory()
     {
         return $this->belongsTo(Accessories::class);
-    }
-
-    protected static function newFactory()
-    {
-        return \Modules\Inventory\Database\factories\SaleAccessoryFactory::new();
     }
 }

@@ -34,5 +34,4 @@ class DevicePurchaseAccessory extends Model
         return $this->belongsTo(Accessories::class, 'accessory_id', 'id');
     }
 
-    
 }

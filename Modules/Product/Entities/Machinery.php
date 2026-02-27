@@ -26,9 +26,4 @@ class Machinery extends Model
         'images',
         'slug'
     ];
-
-    protected static function newFactory()
-    {
-        return \Modules\Product\Database\factories\MachineryFactory::new();
-    }
 }

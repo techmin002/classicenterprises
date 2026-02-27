@@ -28,12 +28,12 @@
                                 <input class="form-control" type="number" step="0.01" name="price"
                                     placeholder="Enter price" required>
                             </div>
-
+{{-- 
                             <div class="col-lg-6">
                                 <label class="form-label12">Stock Quantity</label>
                                 <input class="form-control" type="number" name="stock"
                                     placeholder="Enter stock quantity" required>
-                            </div>
+                            </div> --}}
 
                             <div class="col-lg-6">
                                 <label class="form-label12">Image</label>

@@ -32,16 +32,6 @@ class Accessories extends Model
     ];
 
     /**
-     * Define the factory for the Accessories model.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    protected static function newFactory()
-    {
-        return AccessoriesFactory::new();
-    }
-
-    /**
      * Relationship: One accessory can be attached to many device purchases via pivot.
      */
     public function devicePurchases()
@@ -84,4 +74,5 @@ class Accessories extends Model
     {
         return $this->hasOne(Inventory::class, 'accessory_id');
     }
+    
 }

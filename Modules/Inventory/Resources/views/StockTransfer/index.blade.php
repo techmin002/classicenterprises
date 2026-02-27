@@ -70,7 +70,7 @@
                             <h3 class="card-title mb-0">Stock Transfer List</h3>
                             <div class="ml-auto">
                                 <a class="btn btn-light text-primary font-weight-bold" data-toggle="modal" data-target="#createStockTransfer"><i class="fa fa-plus"></i> Create</a>
-                                @include('inventory::stocktransfer.create')
+                                @include('inventory::StockTransfer.create')
                             </div>
                         </div>
                         <div class="card-body bg-light">
@@ -119,7 +119,7 @@
                                                 <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewTransfer{{ $transfer->id }}" title="View Details">
                                                     <i class="fa fa-eye"></i>
                                                 </button>
-                                                @include('inventory::stocktransfer.view', ['transfer' => $transfer])
+                                                @include('inventory::StockTransfer.view', ['transfer' => $transfer])
 
                                                 @if($transfer->status == 'pending' || $transfer->status == 'in_transit')
                                                 <a href="{{ route('stock-transfers.edit', $transfer->id) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>

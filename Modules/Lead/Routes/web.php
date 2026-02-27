@@ -71,4 +71,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('lead/details/{id}', [LeadController::class, 'LeadDetails'])->name('lead.details');
 
     Route::get('/customer/{id}/pdf', [InstallationCategoryController::class, 'customerDetailsPDF'])->name('customer.pdf');
+
+    Route::get('/retailler-leads', [LeadController::class, 'retailler'])
+    ->name('retailler-leads');
+
+Route::get('/wholeseller-leads', [LeadController::class, 'wholeseller'])
+    ->name('wholeseller-leads');
 });

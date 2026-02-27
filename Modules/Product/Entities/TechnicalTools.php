@@ -20,7 +20,7 @@ class TechnicalTools extends Model
         'price',
         'image',
         'description',
-        'stock',
+        // 'stock',
         'status',
     ];
 

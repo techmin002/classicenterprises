@@ -14,6 +14,7 @@ use Modules\Inventory\Entities\SaleAccessory;
 use Modules\Inventory\Entities\SaleMachinery;
 use Modules\Inventory\Entities\Inventory;
 
+
 class SalesController extends Controller
 {
     public function index()
@@ -40,108 +41,133 @@ class SalesController extends Controller
         ));
     }
 
-    public function store(Request $request)
-    {
-        DB::beginTransaction();
+ 
 
-        try {
-            // Generate invoice number
-            $invoiceNumber = 'INV-' . strtoupper(Str::random(6)) . '-' . date('Ymd');
+public function store(Request $request)
+{
+    DB::beginTransaction();
 
-            // Create the sale record
-            $sale = Sale::create([
-                'invoice_number' => $invoiceNumber,
-                'customer_name' => $request->customer_name,
-                'contact' => $request->contact,
-                'landline' => $request->landline,
-                'email' => $request->email,
-                'customer_type' => $request->customer_type,
-                'address' => $request->address,
-                'total_amount' => $request->total_amount,
-                'paid_amount' => $request->paid_amount,
-                'balance_due' => $request->balance_due,
-                'payment_method' => $request->payment_method,
-                'payment_reference' => $request->payment_reference,
-                'status' => $request->status,
-                'remarks' => $request->remarks,
-                'created_by' => auth()->id(),
-            ]);
+    try {
+        // Branch detect
+        $branchId = auth()->user()->role['name'] === 'Super Admin'
+            ? session('branch_id')
+            : auth()->user()->branch_id;
 
-            // Store accessories and update inventory
-            if ($request->has('accessories')) {
-                foreach ($request->accessories as $accessory) {
-                    // Create sale accessory record
-                    SaleAccessory::create([
-                        'sale_id' => $sale->id,
-                        'accessory_id' => $accessory['id'],
-                        'name' => Accessories::find($accessory['id'])->name,
-                        'quantity' => $accessory['quantity'],
-                        'price' => $accessory['price'],
-                        'total' => $accessory['total'],
-                        'warranty' => $accessory['warranty'],
-                    ]);
+        // Invoice number
+        $invoiceNumber = 'INV-' . strtoupper(Str::random(6)) . '-' . date('Ymd');
 
-                    // Update inventory
-                    $inventory = Inventory::where('accessory_id', $accessory['id'])
-                        ->first();
+        // Create Sale
+        $sale = Sale::create([
+            'invoice_number'    => $invoiceNumber,
+            'customer_name'     => $request->customer_name,
+            'contact'           => $request->contact,
+            'landline'          => $request->landline,
+            'email'             => $request->email,
+            'customer_type'     => $request->customer_type,
+            'address'           => $request->address,
+            'total_amount'      => $request->total_amount,
+            'paid_amount'       => $request->paid_amount,
+            'balance_due'       => $request->balance_due,
+            'payment_method'    => $request->payment_method,
+            'payment_reference' => $request->payment_reference,
+            'status'            => $request->status,
+            'remarks'           => $request->remarks,
+            'created_by'        => auth()->id(),
+            'branch_id'         => $branchId, // ✅ save branch
 
-                    if ($inventory) {
-                        // Check if enough stock exists
-                        if ($inventory->quantity < $accessory['quantity']) {
-                            throw new \Exception("Not enough stock for accessory: " . Accessories::find($accessory['id'])->name);
-                        }
+        ]);
 
-                        // Decrease the quantity
-                        $inventory->quantity -= $accessory['quantity'];
-                        $inventory->save();
-                    } else {
-                        throw new \Exception("Inventory not found for accessory: " . Accessories::find($accessory['id'])->name);
-                    }
+        /*
+        |--------------------------------------------------------------------------
+        | ACCESSORIES SALE
+        |--------------------------------------------------------------------------
+        */
+        if ($request->filled('accessories')) {
+            foreach ($request->accessories as $accessory) {
+
+                $product = Accessories::findOrFail($accessory['id']);
+
+                SaleAccessory::create([
+                    'sale_id'     => $sale->id,
+                    'accessory_id'=> $product->id,
+                    'name'        => $product->name,
+                    'quantity'    => $accessory['quantity'],
+                    'price'       => $accessory['price'],
+                    'total'       => $accessory['total'],
+                    'warranty'    => $accessory['warranty'],
+                ]);
+
+                // 🔒 Lock inventory row
+                $inventory = Inventory::where('accessory_id', $product->id)
+                    ->where('branch_id', $branchId)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$inventory) {
+                    throw new \Exception("Inventory not found for accessory: {$product->name}");
                 }
-            }
 
-            // Store machineries and update inventory
-            if ($request->has('machineries')) {
-                foreach ($request->machineries as $machinery) {
-                    // Create sale machinery record
-                    SaleMachinery::create([
-                        'sale_id' => $sale->id,
-                        'machinery_id' => $machinery['id'],
-                        'name' => Machineries::find($machinery['id'])->name,
-                        'quantity' => $machinery['quantity'],
-                        'price' => $machinery['price'],
-                        'total' => $machinery['total'],
-                        'warranty' => $machinery['warranty'],
-                    ]);
-
-                    // Update inventory
-                    $inventory = Inventory::where('machinery_id', $machinery['id'])
-                        ->first();
-
-                    if ($inventory) {
-                        // Check if enough stock exists
-                        if ($inventory->quantity < $machinery['quantity']) {
-                            throw new \Exception("Not enough stock for machinery: " . Machineries::find($machinery['id'])->name);
-                        }
-
-                        // Decrease the quantity
-                        $inventory->quantity -= $machinery['quantity'];
-                        $inventory->save();
-                    } else {
-                        throw new \Exception("Inventory not found for machinery: " . Machineries::find($machinery['id'])->name);
-                    }
+                if ($inventory->quantity < $accessory['quantity']) {
+                    throw new \Exception("Not enough stock for {$product->name}. Available: {$inventory->quantity}");
                 }
+
+                $inventory->quantity -= $accessory['quantity'];
+                $inventory->updated_by = auth()->id();
+                $inventory->save();
             }
-
-            DB::commit();
-
-            return redirect()->route('sales.index')->with('success', 'Sale created successfully.');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withInput()->with('error', 'Failed to create sale: ' . $e->getMessage());
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | MACHINERIES SALE
+        |--------------------------------------------------------------------------
+        */
+        if ($request->filled('machineries')) {
+            foreach ($request->machineries as $machinery) {
+
+                $product = Machineries::findOrFail($machinery['id']);
+
+                SaleMachinery::create([
+                    'sale_id'      => $sale->id,
+                    'machinery_id' => $product->id,
+                    'name'         => $product->name,
+                    'quantity'     => $machinery['quantity'],
+                    'price'        => $machinery['price'],
+                    'total'        => $machinery['total'],
+                    'warranty'     => $machinery['warranty'],
+                ]);
+
+                $inventory = Inventory::where('machinery_id', $product->id)
+                    ->where('branch_id', $branchId)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$inventory) {
+                    throw new \Exception("Inventory not found for machinery: {$product->name}");
+                }
+
+                if ($inventory->quantity < $machinery['quantity']) {
+                    throw new \Exception("Not enough stock for {$product->name}. Available: {$inventory->quantity}");
+                }
+
+                $inventory->quantity -= $machinery['quantity'];
+                $inventory->updated_by = auth()->id();
+                $inventory->save();
+            }
+        }
+
+        DB::commit();
+
+        return redirect()->route('sales.index')
+            ->with('success', 'Sale created successfully.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withInput()
+            ->with('error', 'Failed to create sale: ' . $e->getMessage());
     }
+}
+
 
     public function edit($id)
     {

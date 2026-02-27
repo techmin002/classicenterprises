@@ -129,13 +129,16 @@ class LeadController extends Controller
             ]);
             return back()->with('success', 'Lead added successfully');
         } catch (QueryException $e) {
-            // Check for duplicate entry error (1062)
-            if ($e->getCode() == 23000) {
-                return back()->with('error', 'Mobile number or email already exists!');
-            }
-            // Any other database error
-            return back()->with('error', 'Something went wrong! Please try again.');
-        }
+
+    // MySQL duplicate entry error code
+    if (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062) {
+        return back()->with('error', 'Mobile number or email already exists!');
+    }
+
+    // Show real error for debugging (you can remove later)
+    return back()->with('error', 'DB Error: ' . $e->getMessage());
+}
+
     }
 
     /**
@@ -655,30 +658,82 @@ class LeadController extends Controller
                 ->with('success', 'Customer added successfully');
         }
     }
+    // public function retailler()
+    // {
+    //     $branches = Branch::all();
+    //     if (auth()->user()->role['name'] === 'Super Admin') {
+    //         $leads = Lead::with('responses', 'branch')->where('branch_id', session('branch_id'))->where('status', 'non_convert')->where('sales_type', 'retailler')->get();
+    //     } else {
+    //         $branch_id = auth()->user()->branch_id;
+    //         $leads = Lead::with('responses', 'branch')->where('branch_id', session('branch_id'))->where('status', 'non_convert')->where('branch_id', $branch_id)->where('sales_type', 'retailler')->get();
+    //     }
+    //     $type = 'Retailler';
+    //     return view('lead::leads.index', compact('leads', 'type', 'branches'));
+    // }
     public function retailler()
-    {
-        $branches = Branch::all();
-        if (auth()->user()->role['name'] === 'Super Admin') {
-            $leads = Lead::with('responses', 'branch')->where('branch_id', session('branch_id'))->where('status', 'non_convert')->where('sales_type', 'retailler')->get();
-        } else {
-            $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('branch_id', session('branch_id'))->where('status', 'non_convert')->where('branch_id', $branch_id)->where('sales_type', 'retailler')->get();
-        }
-        $type = 'Retailler';
-        return view('lead::leads.index', compact('leads', 'type', 'branches'));
+{
+    $branches = Branch::all();
+
+    if (auth()->user()->role['name'] === 'Super Admin') {
+        $leads = Lead::with('responses', 'branch')
+            ->where('branch_id', session('branch_id'))
+            ->where('status', 'non_convert')
+            ->where('sales_type', 'retailler')
+            ->get();
+    } else {
+        $branch_id = auth()->user()->branch_id;
+        $leads = Lead::with('responses', 'branch')
+            ->where('branch_id', session('branch_id'))
+            ->where('status', 'non_convert')
+            ->where('branch_id', $branch_id)
+            ->where('sales_type', 'retailler')
+            ->get();
     }
+
+    $type = 'retailler';
+    $leadtype = 'retailler-leads'; // 👈 ADD THIS (route name)
+
+    return view('lead::leads.index', compact('leads', 'type', 'branches', 'leadtype'));
+}
+
+    // public function wholeseller()
+    // {
+    //     $branches = Branch::all();
+    //     if (auth()->user()->role['name'] === 'Super Admin') {
+    //         $leads = Lead::with('responses', 'branch')->where('branch_id', session('branch_id'))->where('status', 'non_convert')->where('sales_type', 'wholeseller')->get();
+    //     } else {
+    //         $branch_id = auth()->user()->branch_id;
+    //         $leads = Lead::with('responses', 'branch')->where('branch_id', session('branch_id'))->where('status', 'non_convert')->where('branch_id', $branch_id)->where('sales_type', 'wholeseller')->get();
+    //     }
+    //     $type = 'Wholeseller';
+    //     return view('lead::leads.index', compact('leads', 'type', 'branches'));
+    // }
     public function wholeseller()
-    {
-        $branches = Branch::all();
-        if (auth()->user()->role['name'] === 'Super Admin') {
-            $leads = Lead::with('responses', 'branch')->where('branch_id', session('branch_id'))->where('status', 'non_convert')->where('sales_type', 'wholeseller')->get();
-        } else {
-            $branch_id = auth()->user()->branch_id;
-            $leads = Lead::with('responses', 'branch')->where('branch_id', session('branch_id'))->where('status', 'non_convert')->where('branch_id', $branch_id)->where('sales_type', 'wholeseller')->get();
-        }
-        $type = 'Wholeseller';
-        return view('lead::leads.index', compact('leads', 'type', 'branches'));
+{
+    $branches = Branch::all();
+
+    if (auth()->user()->role['name'] === 'Super Admin') {
+        $leads = Lead::with('responses', 'branch')
+            ->where('branch_id', session('branch_id'))
+            ->where('status', 'non_convert')
+            ->where('sales_type', 'wholeseller')
+            ->get();
+    } else {
+        $branch_id = auth()->user()->branch_id;
+        $leads = Lead::with('responses', 'branch')
+            ->where('branch_id', session('branch_id'))
+            ->where('status', 'non_convert')
+            ->where('branch_id', $branch_id)
+            ->where('sales_type', 'wholeseller')
+            ->get();
     }
+
+    $type = 'wholeseller';
+    $leadtype = 'wholeseller-leads'; // 👈 ADD THIS
+
+    return view('lead::leads.index', compact('leads', 'type', 'branches', 'leadtype'));
+}
+
     public function getStaff()
     {
         if (auth()->user()->role['name'] === 'Super Admin') {

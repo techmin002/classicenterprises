@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('lead_id')->nullable();
-            $table->integer('branch_id');
+            $table->integer('branch_id')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('converted_by')->nullable();
             $table->string('user_name')->nullable();

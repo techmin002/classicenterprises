@@ -12,6 +12,7 @@ class Sale extends Model
     protected $fillable = [
         'invoice_number',
         'customer_id',
+        'branch_id',
         'customer_name',
         'contact',
         'landline',
@@ -43,11 +44,6 @@ class Sale extends Model
         return $this->hasMany(CustomerPayment::class);
     }
 
-    protected static function newFactory()
-    {
-        return \Modules\Inventory\Database\factories\SaleFactory::new();
-    }
-
     public function customer()
     {
         return $this->belongsTo(Customer::class);
@@ -62,5 +58,9 @@ class Sale extends Model
     {
         return $this->hasMany(SaleMachinery::class);
     }
+    public function branch()
+{
+    return $this->belongsTo(Branch::class);
+}
     
 }

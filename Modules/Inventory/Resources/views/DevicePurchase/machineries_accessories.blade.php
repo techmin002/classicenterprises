@@ -142,7 +142,7 @@ use Modules\Product\Entities\TechnicalTools;
                                     <td>{{ number_format($item->total, 2) }}</td>
                                     <td>
                                         <span class="badge {{ $item->status ? 'badge-success' : 'badge-warning' }}">
-                                            {{ $item->status ? 'Active' : 'Inactive' }}
+                                            {{ $item->status ? 'active' : 'inactive' }}
                                         </span>
                                     </td>
                                 </tr>

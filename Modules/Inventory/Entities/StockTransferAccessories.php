@@ -27,4 +27,5 @@ class StockTransferAccessories extends Model
     {
         return $this->belongsTo(Accessories::class);
     }
+    
 }

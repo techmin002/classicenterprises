@@ -14,9 +14,5 @@ class ProductStock extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [];
-    
-    protected static function newFactory(): ProductStockFactory
-    {
-        //return ProductStockFactory::new();
-    }
+
 }

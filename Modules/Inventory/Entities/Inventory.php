@@ -5,6 +5,7 @@ namespace Modules\Inventory\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Product\Entities\TechnicalTools;
 
+
 class Inventory extends Model
 {
     protected $fillable = [

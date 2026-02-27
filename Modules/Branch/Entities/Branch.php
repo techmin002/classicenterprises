@@ -11,15 +11,22 @@ class Branch extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
-    public function user(){
-        return $this->belongsTo(User::class,'id','branch_id')->where('access_type','Admin');
-    }
-    public function employees(){
-        return $this->hasMany(Employee::class);
-    }
-    protected static function newFactory()
+    protected $fillable = ['name']; // add fields you need
+
+    public function users()
     {
-        return \Modules\Branch\Database\factories\BranchFactory::new();
+        return $this->hasMany(User::class, 'branch_id', 'id');
+    }
+
+    public function admins()
+    {
+        return $this->hasMany(User::class, 'branch_id', 'id')
+                    ->where('access_type', 'Admin');
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'branch_id', 'id');
     }
 }
+

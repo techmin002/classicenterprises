@@ -55,7 +55,6 @@
                                             <th class="text-center">Model</th>
                                             <th class="text-center">Image</th>
                                             <th class="text-center">Price</th>
-                                            <th class="text-center">Stock</th>
                                             <th class="text-center">Description</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Date</th>
@@ -72,7 +71,6 @@
                                                         src="{{ asset('upload/images/technicaltools/' . $tool->image) }}"
                                                         width="120px" alt="{{ $tool->name }}"> </td>
                                                 <td class="text-center">{{ number_format($tool->price, 2) }}</td>
-                                                <td class="text-center">{{ $tool->stock }}</td>
                                                 <td class="text-center">{{ $tool->description }}</td>
                                                 <td class="text-center">
                                                     @if ($tool->status == 'on')
@@ -114,7 +112,6 @@
                                             <th class="text-center">Model</th>
                                             <th class="text-center">Image</th>
                                             <th class="text-center">Price</th>
-                                            <th class="text-center">Stock</th>
                                             <th class="text-center">Description</th>
                                             <th class="text-center">Status</th>
                                             <th class="text-center">Date</th>

@@ -14,8 +14,14 @@ return new class extends Migration
         Schema::create('stock_issues', function (Blueprint $table) {
             $table->id();
             $table->foreignId('requested_by')->constrained('users')->onDelete('cascade');
+             $table->foreignId('branch_id')
+                ->nullable()
+                ->constrained('branches')
+                ->onDelete('cascade');
+    
             $table->text('message')->nullable();
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+             $table->enum('status', ['pending', 'accepted', 'rejected', 'in_transit', 'completed'])
+          ->default('pending');
             $table->timestamps();
         });
     }

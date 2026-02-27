@@ -50,7 +50,7 @@ class TechnicalToolsController extends Controller
             'tool_name'   => $request->tool_name,
             'model_name'  => $request->model_name,
             'price'       => $request->price,
-            'stock'       => $request->stock,
+            // 'stock'       => $request->stock,
             'image'       => $image,
             'description' => $request->description,
             'status'      => $request->status ?? 'on',

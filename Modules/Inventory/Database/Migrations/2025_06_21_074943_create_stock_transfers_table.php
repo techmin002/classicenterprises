@@ -24,6 +24,13 @@ return new class extends Migration
             $table->foreign('to_branch_id')->references('id')->on('branches');
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('updated_by')->references('id')->on('users');
+              $table->timestamp('received_at')->nullable();
+            $table->unsignedBigInteger('received_by')->nullable();
+
+            $table->foreign('received_by')
+                  ->references('id')
+                  ->on('users')
+                  ->nullOnDelete();
         });
     }
 

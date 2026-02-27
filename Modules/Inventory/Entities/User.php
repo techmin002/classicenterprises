@@ -4,7 +4,6 @@ namespace Modules\Inventory\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Modules\Inventory\Database\factories\UserFactory;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Model
@@ -16,10 +15,6 @@ class User extends Model
      */
     protected $fillable = [];
 
-    protected static function newFactory(): UserFactory
-    {
-        // return UserFactory::new();
-    }
 
     public function devicePurchases()
     {
@@ -30,4 +25,8 @@ class User extends Model
     {
         return $this->belongsTo(Branch::class);
     }
+    public function staffItemAssignments()
+{
+    return $this->hasMany(StaffItemAssignment::class, 'staff_id');
+}
 }

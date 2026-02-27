@@ -58,14 +58,14 @@
                                                     value="{{ $tool->price }}" required>
                                             </div>
                                         </div>
-
+{{-- 
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Stock Quantity</label>
                                                 <input type="number" name="stock" class="form-control"
                                                     value="{{ $tool->stock }}" required>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-md-6">
                                             <div class="form-group">

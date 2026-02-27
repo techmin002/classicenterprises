@@ -116,7 +116,7 @@
                                             <img src="" id="file-ip-1-preview" width="200px">
                                         </div>
                                     </div>
-                                    {{-- @if (auth()->user()->role->name === 'Super Admin')
+                                    @if (auth()->user()->role->name === 'Super Admin')
                                         <div class="form-group">
                                             <label for="branch_id">Branch <span class="text-danger">*</span></label>
                                             <select class="form-control" name="branch_id" id="branch_id" required>
@@ -129,7 +129,7 @@
                                         </div>
                                     @else
                                         <input type="hidden" name="branch_id" value="{{ auth()->user()->branch_id }}">
-                                    @endif --}}
+                                    @endif
                                 </div>
                             </div>
                         </div>

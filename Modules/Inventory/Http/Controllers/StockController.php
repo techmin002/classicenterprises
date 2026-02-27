@@ -41,14 +41,14 @@ class StockController extends Controller
             $q->where('branch_id', $branchId);
         }])->get();
         // dd($technicaltools);
-        $branches = Branch::all(); 
+        $branches = Branch::all();
         $user = User::all();
         $stockTransfers = StockTransfer::with(['accessories', 'machineries', 'technicaltools', 'fromBranch', 'toBranch', 'user'])->get();
         $stockaccessories = StockTransferAccessories::with('accessory')->get();
         $stockmachineries = StockTransferMachineries::with('machinery')->get();
         $stocktechnicaltools = StockTransferTechnicalTool::with('technicaltools')->get();
 
-        return view('inventory::stocktransfer.index', compact(
+        return view('inventory::StockTransfer.index', compact(
             'stockTransfers',
             'accessories',
             'machineries',
@@ -165,12 +165,13 @@ class StockController extends Controller
                     $this->createTransferTechnicalTool($stockTransfer, $tool);
 
                     // FROM branch → reduce
+                    // FROM branch → reduce
                     $this->updateInventory(
-                        null,                         // machinery_id
-                        null,                         // accessory_id
+                        null, // machinery
+                        null, // accessory
                         $validated['from_branch_id'], // branch
-                        -$tool['quantity'],           // reduce
-                        $tool['technical_tool_id']    // technical_tool_id
+                        -$tool['quantity'],           // quantity
+                        $tool['technical_tool_id']    // technical tool id
                     );
 
                     // TO branch → increase
@@ -197,7 +198,7 @@ class StockController extends Controller
             DB::rollBack();
 
             return redirect()->route('stock-transfers.index')
-                ->with('error', 'Error creating stock transfer: '.$e->getMessage())
+                ->with('error', 'Error creating stock transfer: ' . $e->getMessage())
                 ->withInput();
         }
     }
@@ -313,11 +314,12 @@ class StockController extends Controller
         ]);
     }
 
-    protected function updateInventory(?int $machineryId, ?int $accessoryId, int $branchId, int $quantityChange)
+    protected function updateInventory(?int $machineryId = null, ?int $accessoryId = null, int $branchId, int $quantityChange, ?int $technicalToolId = null)
     {
         $inventory = Inventory::firstOrNew([
             'machinery_id' => $machineryId,
             'accessory_id' => $accessoryId,
+            'technical_tool_id' => $technicalToolId,
             'branch_id' => $branchId,
         ]);
 
@@ -335,6 +337,7 @@ class StockController extends Controller
         $inventory->updated_by = Auth::id();
         $inventory->save();
     }
+
 
     public function updateStatus(Request $request, StockTransfer $stockTransfer)
     {
@@ -373,7 +376,7 @@ class StockController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return back()->with('error', 'Error updating status: '.$e->getMessage());
+            return back()->with('error', 'Error updating status: ' . $e->getMessage());
         }
     }
 
@@ -398,7 +401,6 @@ class StockController extends Controller
                 $machinery->quantity * $multiplier
             );
         }
-
     }
 
     public function update(Request $request, $id)
@@ -548,7 +550,7 @@ class StockController extends Controller
             DB::rollBack();
 
             return back()->withInput()
-                ->with('error', 'Error updating transfer: '.$e->getMessage());
+                ->with('error', 'Error updating transfer: ' . $e->getMessage());
         }
     }
 
@@ -690,7 +692,7 @@ class StockController extends Controller
             DB::rollBack();
 
             return back()
-                ->with('error', 'Error deleting transfer: '.$e->getMessage());
+                ->with('error', 'Error deleting transfer: ' . $e->getMessage());
         }
     }
 }

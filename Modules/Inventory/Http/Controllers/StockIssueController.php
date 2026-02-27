@@ -23,6 +23,7 @@ use Modules\Product\Entities\Accessory;
 use Modules\Product\Entities\Machinery;
 use Modules\Product\Entities\TechnicalTools;
 
+
 class StockIssueController extends Controller
 {
     /**
@@ -66,57 +67,87 @@ class StockIssueController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
 
-        // dd($request->all());
-        // 1. Create Stock Issue
+public function store(Request $request)
+{
+    $request->validate([
+        'message' => 'required|string',
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+
+        // 🔥 GLOBAL BRANCH DETECTION
+        if (auth()->user()->role->name === 'Super Admin') {
+
+            $branchId = session('branch_id');
+
+            if (!$branchId) {
+                throw new \Exception('Please select a branch first.');
+            }
+
+        } else {
+            $branchId = auth()->user()->branch_id;
+        }
+
+        // Create Stock Issue
         $issue = StockIssue::create([
-            'message' => $request->message,
+            'message'      => $request->message,
             'requested_by' => auth()->id(),
-            'status' => 'pending',
+            'status'       => 'pending',
+            'branch_id'    => $branchId,
         ]);
 
-        // 2. Store Machineries
-        if ($request->has('machineries')) {
+        // Machineries
+        if ($request->filled('machineries')) {
             foreach ($request->machineries as $machinery) {
-                if (! empty($machinery['id']) && ! empty($machinery['qty'])) {
-                    StockIssueMachinery::create([
-                        'stock_issue_id' => $issue->id,
+                if (!empty($machinery['id']) && !empty($machinery['qty'])) {
+                    $issue->machineries()->create([
                         'machinery_id' => $machinery['id'],
-                        'quantity' => $machinery['qty'],
+                        'quantity'     => $machinery['qty'],
                     ]);
                 }
             }
         }
-        // 3. Store Accessories
-        if ($request->accessories) {
+
+        // Accessories
+        if ($request->filled('accessories')) {
             foreach ($request->accessories as $accessory) {
-                if (! empty($accessory['id']) && ! empty($accessory['qty'])) {
-                    StockIssueAccessory::create([
-                        'stock_issue_id' => $issue->id,
+                if (!empty($accessory['id']) && !empty($accessory['qty'])) {
+                    $issue->accessories()->create([
                         'accessory_id' => $accessory['id'],
-                        'quantity' => $accessory['qty'],
+                        'quantity'     => $accessory['qty'],
                     ]);
                 }
             }
         }
 
-        // 4. Store Technical Tools
-        if ($request->has('technical_tools')) {
+        // Technical Tools
+        if ($request->filled('technical_tools')) {
             foreach ($request->technical_tools as $tool) {
-                if (! empty($tool['id']) && ! empty($tool['qty'])) {
-                    StockIssueTechnicalTool::create([
-                        'stock_issue_id' => $issue->id,
+                if (!empty($tool['id']) && !empty($tool['qty'])) {
+                    $issue->technicalTools()->create([
                         'technical_tool_id' => $tool['id'],
-                        'quantity' => $tool['qty'],
+                        'quantity'          => $tool['qty'],
                     ]);
                 }
             }
         }
 
-        return back()->with('success', 'Stock Issue Request Created Successfully');
+        DB::commit();
+
+        return back()->with('success', 'Stock Issue Request Created Successfully.');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->with('error', $e->getMessage());
     }
+}
+
+
 
     /**
      * Show the specified resource.
@@ -162,155 +193,130 @@ class StockIssueController extends Controller
         return redirect()->back()->with('success', 'Request Rejected.');
     }
 
-    // public function accept(Request $request, $id)
-    // {
-    //     $stockIssue = StockIssue::findOrFail($id);
-    //     $stockIssue->status = 'accepted';
-    //     if ($request->has('message')) {
-    //         $stockIssue->message = $request->message;
-    //     }
-    //     $stockIssue->save();
+public function accept(Request $request, $id)
+{
+    $validated = $request->validate([
+        'from_branch_id' => 'required|exists:branches,id',
+        'to_branch_id'   => 'required|exists:branches,id',
+        'transfer_date'  => 'required|date',
+        'remarks'        => 'nullable|string',
 
-    //     return redirect()->back()->with('success', 'Request Accepted.');
-    // }
+        'accessories' => 'sometimes|array',
+        'accessories.*.accessory_id' => 'required|exists:accessories,id',
+        'accessories.*.quantity'     => 'required|integer|min:1',
 
-    public function accept(Request $request, $id)
-    {
-        try {
-            $validated = $request->validate([
-                'from_branch_id' => 'required|exists:branches,id',
-                'to_branch_id' => 'required|exists:branches,id|different:from_branch_id',
-                'transfer_date' => 'required|date',
-                'status' => 'required|in:pending,in_transit,completed,cancelled',
-                'remarks' => 'nullable|string',
+        'machineries' => 'sometimes|array',
+        'machineries.*.machinery_id' => 'required|exists:machineries,id',
+        'machineries.*.quantity'     => 'required|integer|min:1',
 
-                // Accessories
-                'accessories' => 'sometimes|array',
-                'accessories.*.accessory_id' => 'required|exists:accessories,id',
-                'accessories.*.quantity' => 'required|integer',
+        'technical_tools' => 'sometimes|array',
+        'technical_tools.*.technical_tool_id' => 'required|exists:technical_tools,id',
+        'technical_tools.*.quantity'          => 'required|integer|min:1',
+    ]);
 
-                // Machineries
-                'machineries' => 'sometimes|array',
-                'machineries.*.machinery_id' => 'required|exists:machineries,id',
-                'machineries.*.quantity' => 'required|integer',
+    DB::beginTransaction();
+    try {
+        // 1️⃣ Check stock availability
+        $this->validateStockAvailability($validated);
 
-                // Technical Tools
-                'technical_tools' => 'sometimes|array',
-                'technical_tools.*.technical_tool_id' => 'required|exists:technical_tools,id',
-                'technical_tools.*.quantity' => 'required|integer',
+        // 2️⃣ Create StockTransfer
+        $stockTransfer = StockTransfer::create([
+            'stock_issue_id' => $id,
+            'from_branch_id' => $validated['from_branch_id'],
+            'to_branch_id'   => $validated['to_branch_id'],
+            'transfer_date'  => $validated['transfer_date'],
+            'status'         => 'in_transit',
+            'remarks'        => $validated['remarks'] ?? null,
+            'created_by'     => Auth::id(),
+        ]);
+
+        // 3️⃣ Save pivot quantities and deduct inventory
+        foreach ($validated['accessories'] ?? [] as $acc) {
+            $stockTransfer->accessories()->attach($acc['accessory_id'], [
+                'quantity' => $acc['quantity'],
+                'condition' => 'used'
             ]);
 
-            DB::beginTransaction();
-
-            // 🔴 Stock availability validation
-            $this->validateStockAvailability($validated);
-
-            // Create stock transfer
-            $stockTransfer = StockTransfer::create([
-                'stock_issue_id' => $request->stock_issue_id,
-                'from_branch_id' => $validated['from_branch_id'],
-                'to_branch_id' => $validated['to_branch_id'],
-                'transfer_date' => $validated['transfer_date'],
-                'status' => $validated['status'],
-                'remarks' => $validated['remarks'] ?? null,
-                'created_by' => Auth::id(),
-            ]);
-
-            // ================= ACCESSORIES =================
-            foreach ($validated['accessories'] ?? [] as $acc) {
-
-                $this->createTransferAccessory($stockTransfer, $acc);
-
-                // From branch (-)
-                $this->updateInventory(
-                    null,                           // machinery_id
-                    $acc['accessory_id'],           // accessory_id
-                    null,                           // technical_tool_id
-                    $validated['from_branch_id'],
-                    -$acc['quantity']
-                );
-
-                // To branch (+)
-                $this->updateInventory(
-                    null,
-                    $acc['accessory_id'],
-                    null,
-                    $validated['to_branch_id'],
-                    +$acc['quantity']
-                );
-            }
-
-            // ================= MACHINERIES =================
-            foreach ($validated['machineries'] ?? [] as $mach) {
-
-                $this->createTransferMachinery($stockTransfer, $mach);
-
-                // From branch (-)
-                $this->updateInventory(
-                    $mach['machinery_id'],
-                    null,
-                    null,
-                    $validated['from_branch_id'],
-                    -$mach['quantity']
-                );
-
-                // To branch (+)
-                $this->updateInventory(
-                    $mach['machinery_id'],
-                    null,
-                    null,
-                    $validated['to_branch_id'],
-                    +$mach['quantity']
-                );
-            }
-
-            // ================= TECHNICAL TOOLS =================
-            foreach ($validated['technical_tools'] ?? [] as $tool) {
-
-                $this->createTransferTechnicalTool($stockTransfer, $tool);
-
-                // From branch (-)
-                $this->updateInventory(
-                    null,
-                    null,
-                    $tool['technical_tool_id'],
-                    $validated['from_branch_id'],
-                    -$tool['quantity']
-                );
-
-                // To branch (+)
-                $this->updateInventory(
-                    null,
-                    null,
-                    $tool['technical_tool_id'],
-                    $validated['to_branch_id'],
-                    +$tool['quantity']
-                );
-            }
-
-            // Update stock issue
-            $stockIssue = StockIssue::findOrFail($id);
-            $stockIssue->status = 'accepted';
-            $stockIssue->message = $validated['remarks'] ?? null;
-            $stockIssue->save();
-
-            DB::commit();
-
-            return back()->with('success', 'Stock transferred successfully');
-
-        } catch (ValidationException $e) {
-            DB::rollBack();
-
-            return back()
-                ->withErrors($e->errors())
-                ->withInput()
-                ->with('error', 'Stock not available for one or more items.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return back()->with('error', 'Something went wrong. Please try again.');
+            $this->updateInventory(null, $acc['accessory_id'], null, $validated['from_branch_id'], -$acc['quantity']);
         }
+
+        foreach ($validated['machineries'] ?? [] as $mach) {
+            $stockTransfer->machineries()->attach($mach['machinery_id'], [
+                'quantity' => $mach['quantity'],
+                'condition' => 'used'
+            ]);
+
+            $this->updateInventory($mach['machinery_id'], null, null, $validated['from_branch_id'], -$mach['quantity']);
+        }
+
+        foreach ($validated['technical_tools'] ?? [] as $tool) {
+            $stockTransfer->technicaltools()->attach($tool['technical_tool_id'], [
+                'quantity' => $tool['quantity'],
+                'condition' => 'used'
+            ]);
+
+            $this->updateInventory(null, null, $tool['technical_tool_id'], $validated['from_branch_id'], -$tool['quantity']);
+        }
+
+        // 4️⃣ Update StockIssue status
+        $stockIssue = StockIssue::findOrFail($id);
+        $stockIssue->status  = 'in_transit';
+        $stockIssue->message = $validated['remarks'] ?? null;
+        $stockIssue->save();
+
+        DB::commit();
+        return back()->with('success', 'Stock sent successfully. Waiting for receiving confirmation.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Something went wrong: ' . $e->getMessage());
     }
+}
+public function receive($stockIssueId)
+{
+    DB::beginTransaction();
+    try {
+        $transfer = StockTransfer::with([
+            'accessories', 'machineries', 'technicaltools', 'stockIssue'
+        ])->where('stock_issue_id', $stockIssueId)
+          ->latest()
+          ->firstOrFail(); // latest transfer
+
+        if ($transfer->status !== 'in_transit') {
+            return back()->with('error', 'Transfer is not in transit.');
+        }
+
+        // Add stock using pivot quantities
+        foreach ($transfer->accessories as $acc) {
+            $this->updateInventory(null, $acc->id, null, $transfer->to_branch_id, +$acc->pivot->quantity);
+        }
+
+        foreach ($transfer->machineries as $mach) {
+            $this->updateInventory($mach->id, null, null, $transfer->to_branch_id, +$mach->pivot->quantity);
+        }
+
+        foreach ($transfer->technicaltools as $tool) {
+            $this->updateInventory(null, null, $tool->id, $transfer->to_branch_id, +$tool->pivot->quantity);
+        }
+
+        $transfer->status = 'completed';
+        $transfer->received_by = Auth::id();
+        $transfer->received_at = now();
+        $transfer->save();
+
+        $transfer->stockIssue->update(['status' => 'completed']);
+
+        DB::commit();
+        return back()->with('success', 'Stock received and verified successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+    }
+}
+
+
+
+
 
     protected function validateStockAvailability($validatedData)
     {

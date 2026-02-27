@@ -7,6 +7,7 @@ use Modules\Inventory\Http\Controllers\SalesController;
 use Modules\Inventory\Http\Controllers\StockController;
 use Modules\Inventory\Http\Controllers\StockIssueController;
 use Modules\Inventory\Http\Controllers\SupplierController;
+use Modules\Inventory\Http\Controllers\TechnicianInventoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,9 @@ use Modules\Inventory\Http\Controllers\SupplierController;
 */
 
 Route::group([], function () {
-    Route::resource('inventory', InventoryController::class)->names('inventory');
+    // Route::resource('inventory', InventoryController::class)->names('inventory');
+    Route::get('inventory', [InventoryController::class, 'index'])
+        ->name('inventory.index');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -55,4 +58,33 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('stock-issue', StockIssueController::class)->names('stock-issue');
     Route::post('stock-issue/accept/{id}', [StockIssueController::class, 'accept'])->name('stock-issue.accept');
     Route::post('stock-issue/reject/{id}', [StockIssueController::class, 'reject'])->name('stock-issue.reject');
+    Route::post('/stock-issue/{id}/receive', [StockIssueController::class, 'receive'])->name('stock-issue.receive');
+
+
+
+    Route::prefix('inventory/technicians')->group(function () {
+        Route::get('/', [TechnicianInventoryController::class, 'index'])
+            ->name('inventory.technicians.index');
+
+        Route::get('{staff}', [TechnicianInventoryController::class, 'show'])
+            ->name('inventory.technicians.show');
+
+        // Assignment routes
+        Route::get('{staff}/assign', [TechnicianInventoryController::class, 'createAssignment'])
+            ->name('inventory.technicians.assign.create');
+
+        Route::post('assign', [TechnicianInventoryController::class, 'storeAssignment'])
+            ->name('inventory.technicians.assign.store');
+
+        // Verify return
+      Route::post(
+    '{staffId}/verify/{itemType}/{itemId}',
+    [TechnicianInventoryController::class, 'verifyReturn']
+)->name('inventory.technicians.verify');
+
+
+        // ✅ History route
+        Route::get('{staff}/{item_type}/{item}', [TechnicianInventoryController::class, 'itemHistory'])
+            ->name('inventory.technicians.itemHistory');
+    });
 });

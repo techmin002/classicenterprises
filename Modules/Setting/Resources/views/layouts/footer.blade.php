@@ -49,7 +49,8 @@
 <script src="{{ asset('backend/plugins/bs-stepper/js/bs-stepper.min.js') }}"></script>
 <script src="{{ asset('backend/plugins/dropzone/min/dropzone.min.js') }}"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="{{ asset('backend/dist/js/adminlte.min.js') }}"></script>
 
 
 <!-- Custom Scripts -->

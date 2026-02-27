@@ -1,22 +1,31 @@
 <?php
-
 namespace Modules\Product\Entities;
+use Modules\Branch\Entities\Branch;
+use Modules\Product\Entities\Accessory;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Product\Database\factories\AccessoryStockFactory;
 
 class AccessoryStock extends Model
 {
-    use HasFactory;
+    protected $table = 'accessory_stocks';
 
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [];
-    
-    protected static function newFactory(): AccessoryStockFactory
+    protected $fillable = [
+        'accessory_id',
+        'branch_id',
+        'stock_in',
+        'total_stock',
+        'stock_alert',
+        'created_by',
+        'status',
+    ];
+
+    public function accessory()
     {
-        //return AccessoryStockFactory::new();
+        return $this->belongsTo(Accessory::class);
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 }

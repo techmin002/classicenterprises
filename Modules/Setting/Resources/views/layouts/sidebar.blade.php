@@ -662,6 +662,12 @@ $profile = \Modules\Setting\Entities\CompanyProfile::first();
                             </a>
                         </li>
 
+                          <li class="nav-item">
+                            <a href="{{ route('inventory.technicians.index') }}" class="nav-link {{ request()->routeIs('inventory.technicians.*') ? 'active' : '' }}">
+                                <p>Technician</p>
+                            </a>
+                        </li>
+
                         <li class="nav-item">
                             <a href="{{ route('sales.index') }}" class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
                                 <p>Sales</p>

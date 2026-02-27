@@ -22,6 +22,7 @@ class StockTransfer extends Model
         'created_by',
         'updated_by',
     ];
+protected $dates = ['transfer_date', 'received_at', 'created_at', 'updated_at'];
 
     public function fromBranch()
     {
@@ -37,6 +38,13 @@ class StockTransfer extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+ 
+
+public function creator()
+{
+    return $this->belongsTo(User::class, 'created_by');
+}
+
 
     public function machineries()
     {
@@ -47,7 +55,8 @@ class StockTransfer extends Model
             'machinery_id',      // Foreign key on the related model (if different from machinery_id)
             'id',                // Local key on stock_transfers table
             'id'                 // Local key on machineries table
-        )->withPivot(['quantity', 'serial_numbers', 'condition']);
+        )->withPivot(['quantity', 'serial_numbers', 'condition'])
+        ->withTimestamps();
     }
 
     public function accessories()
@@ -59,7 +68,8 @@ class StockTransfer extends Model
             'accessory_id',      // Foreign key on the related model (if different from accessories_id)
             'id',               // Local key on stock_transfers table
             'id'                // Local key on accessories table
-        )->withPivot(['quantity', 'serial_numbers', 'condition']);
+        )->withPivot(['quantity', 'serial_numbers', 'condition'])
+        ->withTimestamps();
     }
 
     public function technicaltools()
@@ -71,7 +81,8 @@ class StockTransfer extends Model
             'technical_tool_id',      // Foreign key on the related model (if different from accessories_id)
             'id',               // Local key on stock_transfers table
             'id'                // Local key on accessories table
-        )->withPivot(['quantity', 'serial_numbers', 'condition']);
+        )->withPivot(['quantity', 'serial_numbers', 'condition'])
+        ->withTimestamps();
     }
 
     public function stockIssue()

@@ -1,4 +1,5 @@
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="max-width: 1100px;">
         <div class="modal-content shadow-lg modal-advanced" style="border-radius: 24px; border: none;">
             <div class="modal-header justify-content-center modal-header-advanced">
@@ -21,7 +22,7 @@
                                 <select class="form-control border-primary shadow-sm" name="supplier_id">
                                     <option value="">Select Supplier</option>
                                     @foreach ($suppliers as $supplier)
-                                    <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                        <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -36,15 +37,18 @@
                             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
                             <div class="col-lg-4">
                                 <label class="form-label12 fw-semibold">Bill No.</label>
-                                <input class="form-control border-primary shadow-sm" placeholder="Enter bill number" type="text" name="bill_no" id="bill_no">
+                                <input class="form-control border-primary shadow-sm" placeholder="Enter bill number"
+                                    type="text" name="bill_no" id="bill_no">
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label12 fw-semibold">Total Amount</label>
-                                <input class="form-control border-primary shadow-sm" placeholder="Enter total amount" type="number" step="0.01" name="total_amount" id="total_amount" readonly>
+                                <input class="form-control border-primary shadow-sm" placeholder="Enter total amount"
+                                    type="number" step="0.01" name="total_amount" id="total_amount" readonly>
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label12 fw-semibold">Receipt</label>
-                                <input class="form-control border-primary shadow-sm" type="file" name="receipt" id="receipt" accept="image/*,application/pdf">
+                                <input class="form-control border-primary shadow-sm" type="file" name="receipt"
+                                    id="receipt" accept="image/*,application/pdf">
                             </div>
                             <div class="col-lg-4">
                                 <label class="form-label12 fw-semibold">Status</label>
@@ -56,7 +60,8 @@
                             </div>
                             <div class="col-lg-12">
                                 <label class="form-label12 fw-semibold">Description</label>
-                                <textarea name="description" class="form-control border-primary shadow-sm" id="description" rows="3" placeholder="Enter description"></textarea>
+                                <textarea name="description" class="form-control border-primary shadow-sm" id="description" rows="3"
+                                    placeholder="Enter description"></textarea>
                             </div>
                         </div>
                     </div>
@@ -76,7 +81,8 @@
                         <div class="row mt-3">
                             <div class="col-md-3 offset-md-9">
                                 <label class="form-label12 fw-semibold">Accessories Subtotal</label>
-                                <input class="form-control border-success shadow-sm" type="number" step="0.01" name="accessories_subtotal" id="accessories_subtotal" readonly>
+                                <input class="form-control border-success shadow-sm" type="number" step="0.01"
+                                    name="accessories_subtotal" id="accessories_subtotal" readonly>
                             </div>
                         </div>
                     </div>
@@ -96,7 +102,8 @@
                         <div class="row mt-3">
                             <div class="col-md-3 offset-md-9">
                                 <label class="form-label12 fw-semibold">Machinery Subtotal</label>
-                                <input class="form-control border-warning shadow-sm" type="number" step="0.01" name="machinery_subtotal" id="machinery_subtotal" readonly>
+                                <input class="form-control border-warning shadow-sm" type="number" step="0.01"
+                                    name="machinery_subtotal" id="machinery_subtotal" readonly>
                             </div>
                         </div>
                     </div>
@@ -116,14 +123,16 @@
                         <div class="row mt-3">
                             <div class="col-md-3 offset-md-9">
                                 <label class="form-label12 fw-semibold">Technical Tools Subtotal</label>
-                                <input class="form-control border-info shadow-sm" type="number" step="0.01" name="technicaltools_subtotal" id="technicaltools_subtotal" readonly>
+                                <input class="form-control border-info shadow-sm" type="number" step="0.01"
+                                    name="technicaltools_subtotal" id="technicaltools_subtotal" readonly>
                             </div>
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer justify-content-start modal-footer-advanced">
-                    <button type="submit" name="submit" id="btnSubmit" class="btn btn-success px-5 py-2 fw-bold shadow-sm">
+                    <button type="submit" name="submit" id="btnSubmit"
+                        class="btn btn-success px-5 py-2 fw-bold shadow-sm">
                         <i class="bi bi-save me-2"></i>Save Device Purchase
                     </button>
                     <button type="button" data-dismiss="modal" class="btn btn-danger px-5 py-2 fw-bold shadow-sm">
@@ -257,7 +266,6 @@
             max-width: 98vw !important;
         }
     }
-
 </style>
 
 <script>
@@ -309,63 +317,94 @@
             $('#total_amount').val(grandTotal.toFixed(2));
         }
 
-        // Add accessory row
         $('#addAccessory').click(function() {
             accessoryIndex++;
-            const row = `
-        <div class="row gy-4 item-row accessory-row" id="accessory-row-${accessoryIndex}">
-            <div class="col-lg-4">
-                <label class="form-label12 fw-semibold">Accessory Name</label>
-                <select class="form-control border-success shadow-sm accessory-name" name="accessories[${accessoryIndex}][id]">
-                    <option value="">Select Accessory</option>
-                    @foreach ($accessories as $accessory)
-                        <option value="{{ $accessory->id }}" data-price="{{ $accessory->price }}">{{ $accessory->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-lg-2">
-                <label class="form-label12 fw-semibold">Quantity</label>
-                <input class="form-control border-success shadow-sm accessory-quantity" name="accessories[${accessoryIndex}][quantity]" type="number" value="1" min="1">
-            </div>
-            <div class="col-lg-2">
-                <label class="form-label12 fw-semibold">Unit Price</label>
-                <input class="form-control border-success shadow-sm accessory-price" name="accessories[${accessoryIndex}][price]" type="number" step="0.01" placeholder="Price">
-            </div>
-            <div class="col-lg-3">
-                <label class="form-label12 fw-semibold">Total</label>
-                <input class="form-control border-success shadow-sm accessory-total" name="accessories[${accessoryIndex}][total]" type="number" step="0.01" readonly>
-            </div>
 
-            <div class="col-lg-1 d-flex align-items-end">
-                <button type="button" class="btn btn-sm btn-danger remove-item" data-row="accessory-row-${accessoryIndex}">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-        </div>`;
+            const row = `
+    <div class="row gy-4 item-row accessory-row" id="accessory-row-${accessoryIndex}">
+        
+        <div class="col-lg-3">
+            <label class="form-label12 fw-semibold">Accessory Name</label>
+            <select class="form-control border-success shadow-sm accessory-name"
+                name="accessories[${accessoryIndex}][id]">
+                <option value="">Select Accessory</option>
+                @foreach ($accessories as $accessory)
+                    <option 
+                        value="{{ $accessory->id }}"
+                        data-price="{{ $accessory->sales_price }}"
+                        data-unit="{{ $accessory->units }}"
+                    >
+                        {{ $accessory->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-lg-2">
+            <label class="form-label12 fw-semibold">Quantity</label>
+            <input class="form-control border-success shadow-sm accessory-quantity"
+                name="accessories[${accessoryIndex}][quantity]"
+                type="number" value="1" min="1">
+        </div>
+
+        <div class="col-lg-2">
+            <label class="form-label12 fw-semibold">Unit</label>
+            <input class="form-control accessory-unit" type="text" readonly>
+        </div>
+
+        <div class="col-lg-2">
+            <label class="form-label12 fw-semibold">Unit Price</label>
+            <input class="form-control border-success shadow-sm accessory-price"
+                name="accessories[${accessoryIndex}][price]"
+                type="number" step="0.01">
+        </div>
+
+        <div class="col-lg-2">
+            <label class="form-label12 fw-semibold">Total</label>
+            <input class="form-control border-success shadow-sm accessory-total"
+                name="accessories[${accessoryIndex}][total]"
+                type="number" step="0.01" readonly>
+        </div>
+
+        <div class="col-lg-1 d-flex align-items-end">
+            <button type="button"
+                class="btn btn-sm btn-danger remove-item"
+                data-row="accessory-row-${accessoryIndex}">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+
+    </div>`;
+
             $('#accessoriesContainer').append(row);
 
-            // Set price when accessory is selected
+            // When accessory selected
             $(`#accessory-row-${accessoryIndex} .accessory-name`).change(function() {
-                const price = $(this).find(':selected').data('price');
-                $(this).closest('.accessory-row').find('.accessory-price').val(price).trigger('input');
+
+                const selected = $(this).find(':selected');
+                const price = selected.data('price');
+                let unit = selected.data('unit');
+
+                // Convert short unit to readable text
+                const unitMap = {
+                    'qty': 'Quantity',
+                    'ltr': 'Liter',
+                    'kg': 'Kilogram',
+                    'meter': 'Meter',
+                    'inch': 'Inch',
+                    'other': 'Other'
+                };
+
+                unit = unitMap[unit] ?? unit;
+
+                const row = $(this).closest('.accessory-row');
+
+                row.find('.accessory-price').val(price).trigger('input');
+                row.find('.accessory-unit').val(unit);
             });
+
         });
 
-        // <div class="col-lg-2">
-        //         <label class="form-label12 fw-semibold">Branch</label>
-        //         <select class="form-control border-success shadow-sm" name="accessories[${accessoryIndex}][branch_id]">
-        //             @if (auth()->user()->role['name'] === 'Super Admin')
-        //                 <option value="">Select Branch</option>
-        //                 @foreach ($branches as $branch)
-        //                     <option value="{{ $branch->id }}">{{ $branch->name }}</option>
-        //                 @endforeach
-        //             @else
-        //                 <option value="{{ $branchId }}" selected>
-        //                     {{ $branchName }}
-        //                 </option>
-        //             @endif
-        //         </select>
-        //     </div>
 
         // Add machinery row
         $('#addMachinery').click(function() {
@@ -404,7 +443,8 @@
             // Set price when machinery is selected
             $(`#machinery-row-${machineryIndex} .machinery-name`).change(function() {
                 const price = $(this).find(':selected').data('price');
-                $(this).closest('.machinery-row').find('.machinery-price').val(price).trigger('input');
+                $(this).closest('.machinery-row').find('.machinery-price').val(price).trigger(
+                    'input');
             });
         });
 
@@ -479,11 +519,10 @@
 
         // Calculate totals when quantity or price changes
         $(document).on(
-            'input'
-            , '.accessory-quantity, .accessory-price,' +
+            'input', '.accessory-quantity, .accessory-price,' +
             '.machinery-quantity, .machinery-price,' +
-            '.technicaltool-quantity, .technicaltool-price'
-            , function() {
+            '.technicaltool-quantity, .technicaltool-price',
+            function() {
                 calculateTotals();
             }
         );
@@ -493,5 +532,4 @@
         $('#addMachinery').trigger('click');
         $('#addTechnicalTool').trigger('click');
     });
-
 </script>

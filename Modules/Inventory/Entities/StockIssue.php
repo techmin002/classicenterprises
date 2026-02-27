@@ -5,7 +5,6 @@ namespace Modules\Inventory\Entities;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Modules\Inventory\Database\factories\StockIssueFactory;
-
 class StockIssue extends Model
 {
     use HasFactory;
@@ -17,6 +16,7 @@ class StockIssue extends Model
         'message',
         'requested_by',
         'status',
+        'branch_id',
     ];
 
     protected static function newFactory()
@@ -48,4 +48,8 @@ class StockIssue extends Model
     {
         return $this->hasMany(StockTransfer::class, 'stock_issue_id');
     }
+    public function branch()
+{
+    return $this->belongsTo(Branch::class);
+}
 }

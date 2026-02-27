@@ -24,9 +24,4 @@ class Product extends Model
         'backend_price',
         'images'
     ];
-
-    protected static function newFactory()
-    {
-        return \Modules\Product\Database\factories\ProductFactory::new();
-    }
 }
