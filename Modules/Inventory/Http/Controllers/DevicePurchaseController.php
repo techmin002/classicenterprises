@@ -73,9 +73,9 @@ class DevicePurchaseController extends Controller
         DB::transaction(function () use ($request) {
             $receiptPath = null;
             if ($request->hasFile('receipt')) {
-                $imageName = time().'.'.$request->receipt->extension();
+                $imageName = time() . '.' . $request->receipt->extension();
                 $request->receipt->move(public_path('upload/images/receipts'), $imageName);
-                $receiptPath = 'upload/images/receipts/'.$imageName;
+                $receiptPath = 'upload/images/receipts/' . $imageName;
             }
 
             $devicePurchase = DevicePurchase::create([
@@ -278,9 +278,9 @@ class DevicePurchaseController extends Controller
                 if ($receiptPath && file_exists(public_path($receiptPath))) {
                     unlink(public_path($receiptPath));
                 }
-                $imageName = time().'.'.$request->receipt->extension();
+                $imageName = time() . '.' . $request->receipt->extension();
                 $request->receipt->move(public_path('upload/images/receipts'), $imageName);
-                $receiptPath = 'upload/images/receipts/'.$imageName;
+                $receiptPath = 'upload/images/receipts/' . $imageName;
             }
 
             /* ================= UPDATE MAIN PURCHASE ================= */
@@ -512,50 +512,47 @@ class DevicePurchaseController extends Controller
         ]);
     }
 
-    public function getInventories()
-    {
-        if (auth()->user()->role['name'] === 'Super Admin') {
-            $branchId = session('branch_id');
-        } else {
-            $branchId = auth()->user()->branch_id;
-        }
-        $branch = Branch::find($branchId);
-        $branchName = $branch?->name;
+    
+public function getInventories()
+{
+    $user = auth()->user();
 
-        $user = auth()->user();
+    $branchId = $user->hasRole('Super Admin')
+        ? session('branch_id')
+        : $user->branch_id;
 
-        $query = Inventory::with([
-    'accessories:id,name,units',
-    'technicaltools:id,tool_name',
-    'machineries:id,name',
-    'branch:id,name',
-    'user:id,name',
-])->where('branch_id', $branchId)->latest();
-
-        if ($user->branch_id) {
-            $query->where('branch_id', $user->branch_id);
-        }
-
-        $inventories = $query->get();
-
-        $filteredAccessories = $inventories->filter(function ($inventory) {
-            return ! empty($inventory->accessories);
-        });
-
-        $filteredMachineries = $inventories->filter(function ($inventory) {
-            return ! empty($inventory->machineries);
-        });
-
-        $filteredTechnicalTools = $inventories->filter(function ($inventory) {
-            return ! empty($inventory->technicaltools);
-        });
-
-        // dd($filteredTechnicalTools);
-
-        return view('inventory::inventories.index', compact(
-            'filteredAccessories',
-            'filteredMachineries',
-            'filteredTechnicalTools'
-        ));
+    if (!$branchId) {
+        return back()->withErrors(['error' => 'Branch not selected for Super Admin.']);
     }
+
+    /* ================= TECHNICIANS ================= */
+$technicians = User::with('branch')
+    ->where('branch_id', $branchId)
+    ->where('access_type', 'staff')
+    ->select('id','name','branch_id')
+    ->get();
+
+    /* ================= INVENTORY ================= */
+    $inventories = Inventory::with([
+        'accessories:id,name,units',
+        'technicaltools:id,tool_name',
+        'machineries:id,name',
+        'branch:id,name',
+        'user:id,name',
+    ])
+    ->where('branch_id', $branchId)
+    ->latest()
+    ->get();
+
+    $filteredAccessories = $inventories->filter(fn($inv) => !empty($inv->accessories));
+    $filteredMachineries = $inventories->filter(fn($inv) => !empty($inv->machineries));
+    $filteredTechnicalTools = $inventories->filter(fn($inv) => !empty($inv->technicaltools));
+
+    return view('inventory::inventories.comboindex', compact(
+        'technicians',
+        'filteredAccessories',
+        'filteredMachineries',
+        'filteredTechnicalTools'
+    ));
+}
 }

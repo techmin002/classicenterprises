@@ -5,7 +5,7 @@
             <div class="modal-header justify-content-center modal-header-advanced">
                 <h1 class="modal-title fs-3 fw-bold" id="staticBackdropLabel">
                     <i class="bi bi-plus-circle-dotted me-2"></i>
-                    Create Device Purchase
+                    Create Purchase
                 </h1>
             </div>
             <form action="" id="devicePurchaseForm" method="post" enctype="multipart/form-data">
@@ -13,7 +13,7 @@
                 <div class="modal-body modal-body-advanced">
                     <h3 class="mb-3 text-primary border-bottom pb-2 section-title">
                         <i class="bi bi-phone me-2"></i>
-                        Device Purchase
+                         Purchase
                     </h3>
                     <div class="container-fluid">
                         <div class="row gy-4">
@@ -27,6 +27,11 @@
                                 </select>
                             </div>
                             <div class="col-lg-4">
+                                <label class="form-label12 fw-semibold">Bill No.</label>
+                                <input class="form-control border-primary shadow-sm" placeholder="Enter bill number"
+                                    type="text" name="bill_no" id="bill_no">
+                            </div>
+                            <div class="col-lg-4">
                                 <label class="form-label12 fw-semibold">Branch ID</label>
                                 <select class="form-control border-primary shadow-sm" name="branch_id">
                                     <option value="{{ $branchId }}" selected>
@@ -35,11 +40,7 @@
                                 </select>
                             </div>
                             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
-                            <div class="col-lg-4">
-                                <label class="form-label12 fw-semibold">Bill No.</label>
-                                <input class="form-control border-primary shadow-sm" placeholder="Enter bill number"
-                                    type="text" name="bill_no" id="bill_no">
-                            </div>
+                            
                             <div class="col-lg-4">
                                 <label class="form-label12 fw-semibold">Total Amount</label>
                                 <input class="form-control border-primary shadow-sm" placeholder="Enter total amount"
@@ -65,6 +66,26 @@
                             </div>
                         </div>
                     </div>
+<h3 class="mt-5 mb-3 text-warning border-bottom pb-2 section-title">
+                        <i class="bi bi-gear-wide-connected me-2"></i>
+                        Machinery Purchase
+                    </h3>
+                    <div class="container-fluid">
+                        <div id="machineryContainer">
+                            <!-- Machinery rows will be added here -->
+                        </div>
+                        <button type="button" id="addMachinery" class="btn btn-outline-warning mt-3">
+                            <i class="bi bi-plus-circle"></i> Add Machinery
+                        </button>
+
+                        <div class="row mt-3">
+                            <div class="col-md-3 offset-md-9">
+                                <label class="form-label12 fw-semibold">Machinery Subtotal</label>
+                                <input class="form-control border-warning shadow-sm" type="number" step="0.01"
+                                    name="machinery_subtotal" id="machinery_subtotal" readonly>
+                            </div>
+                        </div>
+                    </div>
 
                     <h3 class="mt-5 mb-3 text-success border-bottom pb-2 section-title">
                         <i class="bi bi-plug me-2"></i>
@@ -87,27 +108,7 @@
                         </div>
                     </div>
 
-                    <h3 class="mt-5 mb-3 text-warning border-bottom pb-2 section-title">
-                        <i class="bi bi-gear-wide-connected me-2"></i>
-                        Machinery Purchase
-                    </h3>
-                    <div class="container-fluid">
-                        <div id="machineryContainer">
-                            <!-- Machinery rows will be added here -->
-                        </div>
-                        <button type="button" id="addMachinery" class="btn btn-outline-warning mt-3">
-                            <i class="bi bi-plus-circle"></i> Add Machinery
-                        </button>
-
-                        <div class="row mt-3">
-                            <div class="col-md-3 offset-md-9">
-                                <label class="form-label12 fw-semibold">Machinery Subtotal</label>
-                                <input class="form-control border-warning shadow-sm" type="number" step="0.01"
-                                    name="machinery_subtotal" id="machinery_subtotal" readonly>
-                            </div>
-                        </div>
-                    </div>
-
+                    
                     <h3 class="mt-5 mb-3 text-info border-bottom pb-2 section-title">
                         <i class="bi bi-tools me-2"></i>
                         Technical Tools Purchase

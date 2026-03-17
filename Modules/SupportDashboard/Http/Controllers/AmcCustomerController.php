@@ -734,4 +734,4 @@ class AmcCustomerController extends Controller
 
         return $parts ? implode(' ', $parts).' ago' : 'Just now';
     }
-}ss
+}

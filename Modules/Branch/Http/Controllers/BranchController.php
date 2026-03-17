@@ -20,7 +20,7 @@ class BranchController extends Controller
      */
     public function index()
     {
-        $branches = Branch::with('user')->get();
+        $branches = Branch::with('users')->get();
         // dd($branches);
         return view('branch::branch.index', compact('branches'));
     }

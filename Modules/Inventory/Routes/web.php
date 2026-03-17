@@ -8,6 +8,7 @@ use Modules\Inventory\Http\Controllers\StockController;
 use Modules\Inventory\Http\Controllers\StockIssueController;
 use Modules\Inventory\Http\Controllers\SupplierController;
 use Modules\Inventory\Http\Controllers\TechnicianInventoryController;
+use Modules\Inventory\Http\Controllers\SaleReturnController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,7 +60,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('stock-issue/accept/{id}', [StockIssueController::class, 'accept'])->name('stock-issue.accept');
     Route::post('stock-issue/reject/{id}', [StockIssueController::class, 'reject'])->name('stock-issue.reject');
     Route::post('/stock-issue/{id}/receive', [StockIssueController::class, 'receive'])->name('stock-issue.receive');
-
+Route::get('get-sale-items/{id}', [SaleReturnController::class,'getSaleItems'])
+    ->name('get.sale.items');
+Route::resource('sale-returns', SaleReturnController::class);
 
 
     Route::prefix('inventory/technicians')->group(function () {

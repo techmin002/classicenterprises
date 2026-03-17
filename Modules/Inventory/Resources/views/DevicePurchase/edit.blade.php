@@ -53,6 +53,10 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                     <div class="col-lg-4">
+                                        <label class="form-label12 fw-semibold">Bill No.</label>
+                                        <input class="form-control border-primary shadow-sm" placeholder="Enter bill number" type="text" name="bill_no" id="bill_no" value="{{ $devicePurchase->bill_no }}">
+                                    </div>
                                     <div class="col-lg-4">
                                         <label class="form-label12 fw-semibold">Branch</label>
                                         <select class="form-control border-primary shadow-sm" name="branch_id">
@@ -74,10 +78,7 @@
                                         </select>
                                     </div>
                                     <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
-                                    <div class="col-lg-4">
-                                        <label class="form-label12 fw-semibold">Bill No.</label>
-                                        <input class="form-control border-primary shadow-sm" placeholder="Enter bill number" type="text" name="bill_no" id="bill_no" value="{{ $devicePurchase->bill_no }}">
-                                    </div>
+                                   
                                     <div class="col-lg-4">
                                         <label class="form-label12 fw-semibold">Total Amount</label>
                                         <input class="form-control border-primary shadow-sm" type="number" step="0.01" name="total_amount" id="total_amount" value="{{ $devicePurchase->total_amount }}" placeholder="Enter total amount">
@@ -102,61 +103,7 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <h3 class="mt-5 mb-3 text-success border-bottom pb-2 section-title">
-                                <i class="bi bi-plug me-2"></i>
-                                Accessories Purchase
-                            </h3>
-                            <div class="container-fluid">
-                                @foreach ($purchaseAccessories as $acc)
-                                <div class="row gy-4 item-row accessory-row" id="accessory-row-{{ $acc->id }}">
-                                    <div class="col-lg-4">
-                                        <label class="form-label12 fw-semibold">Accessory Name</label>
-                                        <select class="form-control border-success shadow-sm accessory-name" name="accessories[{{ $acc->id }}][id]">
-                                            <option value="">Select Accessory</option>
-                                            @foreach ($accessories as $accessory)
-                                            <option value="{{ $accessory->id }}" data-price="{{ $accessory->price }}" @if ($accessory->id == $acc->accessory_id) selected @endif>
-                                                {{ $accessory->name }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <label class="form-label12 fw-semibold">Quantity</label>
-                                        <input class="form-control border-success shadow-sm accessory-quantity" name="accessories[{{ $acc->id }}][quantity]" type="number" value="{{ $acc['quantity'] }}" min="1">
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <label class="form-label12 fw-semibold">Unit Price</label>
-                                        <input class="form-control border-success shadow-sm accessory-price" name="accessories[{{ $acc->id }}][price]" value="{{ $acc['unit_price'] }}" type="number" step="0.01" placeholder="Price">
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <label class="form-label12 fw-semibold">Total</label>
-                                        <input class="form-control border-success shadow-sm accessory-total" name="accessories[{{ $acc->id }}][total]" type="number" value="{{ $acc['total'] }}" step="0.01" readonly>
-                                    </div>
-
-                                    <div class="col-lg-1 d-flex align-items-end">
-                                        <button type="button" class="btn btn-sm btn-danger remove-item" data-row="accessory-row-{{ $acc->id }}">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                @endforeach
-                                <div id="accessoriesContainer">
-
-                                </div>
-                                <button type="button" id="addAccessory" class="btn btn-outline-success mt-3">
-                                    <i class="bi bi-plus-circle"></i> Add Accessory
-                                </button>
-
-                                <div class="row mt-3">
-                                    <div class="col-md-3 offset-md-9">
-                                        <label class="form-label12 fw-semibold">Accessories Subtotal</label>
-                                        <input class="form-control border-success shadow-sm" type="number" step="0.01" name="accessories_subtotal" id="accessories_subtotal" readonly>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <h3 class="mt-5 mb-3 text-warning border-bottom pb-2 section-title">
+ <h3 class="mt-5 mb-3 text-warning border-bottom pb-2 section-title">
                                 <i class="bi bi-gear-wide-connected me-2"></i>
                                 Machinery Purchase
                             </h3>
@@ -212,6 +159,60 @@
                                 </div>
                                 @endforeach
                             </div>
+                            <h3 class="mt-5 mb-3 text-success border-bottom pb-2 section-title">
+                                <i class="bi bi-plug me-2"></i>
+                                Accessories Purchase
+                            </h3>
+                            <div class="container-fluid">
+                                @foreach ($purchaseAccessories as $acc)
+                                <div class="row gy-4 item-row accessory-row" id="accessory-row-{{ $acc->id }}">
+                                    <div class="col-lg-4">
+                                        <label class="form-label12 fw-semibold">Accessory Name</label>
+                                        <select class="form-control border-success shadow-sm accessory-name" name="accessories[{{ $acc->id }}][id]">
+                                            <option value="">Select Accessory</option>
+                                            @foreach ($accessories as $accessory)
+                                            <option value="{{ $accessory->id }}" data-price="{{ $accessory->price }}" @if ($accessory->id == $acc->accessory_id) selected @endif>
+                                                {{ $accessory->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label class="form-label12 fw-semibold">Quantity</label>
+                                        <input class="form-control border-success shadow-sm accessory-quantity" name="accessories[{{ $acc->id }}][quantity]" type="number" value="{{ $acc['quantity'] }}" min="1">
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label class="form-label12 fw-semibold">Unit Price</label>
+                                        <input class="form-control border-success shadow-sm accessory-price" name="accessories[{{ $acc->id }}][price]" value="{{ $acc['unit_price'] }}" type="number" step="0.01" placeholder="Price">
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label class="form-label12 fw-semibold">Total</label>
+                                        <input class="form-control border-success shadow-sm accessory-total" name="accessories[{{ $acc->id }}][total]" type="number" value="{{ $acc['total'] }}" step="0.01" readonly>
+                                    </div>
+
+                                    <div class="col-lg-1 d-flex align-items-end">
+                                        <button type="button" class="btn btn-sm btn-danger remove-item" data-row="accessory-row-{{ $acc->id }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                @endforeach
+                                <div id="accessoriesContainer">
+
+                                </div>
+                                <button type="button" id="addAccessory" class="btn btn-outline-success mt-3">
+                                    <i class="bi bi-plus-circle"></i> Add Accessory
+                                </button>
+
+                                <div class="row mt-3">
+                                    <div class="col-md-3 offset-md-9">
+                                        <label class="form-label12 fw-semibold">Accessories Subtotal</label>
+                                        <input class="form-control border-success shadow-sm" type="number" step="0.01" name="accessories_subtotal" id="accessories_subtotal" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                           
                             <button type="button" id="addMachinery" class="btn btn-outline-warning mt-3">
                                 <i class="bi bi-plus-circle"></i> Add Machinery
                             </button>

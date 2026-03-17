@@ -42,9 +42,10 @@
                                 <thead>
                                     <tr>
                                         <th class="text-center">S.N</th>
+                                        <th class="text-center">Branch</th>
+                                        <th class="text-center">Date</th>
                                         <th class="text-center">Bill No.</th>
                                         <th class="text-center">Total Amount</th>
-                                        <th class="text-center">Branch</th>
                                         <th class="text-center">Created By</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Receipt</th>
@@ -55,9 +56,10 @@
                                     @foreach ($details as $data)
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration }}</td>
+                                        <td class="text-center">{{ $data->branch->name }}</td>
+                                        <td class="text-center">{{ $data->created_at }}</td>
                                         <td class="text-center">{{ $data->bill_no }}</td>
                                         <td class="text-center">{{ $data->total_amount }}</td>
-                                        <td class="text-center">{{ $data->branch->name }}</td>
                                         <td class="text-center">{{ $data->user->name }}</td>
                                         <td class="text-center">
                                             @if ($data->status == 0)
@@ -87,9 +89,10 @@
                                 <tfoot>
                                     <tr>
                                         <th class="text-center">S.N</th>
+                                        <th class="text-center">Branch</th>
+                                        <th class="text-center">Date</th>
                                         <th class="text-center">Bill No.</th>
                                         <th class="text-center">Total Amount</th>
-                                        <th class="text-center">Branch</th>
                                         <th class="text-center">Created By</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Receipt</th>

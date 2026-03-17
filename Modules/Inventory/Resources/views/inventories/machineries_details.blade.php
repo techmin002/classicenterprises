@@ -3,133 +3,137 @@
 @section('title', 'Machinery Movements')
 
 @section('content')
-    <div class="content-wrapper">
+<div class="content-wrapper">
 
-        <!-- Header -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <h1>Machinery Movements of {{ $machineryMovements->first()->machinery->name ?? 'N/A' }}</h1>
-                <ol class="breadcrumb float-sm-right">
+    <!-- HEADER -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="fw-bold text-primary">
+                    Movements of <span class="text-dark">{{ $machineryName }}</span>
+                </h1>
+                <ol class="breadcrumb bg-light rounded p-2 shadow-sm">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                     <li class="breadcrumb-item active">Machinery Movements</li>
                 </ol>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Main Content -->
-        <section class="content">
-            <div class="container-fluid">
+    <!-- MAIN CONTENT -->
+    <section class="content">
+        <div class="container-fluid">
 
-                @if ($machineryMovements->isEmpty())
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        No movements found for this machinery.
-                    </div>
-                @else
-                    <!-- ================= SUMMARY BOXES ================= -->
-                    <div class="row mb-3">
+            @if ($machineryMovements->isEmpty())
+                <div class="alert alert-info rounded shadow-sm d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2 fs-4"></i> No movements found for this machinery.
+                </div>
+            @else
 
-                        <!-- TOTAL IN -->
-                        <div class="col-lg-4 col-6">
-                            <div class="small-box bg-success shadow-sm">
-                                <div class="inner">
-                                    <h3>{{ number_format($totalIn) }}</h3>
-                                    <p>Total IN</p>
-                                </div>
-                                <div class="icon"><i class="fas fa-arrow-down"></i></div>
+                <!-- ================= SUMMARY BOXES ================= -->
+                <div class="row mb-4 g-3">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card shadow-lg border-0 text-white" style="background: linear-gradient(135deg,#28a745,#218838);">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-arrow-down fa-3x mb-2"></i>
+                                <h3 class="fw-bold">{{ number_format($totalIn) }}</h3>
+                                <p class="mb-0 fw-semibold">Total IN <small class="text-light">(Purchase, Transfer In, Sale Return)</small></p>
                             </div>
                         </div>
-
-                        <!-- TOTAL OUT -->
-                        <div class="col-lg-4 col-6">
-                            <div class="small-box bg-danger shadow-sm">
-                                <div class="inner">
-                                    <h3>{{ number_format($totalOut) }}</h3>
-                                    <p>Total OUT</p>
-                                </div>
-                                <div class="icon"><i class="fas fa-arrow-up"></i></div>
-                            </div>
-                        </div>
-
-                        <!-- REMAINING -->
-                        <div class="col-lg-4 col-6">
-                            <div class="small-box bg-info shadow-sm">
-                                <div class="inner">
-                                    <h3>{{ number_format($remaining) }}</h3>
-                                    <p>Remaining Quantity</p>
-                                </div>
-                                <div class="icon"><i class="fas fa-boxes"></i></div>
-                            </div>
-                        </div>
-
                     </div>
 
-                    <!-- ================= TABLE ================= -->
-                    <div class="card shadow-sm">
-                        <div class="card-body table-responsive">
-                            <table class="table table-bordered table-striped text-center" id="table-movements">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th>SN</th>
-                                        {{-- <th>Machinery</th> --}}
-                                        <th>Quantity</th>
-                                        <th>Type</th>
-                                        <th>From Branch</th>
-                                        <th>To</th>
-                                        <th>Date</th>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card shadow-lg border-0 text-white" style="background: linear-gradient(135deg,#dc3545,#c82333);">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-arrow-up fa-3x mb-2"></i>
+                                <h3 class="fw-bold">{{ number_format($totalOut) }}</h3>
+                                <p class="mb-0 fw-semibold">Total OUT <small class="text-light">(Sale, Transfer Out)</small></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-12">
+                        <div class="card shadow-lg border-0 text-white" style="background: linear-gradient(135deg,#17a2b8,#117a8b);">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-boxes fa-3x mb-2"></i>
+                                <h3 class="fw-bold">{{ number_format($remaining) }}</h3>
+                                <p class="mb-0 fw-semibold">Remaining Quantity</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= MOVEMENT TABLE ================= -->
+                <div class="card shadow-lg rounded">
+                    <div class="card-header bg-primary text-white fw-bold d-flex align-items-center">
+                        <i class="fas fa-stream me-2"></i> Movement Details
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-hover table-striped table-bordered align-middle text-center" id="table-movements example">
+                            <thead class="table-dark text-uppercase">
+                                <tr>
+                                    <th>SN</th>
+                                    <th>Quantity</th>
+                                    <th>Type</th>
+                                    <th>From Branch</th>
+                                    <th>To Branch</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($machineryMovements as $key => $movement)
+                                    <tr class="align-middle">
+                                        <td>{{ $key + 1 }}</td>
+                                        <td>
+                                            <span class="badge {{ in_array($movement->movement_type, ['Purchase','Transfer Received','Sale Return']) ? 'bg-success' : 'bg-danger' }}">
+                                                {{ number_format($movement->quantity) }}
+                                            </span>
+                                            <br>
+                                            <small class="text-muted">{{ $movement->unit }}</small>
+                                        </td>
+                                        <td>
+                                            @php
+                                                $typeColor = match ($movement->movement_type) {
+                                                    'Purchase' => 'success',
+                                                    'Transfer Received' => 'info',
+                                                    'Sale Return' => 'primary',
+                                                    'Transfer Sent' => 'warning',
+                                                    'Sale' => 'danger',
+                                                    default => 'secondary',
+                                                };
+                                            @endphp
+                                            <span class="badge bg-{{ $typeColor }}">{{ $movement->movement_type }}</span>
+                                        </td>
+                                        <td>{{ $movement->from_branch ?? '-' }}</td>
+                                        <td>{{ $movement->to_branch ?? '-' }}</td>
+                                        <td>{{ optional($movement->created_at)->format('d M Y, h:i A') ?? '-' }}</td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($machineryMovements as $key => $movement)
-                                        <tr>
-                                            <td>{{ $key + 1 }}</td>
-                                            {{-- <td>{{ $movement->machinery->name ?? 'N/A' }}</td> --}}
-                                            <td>
-                                                @if (in_array($movement->movement_type, ['Purchase', 'Transfer Received']))
-                                                    <span
-                                                        class="badge badge-success">{{ number_format($movement->quantity) }}</span>
-                                                @else
-                                                    <span
-                                                        class="badge badge-danger">{{ number_format($movement->quantity) }}</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if ($movement->movement_type === 'Sell')
-                                                    <span class="badge badge-warning">Sell</span>
-                                                @elseif($movement->movement_type === 'Transfer Sent')
-                                                    <span class="badge badge-danger">Transfer Sent</span>
-                                                @else
-                                                    <span class="badge badge-info">{{ $movement->movement_type }}</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $movement->from_branch ?? '-' }}</td>
-                                            <td>{{ $movement->to_branch ?? '-' }}</td>
-                                           
-{{-- {{ $transfer->created_at ? \Carbon\Carbon::parse($transfer->created_at)->format('d M Y, h:i A') : '-' }} --}}
-
-                                            <td>{{ $movement->created_at ? \Carbon\Carbon::parse($movement->created_at)->format('d M Y, h:i A') : '-' }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+                </div>
 
-                @endif
-            </div>
-        </section>
-    </div>
+            @endif
+        </div>
+    </section>
+</div>
 @endsection
 
 @push('scripts')
-    <script>
-        $(function() {
-            $('#table-movements').DataTable({
-                responsive: true,
-                autoWidth: false,
-                pageLength: 25,
-                dom: '<"top"<"float-left"l><"float-right"f>>rt<"bottom"<"float-left"i><"float-right"p>>'
-            });
-        });
-    </script>
+<script>
+$(function() {
+    $('#table-movements').DataTable({
+        responsive: true,
+        autoWidth: false,
+        pageLength: 25,
+        order: [[5, 'desc']],
+        dom: '<"top mb-3"<"d-flex justify-content-between"<"left"l><"right"f>>>rt<"bottom mt-3 d-flex justify-content-between"<"left"i><"right"p>>',
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search movements..."
+        }
+    });
+});
+</script>
 @endpush

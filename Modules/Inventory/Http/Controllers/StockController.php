@@ -18,50 +18,120 @@ use Modules\Inventory\Entities\StockTransferTechnicalTool;
 use Modules\Inventory\Entities\User;
 use Modules\Product\Entities\TechnicalTools;
 
+use Modules\Product\Entities\Accessory;
+use Modules\Product\Entities\Machinery;
+use Modules\Inventory\Entities\StockIssue;
+
+
 class StockController extends Controller
 {
-    public function index()
-    {
-        if (auth()->user()->role['name'] === 'Super Admin') {
-            $branchId = session('branch_id');
-        } else {
-            $branchId = auth()->user()->branch_id;
-        }
+    // public function index()
+    // {
+    //     if (auth()->user()->role['name'] === 'Super Admin') {
+    //         $branchId = session('branch_id');
+    //     } else {
+    //         $branchId = auth()->user()->branch_id;
+    //     }
 
-        $branch = Branch::find($branchId);
-        $branchName = $branch?->name;
+    //     $branch = Branch::find($branchId);
+    //     $branchName = $branch?->name;
 
-        $machineries = Machineries::with(['inventory' => function ($q) use ($branchId) {
-            $q->where('branch_id', $branchId);
-        }])->get();
-        $accessories = Accessories::with(['inventory' => function ($q) use ($branchId) {
-            $q->where('branch_id', $branchId);
-        }])->get();
-        $technicaltools = TechnicalTools::with(['inventory' => function ($q) use ($branchId) {
-            $q->where('branch_id', $branchId);
-        }])->get();
-        // dd($technicaltools);
-        $branches = Branch::all();
-        $user = User::all();
-        $stockTransfers = StockTransfer::with(['accessories', 'machineries', 'technicaltools', 'fromBranch', 'toBranch', 'user'])->get();
-        $stockaccessories = StockTransferAccessories::with('accessory')->get();
-        $stockmachineries = StockTransferMachineries::with('machinery')->get();
-        $stocktechnicaltools = StockTransferTechnicalTool::with('technicaltools')->get();
+    //     $machineries = Machineries::with(['inventory' => function ($q) use ($branchId) {
+    //         $q->where('branch_id', $branchId);
+    //     }])->get();
+    //     $accessories = Accessories::with(['inventory' => function ($q) use ($branchId) {
+    //         $q->where('branch_id', $branchId);
+    //     }])->get();
+    //     $technicaltools = TechnicalTools::with(['inventory' => function ($q) use ($branchId) {
+    //         $q->where('branch_id', $branchId);
+    //     }])->get();
+    //     // dd($technicaltools);
+    //     $branches = Branch::all();
+    //     $user = User::all();
+    //     $stockTransfers = StockTransfer::with(['accessories', 'machineries', 'technicaltools', 'fromBranch', 'toBranch', 'user'])->get();
+    //     $stockaccessories = StockTransferAccessories::with('accessory')->get();
+    //     $stockmachineries = StockTransferMachineries::with('machinery')->get();
+    //     $stocktechnicaltools = StockTransferTechnicalTool::with('technicaltools')->get();
 
-        return view('inventory::StockTransfer.index', compact(
-            'stockTransfers',
-            'accessories',
-            'machineries',
-            'technicaltools',
-            'branches',
-            'stockaccessories',
-            'stockmachineries',
-            'stocktechnicaltools',
-            'user',
-            'branchId',
-            'branchName'
-        ));
+    //     return view('inventory::StockTransfer.index', compact(
+    //         'stockTransfers',
+    //         'accessories',
+    //         'machineries',
+    //         'technicaltools',
+    //         'branches',
+    //         'stockaccessories',
+    //         'stockmachineries',
+    //         'stocktechnicaltools',
+    //         'user',
+    //         'branchId',
+    //         'branchName'
+    //     ));
+    // }
+  public function index()
+{
+    // ================= STOCK TRANSFER =================
+    if (auth()->user()->role['name'] === 'Super Admin') {
+        $branchId = session('branch_id');
+    } else {
+        $branchId = auth()->user()->branch_id;
     }
+
+    $branch = Branch::find($branchId);
+    $branchName = $branch?->name;
+
+    $machineries = Machineries::with(['inventory' => function ($q) use ($branchId) {
+        $q->where('branch_id', $branchId);
+    }])->get();
+
+    $accessories = Accessories::with(['inventory' => function ($q) use ($branchId) {
+        $q->where('branch_id', $branchId);
+    }])->get();
+
+    $technicaltools = TechnicalTools::with(['inventory' => function ($q) use ($branchId) {
+        $q->where('branch_id', $branchId);
+    }])->get();
+
+    // ✅ FIX FOR STOCK ISSUE MODAL
+    $technicalTools = $technicaltools;
+
+    $branches = Branch::all();
+    $user = User::all();
+
+    $stockTransfers = StockTransfer::with([
+        'accessories',
+        'machineries',
+        'technicaltools',
+        'fromBranch',
+        'toBranch',
+        'user'
+    ])->get();
+
+
+    // ================= STOCK ISSUE =================
+
+    $stockIssues = StockIssue::with([
+        'user.branch',
+        'stockTransfers.accessories',
+        'stockTransfers.machineries',
+        'stockTransfers.technicaltools',
+        'stockTransfers.fromBranch',
+        'stockTransfers.toBranch',
+        'stockTransfers.user',
+    ])->latest()->get();
+
+    return view('inventory::StockTransfer.comboindex', compact(
+        'stockTransfers',
+        'stockIssues',
+        'machineries',
+        'accessories',
+        'technicaltools',
+        'technicalTools', // ✅ added
+        'branches',
+        'user',
+        'branchId',
+        'branchName'
+    ));
+}
 
     public function store(Request $request)
     {

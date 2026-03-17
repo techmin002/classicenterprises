@@ -49,9 +49,10 @@
                                     <tr>
                                         <th class="text-center">S.N</th>
                                         <th class="text-center">Supplier</th>
+                                        <th class="text-center">Branch</th>
+                                        <th class="text-center">Date</th>
                                         <th class="text-center">Bill No.</th>
                                         <th class="text-center">Total Amount</th>
-                                        <th class="text-center">Branch</th>
                                         <th class="text-center">Created By</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Receipt</th>
@@ -63,9 +64,10 @@
                                     <tr>
                                         <td class="text-center">{{ $loop->iteration }}</td>
                                         <td class="text-center">{{ $devicePurchase->supplier->name }}</td>
+                                        <td class="text-center">{{ $devicePurchase->branch->name }}</td>
+                                        <td class="text-center">{{ $devicePurchase->created_at }}</td>
                                         <td class="text-center">{{ $devicePurchase->bill_no }}</td>
                                         <td class="text-center">{{ $devicePurchase->total_amount }}</td>
-                                        <td class="text-center">{{ $devicePurchase->branch->name }}</td>
                                         <td class="text-center">{{ $devicePurchase->user->name }}</td>
                                         <td class="text-center">
                                             @if ($devicePurchase->status == 0)
@@ -107,9 +109,10 @@
                                     <tr>
                                         <th class="text-center">S.N</th>
                                         <th class="text-center">Supplier</th>
+                                        <th class="text-center">Branch</th>
+                                        <th class="text-center">Date</th>
                                         <th class="text-center">Bill No.</th>
                                         <th class="text-center">Total Amount</th>
-                                        <th class="text-center">Branch</th>
                                         <th class="text-center">Created By</th>
                                         <th class="text-center">Status</th>
                                         <th class="text-center">Receipt</th>

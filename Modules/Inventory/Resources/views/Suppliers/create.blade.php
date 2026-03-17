@@ -30,11 +30,8 @@
                                 <label class="form-label12">PAN</label>
                                 <input class="form-control" placeholder="Enter PAN number" type="text" name="pan" id="pan">
                             </div>
-                            <div class="mt-3 col-lg-6">
-                                <label class="form-label12">VAT</label>
-                                <input class="form-control" placeholder="Enter VAT number" type="text" name="vat" id="vat">
-                            </div>
-                            <div class="mt-3 col-lg-6">
+                            
+                            <div class="mt-3 col-lg-4">
                                 <label class="form-label12">Branch ID</label>
                                 <select class="form-control" name="branch_id">
                                     @if (auth()->user()->role['name'] === 'Super Admin')
@@ -51,7 +48,7 @@
                                 </select>
                             </div>
                             <input type="hidden" name="created_by" value="{{ auth()->user()->id }}">
-                            <div class="mt-3 col-lg-6">
+                            <div class="mt-3 col-lg-2">
                                 <label class="form-label12">Status</label>
                                 <select class="form-control" name="status">
                                     <option value="" selected>Select Status</option>

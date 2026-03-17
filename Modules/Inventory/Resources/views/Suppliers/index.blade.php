@@ -51,7 +51,7 @@
                                         <th class="text-center">Email</th>
                                         <th class="text-center">Contact</th>
                                         <th class="text-center">Address</th>
-                                        <th class="text-center">PAN/VAT</th>
+                                        <th class="text-center">PAN</th>
                                         <th class="text-center">Details</th>
                                         <th class="text-center">Action</th>
                                     </tr>
@@ -65,7 +65,7 @@
                                         <td class="text-center">{{ $supplier->contact }}</td>
                                         <td class="text-center">{{ $supplier->address }}</td>
                                         <td class="text-center">
-                                            {{ $supplier->PAN  }} / {{ $supplier->VAT }}
+                                            {{ $supplier->PAN  }} 
                                         </td>
                                         <td class="text-center">
                                             <a href="{{ route('suppliers.show',$supplier->id) }}" class="btn btn-info btn-sm">

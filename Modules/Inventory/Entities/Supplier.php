@@ -20,7 +20,7 @@ class Supplier extends Model
         'email',
         'contact',
         'address',
-        'vat',
+        // 'vat',
         'pan',
         'discription',
         'type',
