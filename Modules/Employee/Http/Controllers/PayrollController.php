@@ -14,6 +14,10 @@ use Modules\Employee\Entities\EmployeePayslip;
 use Modules\Employee\Entities\EmployeeSalary;
 use Modules\Employee\Entities\EmployeeSaleInsentive;
 use Modules\Employee\Entities\EmployeeService;
+use Modules\Employee\Entities\EmployeeAttendance;
+use Carbon\Carbon;
+use Modules\Employee\Entities\Holiday;
+use Modules\Employee\Entities\Leave;
 
 class PayrollController extends Controller
 {
@@ -93,7 +97,7 @@ class PayrollController extends Controller
     }
     public function StoreEmployeeSalary(Request $request)
     {
-        dd("HELLO");
+        // dd("HELLO");
         $request->validate([
             'salary' => ['required']
         ]);
@@ -351,54 +355,94 @@ class PayrollController extends Controller
         $fund->delete();
         return back()->with('success', 'Employee Service Deleted Successfully');
     }
+
     public function payslip()
     {
         $payslips = EmployeePayslip::with('employee')->get();
         return view('employee::payslip.index', compact('payslips'));
     }
-    public function payslipStore(Request $request)
-    {
-        $request->validate([
-            'month' => ['required'],
+
+public function payslipStore(Request $request)
+{
+    $request->validate([
+        'month' => ['required'],
+    ]);
+
+    $month = $request->month;
+
+    $employees = EmployeeSalary::pluck('employee_id');
+
+    foreach ($employees as $employeeId) {
+
+        // duplicate
+        $exists = EmployeePayslip::where('employee_id', $employeeId)
+            ->where('month', $month)
+            ->exists();
+
+        if ($exists) continue;
+
+        $salary = EmployeeSalary::where('employee_id', $employeeId)->value('salary') ?? 0;
+
+        $daysInMonth = Carbon::parse($month)->daysInMonth;
+
+        // ✅ PRESENT DAYS
+        $presentDays = EmployeeAttendance::where('employee_id', $employeeId)
+            ->whereMonth('date', Carbon::parse($month)->month)
+            ->whereYear('date', Carbon::parse($month)->year)
+            ->whereNotNull('check_in')
+            ->count();
+
+        // ✅ HOLIDAYS
+        $holidays = Holiday::whereMonth('date', Carbon::parse($month)->month)
+            ->whereYear('date', Carbon::parse($month)->year)
+            ->count();
+
+        // ✅ LEAVES (ACCEPTED ONLY)
+
+$leaves = EmployeeAttendance::where('employee_id', $employeeId)
+    ->where('status', 'leave')
+    ->whereMonth('date', Carbon::parse($month)->month)
+    ->whereYear('date', Carbon::parse($month)->year)
+    ->count();
+
+        // ✅ TOTAL PAID DAYS
+        $totalPaidDays = $presentDays + $holidays + $leaves;
+
+        // ✅ FINAL SALARY
+        $perDaySalary = $salary / $daysInMonth;
+        $finalSalary = $perDaySalary * $totalPaidDays;
+
+        // OTHER
+        $fund = EmployeeFund::where('employee_id', $employeeId)->value('amount') ?? 0;
+        $allowance = EmployeeAllowance::where('employee_id', $employeeId)->sum('amount');
+        $sale_insentive = EmployeeSaleInsentive::where('employee_id', $employeeId)->sum('insentive_amount');
+        $service_insentive = EmployeeService::where('employee_id', $employeeId)->sum('amount');
+
+        // ✅ ADVANCE (MONTHLY)
+        $advancedPay = EmployeeAdvancePay::where('employee_id', $employeeId)
+            ->whereMonth('date', Carbon::parse($month)->month)
+            ->whereYear('date', Carbon::parse($month)->year)
+            ->sum('amount');
+
+        $net_salary = $finalSalary + $allowance + $sale_insentive + $service_insentive - $fund - $advancedPay;
+
+        EmployeePayslip::create([
+            'salary' => $finalSalary,
+            'net_salary' => $net_salary,
+            'fund' => $fund,
+            'sales_insentive' => $sale_insentive,
+            'service_insentive' => $service_insentive,
+            'advance_pay' => $advancedPay,
+            'allowance' => $allowance,
+            'month' => $month,
+            'employee_id' => $employeeId,
+            'status' => 'unpaid',
+            'created_by' => auth()->user()->id,
         ]);
-        $emp = EmployeeSalary::pluck('employee_id');
-        foreach ($emp as $employeeId) {
-            $employee = Employee::where('id', $employeeId)
-                ->with('salary', 'allowance', 'insentive', 'advancePay', 'fund', 'service')
-                ->first();
-
-            $salary =  EmployeeSalary::select('salary')->where('employee_id', $employeeId)->first();
-            $salary = $salary->salary;
-            $fund = EmployeeFund::select('amount')->where('employee_id', $employeeId)->first();
-            $fund = $fund->amount ?? 1000;
-            $allowance = EmployeeAllowance::where('employee_id', $employeeId)->sum('amount');
-            $sale_insentive = EmployeeSaleInsentive::where('employee_id', $employeeId)->sum('insentive_amount');
-            $service_insentive = EmployeeService::where('employee_id', $employeeId)->sum('amount');
-            $advancedPay = EmployeeAdvancePay::where('employee_id', $employeeId)->sum('amount');
-            EmployeeAllowance::where('employee_id', $employeeId)->update(['status' => 'paid']);
-            EmployeeSaleInsentive::where('employee_id', $employeeId)->update(['status' => 'paid']);
-            $fund = EmployeeFund::where('employee_id', $employeeId)->update(['status' => 'paid']);
-            EmployeeService::where('employee_id', $employeeId)->update(['status' => 'paid']);
-            EmployeeAdvancePay::where('employee_id', $employeeId)->update(['status' => 'paid']);
-            $net_salary = $salary + $allowance + $sale_insentive + $service_insentive - $fund - $advancedPay;
-
-            $empamount = EmployeePayslip::create([
-                'salary' => $salary,
-                'net_salary' => $net_salary,
-                'fund' => $fund,
-                'sales_insentive' => $sale_insentive,
-                'service_insentive' => $service_insentive,
-                'advance_pay' => $advancedPay,
-                'allowance' => $allowance,
-                'month' => $request['month'],
-                'employee_id' => $employeeId,
-                'status' => 'unpaid',
-                'created_by' => auth()->user()->id,
-            ]);
-        }
-        $message = $request['month'] . ' Payslip Generated Successfully';
-        return back()->with('success', $message);
     }
+
+    return back()->with('success', 'Payslip Generated Successfully');
+}
     public function fetchPayslip(Request $request)
     {
         $month = $request->input('month');
@@ -427,7 +471,7 @@ class PayrollController extends Controller
                     </td>
                     <td>
                 <a href="javascript:void(0);" class="btn-sm btn btn-warning c" data-id="' . $payslip->id . '">Payslip</a>
-                <a href="javascript:void(0);" class="btn-sm btn btn-primary click-to-paid" data-id="' . $payslip->id . '">Click To Paid</a>
+<a href="javascript:void(0);" class="btn-sm btn btn-primary click-to-paid" data-id="' . $payslip->id . '">Click To Paid</a>
                 <a href="javascript:void(0);" class="btn-sm btn btn-danger delete-payslip" data-id="' . $payslip->id . '">Delete</a>
                     </td>
                 </tr>';
@@ -438,19 +482,28 @@ class PayrollController extends Controller
         return response()->json(['html' => $html]);
     }
     public function markAsPaid(Request $request)
-    {
-        $payslipId = $request->input('id');
-        $payslip = EmployeePayslip::find($payslipId);
-
-        if ($payslip) {
-            $payslip->status = 'paid';
-            $payslip->save();
-
-            return response()->json(['success' => true]);
-        }
-
-        return response()->json(['success' => false]);
+{
+    if (!$request->id) {
+        return response()->json([
+            'success' => false,
+            'message' => 'ID not received'
+        ]);
     }
+
+    $payslip = EmployeePayslip::find($request->id);
+
+    if ($payslip) {
+        $payslip->status = 'paid';
+        $payslip->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Payslip not found'
+    ]);
+}
     public function deletePayslip(Request $request)
     {
         $payslipId = $request->input('id');
@@ -464,20 +517,45 @@ class PayrollController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Payslip not found']);
     }
-    public function viewPayslip(Request $request)
-    {
-        $payslipId = $request->input('id');
+   public function viewPayslip(Request $request)
+{
+    $payslip = EmployeePayslip::with('employee')->find($request->id);
 
-        // Fetch payslip data
-        $payslip = EmployeePayslip::find($payslipId);
-
-        if ($payslip) {
-            // You can customize this view (create a separate blade for it)
-            $html = view('employee::payslip.view', compact('payslip'))->render();
-
-            return response()->json(['success' => true, 'html' => $html]);
-        }
-
-        return response()->json(['success' => false, 'message' => 'Payslip not found']);
+    if (!$payslip) {
+        return response()->json(['success' => false]);
     }
+
+    $month = $payslip->month;
+    $employeeId = $payslip->employee_id;
+
+    // PRESENT
+    $presentDays = EmployeeAttendance::where('employee_id', $employeeId)
+        ->whereMonth('date', Carbon::parse($month)->month)
+        ->whereYear('date', Carbon::parse($month)->year)
+        ->whereNotNull('check_in')
+        ->count();
+
+    // HOLIDAY
+    $holidays = Holiday::whereMonth('date', Carbon::parse($month)->month)
+        ->whereYear('date', Carbon::parse($month)->year)
+        ->count();
+
+$leaves = EmployeeAttendance::where('employee_id', $employeeId)
+    ->where('status', 'leave')
+    ->whereMonth('date', Carbon::parse($month)->month)
+    ->whereYear('date', Carbon::parse($month)->year)
+    ->count();
+
+    $totalPaidDays = $presentDays + $holidays + $leaves;
+
+    $html = view('employee::payslip.view', compact(
+        'payslip',
+        'presentDays',
+        'holidays',
+        'leaves',
+        'totalPaidDays'
+    ))->render();
+
+    return response()->json(['success' => true, 'html' => $html]);
+}
 }

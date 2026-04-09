@@ -70,6 +70,7 @@
                                     <th>From Branch</th>
                                     <th>To Branch</th>
                                     <th>Date</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,7 +94,17 @@
                                         <td>{{ $movement->from_branch ?? '-' }}</td>
                                         <td>{{ $movement->to_branch ?? '-' }}</td>
                                         <td>{{ optional($movement->created_at)->format('d-m-Y H:i') ?? '-' }}</td>
+                                        <td>
+    @if(!empty($movement->route))
+        <a href="{{ $movement->route }}" class="btn btn-sm btn-primary">
+            <i class="fas fa-eye"></i>
+        </a>
+    @else
+        -
+    @endif
+</td>
                                     </tr>
+
                                 @endforeach
                             </tbody>
                         </table>

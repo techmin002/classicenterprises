@@ -23,8 +23,5 @@ class LeaveType extends Model
     {
         return $this->hasOne(Branch::class, 'id', 'branch_id');
     }
-    protected static function newFactory()
-    {
-        return \Modules\Employee\Database\factories\LeaveTypeFactory::new();
-    }
+    
 }

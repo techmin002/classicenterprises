@@ -18,8 +18,5 @@ class EmployeeAttendance extends Model
         'date'
     ];
     
-    protected static function newFactory()
-    {
-        return \Modules\Employee\Database\factories\EmployeeAttendanceFactory::new();
-    }
+    
 }

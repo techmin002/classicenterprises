@@ -74,7 +74,7 @@ class LeadController extends Controller
             $lead->name = $request->input('name');
             $lead->lead_source = $request->input('lead_source');
             $lead->staff_id = $staff_id ?? NULL;
-            $lead->sales_type = $request->input('sales_type');
+            // $lead->sales_type = $request->input('sales_type');
             $lead->email = $request->input('email') ?? NULL;
             $lead->address = $request->input('address');
             $lead->mobile = $request->input('mobile');
@@ -184,7 +184,7 @@ class LeadController extends Controller
             $lead->name = $request->input('name');
             $lead->lead_source = $request->input('lead_source');
             $lead->staff_id = $staff_id ?? NULL;
-            $lead->sales_type = $request->input('sales_type');
+            // $lead->sales_type = $request->input('sales_type');
             $lead->email = $request->input('email') ?? NULL;
             $lead->address = $request->input('address');
             $lead->mobile = $request->input('mobile');
@@ -567,7 +567,7 @@ class LeadController extends Controller
                 'due_amount' => $request->grand_total,
                 'message' => $request->remark,
                 'customer_type' => 'indor',
-                'sales_type' => $lead->sales_type,
+                // 'sales_type' => $lead->sales_type,
                 'installation_category' => $lead->installation_category,
                 'status' => 'installation_queue',
             ]);

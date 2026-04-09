@@ -17,6 +17,9 @@ use Modules\Lead\Entities\CustomerProduct;
 use Modules\Lead\Entities\EmiCustomer;
 use Modules\Lead\Entities\Lead;
 use Modules\Lead\Entities\Skim;
+use Modules\Inventory\Entities\Inventory;
+use Modules\Inventory\Entities\StaffItemAssignment;
+use Modules\Inventory\Entities\StaffItemReturn;
 
 class InstallationCategoryController extends Controller
 {
@@ -31,47 +34,71 @@ class InstallationCategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request, $installation_category)
+    // {
+    //     if (auth()->user()->role['name'] == 'Super Admin') {
+    //         $users = User::where('branch_id', session('branch_id'))->get();
+    //     } else {
+    //         $users = User::where('branch_id', auth()->user()->branch_id)->get();
+    //     }
+
+    //     $leads = Lead::all();
+
+    //     // Start query
+    //     $customers = $this->getCustomersByStatus(self::STATUS_QUEUE, $installation_category);
+
+    //     // ✅ Predefined filters
+    //     if ($request->filter == '7days') {
+    //         $customers->where('updated_at', '>=', now()->subDays(7));
+    //     } elseif ($request->filter == '15days') {
+    //         $customers->where('updated_at', '>=', now()->subDays(15));
+    //     } elseif ($request->filter == '1month') {
+    //         $customers->where('updated_at', '>=', now()->subMonth());
+    //     }
+
+    //     // ✅ Custom date filter
+    //     if ($request->filled(['start_date', 'end_date'])) {
+    //         $start = $request->start_date.' 00:00:00';
+    //         $end = $request->end_date.' 23:59:59';
+    //         $customers->whereBetween('updated_at', [$start, $end]);
+    //     }
+
+    //     // ✅ Order by latest and get collection
+    //     $customers = $customers->orderBy('updated_at', 'desc')->get();
+
+    //     // ✅ Add formatted time
+    //     foreach ($customers as $customer) {
+    //         $customer->formatted_time = $this->formatTimeDifference($customer->updated_at);
+    //     }
+
+    //     $installation_category = ucfirst($installation_category);
+
+    //     return view('lead::installation-category.queue', compact('customers', 'installation_category', 'leads', 'users'));
+    // }
     public function index(Request $request, $installation_category)
-    {
-        if (auth()->user()->role['name'] == 'Super Admin') {
-            $users = User::where('branch_id', session('branch_id'))->get();
-        } else {
-            $users = User::where('branch_id', auth()->user()->branch_id)->get();
-        }
+{
+    $user = auth()->user();
+    $branchId = $user->hasRole('Super Admin') ? session('branch_id') : $user->branch_id;
 
-        $leads = Lead::all();
+    // Users for Assign Lead dropdown (staff of selected branch)
+    $users = User::where('branch_id', $branchId)
+        ->whereHas('role', fn($q) => $q->where('name', 'staff'))
+        ->get();
 
-        // Start query
-        $customers = $this->getCustomersByStatus(self::STATUS_QUEUE, $installation_category);
+    // Get customers (filtered by branch)
+    $customers = $this->getCustomersByStatus(self::STATUS_QUEUE, $installation_category)
+        ->where('branch_id', $branchId)
+        ->orderBy('updated_at', 'desc')
+        ->get();
 
-        // ✅ Predefined filters
-        if ($request->filter == '7days') {
-            $customers->where('updated_at', '>=', now()->subDays(7));
-        } elseif ($request->filter == '15days') {
-            $customers->where('updated_at', '>=', now()->subDays(15));
-        } elseif ($request->filter == '1month') {
-            $customers->where('updated_at', '>=', now()->subMonth());
-        }
-
-        // ✅ Custom date filter
-        if ($request->filled(['start_date', 'end_date'])) {
-            $start = $request->start_date.' 00:00:00';
-            $end = $request->end_date.' 23:59:59';
-            $customers->whereBetween('updated_at', [$start, $end]);
-        }
-
-        // ✅ Order by latest and get collection
-        $customers = $customers->orderBy('updated_at', 'desc')->get();
-
-        // ✅ Add formatted time
-        foreach ($customers as $customer) {
-            $customer->formatted_time = $this->formatTimeDifference($customer->updated_at);
-        }
-
-        $installation_category = ucfirst($installation_category);
-
-        return view('lead::installation-category.queue', compact('customers', 'installation_category', 'leads', 'users'));
+    foreach ($customers as $customer) {
+        $customer->formatted_time = $this->formatTimeDifference($customer->updated_at);
     }
+
+    $installation_category = ucfirst($installation_category);
+
+    return view('lead::installation-category.queue', compact('customers', 'installation_category', 'users'));
+}
 
     private function getCustomersByStatus($status, $installation_category)
     {
@@ -429,79 +456,171 @@ class InstallationCategoryController extends Controller
      * Process products for installation
      */
     private function processProducts($request, $customer, $lead)
-    {
-        if ($request->has('products_id') && is_array($request->products_id)) {
-            foreach ($request->products_id as $index => $productId) {
-                if ($productId) {
-                    $existing = CustomerProduct::where('customer_id', $customer->id)
-                        ->where('product_id', $productId)
-                        ->first();
+{
+    if ($request->has('products_id') && is_array($request->products_id)) {
 
-                    $qty = $request->products_qty[$index] ?? 0;
-                    $price = $request->products_price[$index] ?? 0;
+        foreach ($request->products_id as $index => $productId) {
 
-                    if ($existing) {
-                        $existing->update([
-                            'product_qty' => $qty,
-                            'product_price' => $price,
-                            'product_total' => $qty * $price,
-                        ]);
-                    } else {
-                        CustomerProduct::create([
-                            'lead_id' => $request->lead_id,
-                            'branch_id' => $lead->branch_id,
-                            'customer_id' => $customer->id,
-                            'created_by' => auth()->id(),
-                            'product_id' => $productId,
-                            'remarks' => $request->remarks,
-                            'product_qty' => $qty,
-                            'product_price' => $price,
-                            'product_total' => $request->products_total[$index] ?? ($qty * $price),
-                            'status' => self::STATUS_QUEUE,
-                        ]);
-                    }
-                }
+            if (!$productId) continue;
+
+            $qty   = $request->products_qty[$index] ?? 0;
+            $price = $request->products_price[$index] ?? 0;
+
+            // ✅ Save / Update customer product (NO CHANGE)
+            $existing = CustomerProduct::where('customer_id', $customer->id)
+                ->where('product_id', $productId)
+                ->first();
+
+            if ($existing) {
+                $existing->update([
+                    'product_qty'   => $qty,
+                    'product_price' => $price,
+                    'product_total' => $qty * $price,
+                ]);
+            } else {
+                CustomerProduct::create([
+                    'lead_id'       => $request->lead_id,
+                    'branch_id'     => $lead->branch_id,
+                    'customer_id'   => $customer->id,
+                    'created_by'    => auth()->id(),
+                    'product_id'    => $productId,
+                    'remarks'       => $request->remarks,
+                    'product_qty'   => $qty,
+                    'product_price' => $price,
+                    'product_total' => $qty * $price,
+                    'status'        => self::STATUS_QUEUE,
+                ]);
             }
+
+            // ✅ 🔥 INVENTORY REDUCTION (LIKE SALE)
+          $inventory = Inventory::where('machinery_id', $productId) // ✅ FIX HERE
+    ->where('branch_id', $lead->branch_id)
+    ->lockForUpdate()
+    ->first();
+
+
+            if (!$inventory) {
+                throw new \Exception("Product inventory not found!");
+            }
+
+            if ($inventory->quantity < $qty) {
+                throw new \Exception("Not enough product stock. Available: {$inventory->quantity}");
+            }
+
+            $inventory->quantity -= $qty;
+            $inventory->updated_by = auth()->id();
+            $inventory->save();
         }
     }
+}
 
     /**
      * Process accessories for installation
      */
-    private function processAccessories($request, $customer, $lead)
-    {
-        if ($request->has('accessories_id') && is_array($request->accessories_id)) {
-            foreach ($request->accessories_id as $index => $accessoryId) {
-                if ($accessoryId) {
-                    $existing = CustomerAccessory::where('customer_id', $customer->id)
-                        ->where('accessory_id', $accessoryId)
-                        ->first();
+   private function processAccessories($request, $customer, $lead)
+{
+    if ($request->has('accessories_id') && is_array($request->accessories_id)) {
 
-                    $qty = $request->accessories_qty[$index] ?? 0;
-                    $price = $request->accessories_price[$index] ?? 0;
+        foreach ($request->accessories_id as $index => $accessoryId) {
 
-                    if ($existing) {
-                        $existing->update([
-                            'accessory_qty' => $qty,
-                            'accessory_price' => $price,
-                            'accessory_total' => $qty * $price,
-                        ]);
-                    } else {
-                        CustomerAccessory::create([
-                            'customer_id' => $customer->id,
-                            'lead_id' => $lead->id,
-                            'created_by' => auth()->id(),
-                            'branch_id' => $lead->branch_id,
-                            'accessory_id' => $accessoryId,
-                            'accessory_qty' => $qty,
-                            'accessory_price' => $price,
-                            'accessory_total' => $request->accessories_total[$index] ?? ($qty * $price),
-                        ]);
-                    }
-                }
+            if (!$accessoryId) continue;
+
+            $qty   = $request->accessories_qty[$index] ?? 0;
+            $price = $request->accessories_price[$index] ?? 0;
+
+            // ✅ Save / Update (NO CHANGE)
+            $existing = CustomerAccessory::where('customer_id', $customer->id)
+                ->where('accessory_id', $accessoryId)
+                ->first();
+
+            if ($existing) {
+                $existing->update([
+                    'accessory_qty'   => $qty,
+                    'accessory_price' => $price,
+                    'accessory_total' => $qty * $price,
+                ]);
+            } else {
+                CustomerAccessory::create([
+                    'customer_id'     => $customer->id,
+                    'lead_id'         => $lead->id,
+                    'created_by'      => auth()->id(),
+                    'branch_id'       => $lead->branch_id,
+                    'accessory_id'    => $accessoryId,
+                    'accessory_qty'   => $qty,
+                    'accessory_price' => $price,
+                    'accessory_total' => $qty * $price,
+                ]);
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | ✅ 1. REDUCE FROM TECHNICIAN ASSIGNMENT (TRACKING ONLY)
+            |--------------------------------------------------------------------------
+            */
+            $assignments = StaffItemAssignment::where('item_type', 'accessory')
+                ->where('item_id', $accessoryId)
+                ->whereIn('status', ['assigned', 'returned'])
+                ->orderBy('assigned_at', 'asc')
+                ->lockForUpdate()
+                ->get();
+
+            $remainingQty = $qty;
+
+            foreach ($assignments as $assignment) {
+
+                if ($remainingQty <= 0) break;
+
+                $available = $assignment->remaining_qty;
+
+                if ($available <= 0) continue;
+
+                $consume = min($available, $remainingQty);
+
+                // 🔹 Track usage (same concept as verifyReturn used_qty)
+                StaffItemReturn::create([
+                    'assignment_id' => $assignment->id,
+                    'returned_qty'  => 0,
+                    'used_qty'      => $consume,
+                    'broken_qty'    => 0,
+                    'remarks'       => 'Used in installation',
+                    'verified_by'   => auth()->id(),
+                    'verified_at'   => now(),
+                ]);
+
+                // 🔹 Update assignment status
+                if ($assignment->remaining_qty - $consume <= 0) {
+                    $assignment->update(['status' => 'verified']);
+                } else {
+                    $assignment->update(['status' => 'returned']);
+                }
+
+                $remainingQty -= $consume;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | ✅ 2. ALWAYS REDUCE FROM INVENTORY (MAIN STOCK)
+            |--------------------------------------------------------------------------
+            */
+            $inventory = Inventory::where('accessory_id', $accessoryId)
+                ->where('branch_id', $lead->branch_id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$inventory) {
+                throw new \Exception("Accessory inventory not found!");
+            }
+
+            if ($inventory->quantity < $qty) {
+                throw new \Exception("Not enough accessory stock. Available: {$inventory->quantity}");
+            }
+
+            $inventory->quantity -= $qty;
+            $inventory->updated_by = auth()->id();
+            $inventory->save();
         }
     }
+}
 
     /**
      * Process payment and determine customer status
@@ -645,52 +764,98 @@ class InstallationCategoryController extends Controller
             ->with('success', 'Lead assigned successfully.');
     }
 
+    // public function assignindex(Request $request, $installation_category)
+    // {
+    //     // Users
+    //     if (auth()->user()->role['name'] == 'Super Admin') {
+    //         $users = User::where('branch_id', session('branch_id'))->get();
+    //     } else {
+    //         $users = User::where('branch_id', auth()->user()->branch_id)->get();
+    //     }
+
+    //     // Start query
+    //     $customers = Customer::with(['lead', 'assignLead'])
+    //         ->where('status', 'installation_assign')
+    //         ->where('installation_category', $installation_category);
+
+    //     if (auth()->user()->role['name'] != 'Super Admin') {
+    //         $customers->where('branch_id', auth()->user()->branch_id);
+    //     }
+
+    //     // ✅ Predefined filters
+    //     if ($request->filter == '7days') {
+    //         $customers->where('updated_at', '>=', now()->subDays(7));
+    //     } elseif ($request->filter == '15days') {
+    //         $customers->where('updated_at', '>=', now()->subDays(15));
+    //     } elseif ($request->filter == '1month') {
+    //         $customers->where('updated_at', '>=', now()->subMonth());
+    //     }
+
+    //     // ✅ Custom date filter
+    //     if ($request->filled(['start_date', 'end_date'])) {
+    //         $start = $request->start_date.' 00:00:00';
+    //         $end = $request->end_date.' 23:59:59';
+    //         $customers->whereBetween('updated_at', [$start, $end]);
+    //     }
+
+    //     // ✅ Order by latest first
+    //     $customers = $customers->orderBy('updated_at', 'desc')->get();
+
+    //     // ✅ Add formatted time
+    //     foreach ($customers as $customer) {
+    //         $customer->formatted_time = $this->formatTimeDifference($customer->updated_at);
+    //     }
+
+    //     $installation_category = ucfirst($installation_category);
+
+    //     return view('lead::installation-category.assign', compact('customers', 'installation_category', 'users'));
+    // }
     public function assignindex(Request $request, $installation_category)
-    {
-        // Users
-        if (auth()->user()->role['name'] == 'Super Admin') {
-            $users = User::where('branch_id', session('branch_id'))->get();
-        } else {
-            $users = User::where('branch_id', auth()->user()->branch_id)->get();
-        }
+{
+    $user = auth()->user();
+    $branchId = $user->role['name'] === 'Super Admin' 
+        ? session('branch_id') 
+        : $user->branch_id;
 
-        // Start query
-        $customers = Customer::with(['lead', 'assignLead'])
-            ->where('status', 'installation_assign')
-            ->where('installation_category', $installation_category);
+    // Users for Assign Lead dropdown (staff of branch)
+    $users = User::where('branch_id', $branchId)
+        ->whereHas('role', fn($q) => $q->where('name', 'staff'))
+        ->get();
 
-        if (auth()->user()->role['name'] != 'Super Admin') {
-            $customers->where('branch_id', auth()->user()->branch_id);
-        }
+    // Customers query
+    $customers = Customer::with(['lead', 'assignLead'])
+        ->where('status', 'installation_assign')
+        ->where('installation_category', $installation_category)
+        ->where('branch_id', $branchId); // branch restriction
 
-        // ✅ Predefined filters
-        if ($request->filter == '7days') {
-            $customers->where('updated_at', '>=', now()->subDays(7));
-        } elseif ($request->filter == '15days') {
-            $customers->where('updated_at', '>=', now()->subDays(15));
-        } elseif ($request->filter == '1month') {
-            $customers->where('updated_at', '>=', now()->subMonth());
-        }
-
-        // ✅ Custom date filter
-        if ($request->filled(['start_date', 'end_date'])) {
-            $start = $request->start_date.' 00:00:00';
-            $end = $request->end_date.' 23:59:59';
-            $customers->whereBetween('updated_at', [$start, $end]);
-        }
-
-        // ✅ Order by latest first
-        $customers = $customers->orderBy('updated_at', 'desc')->get();
-
-        // ✅ Add formatted time
-        foreach ($customers as $customer) {
-            $customer->formatted_time = $this->formatTimeDifference($customer->updated_at);
-        }
-
-        $installation_category = ucfirst($installation_category);
-
-        return view('lead::installation-category.assign', compact('customers', 'installation_category', 'users'));
+    // Predefined filters
+    if ($request->filter === '7days') {
+        $customers->where('updated_at', '>=', now()->subDays(7));
+    } elseif ($request->filter === '15days') {
+        $customers->where('updated_at', '>=', now()->subDays(15));
+    } elseif ($request->filter === '1month') {
+        $customers->where('updated_at', '>=', now()->subMonth());
     }
+
+    // Custom date filter
+    if ($request->filled(['start_date', 'end_date'])) {
+        $start = $request->start_date . ' 00:00:00';
+        $end = $request->end_date . ' 23:59:59';
+        $customers->whereBetween('updated_at', [$start, $end]);
+    }
+
+    // Get customers ordered by latest
+    $customers = $customers->orderBy('updated_at', 'desc')->get();
+
+    // Add formatted time
+    foreach ($customers as $customer) {
+        $customer->formatted_time = $this->formatTimeDifference($customer->updated_at);
+    }
+
+    $installation_category = ucfirst($installation_category);
+
+    return view('lead::installation-category.assign', compact('customers', 'installation_category', 'users'));
+}
 
     public function customerDetails($id)
     {

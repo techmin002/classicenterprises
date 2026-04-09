@@ -31,6 +31,10 @@ class CustomerAccessory extends Model
     {
         return $this->belongsTo(Accessory::class,'accessory_id','id');
     }
+      public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
   
     protected static function newFactory(): CustomerAccessoryFactory
     {

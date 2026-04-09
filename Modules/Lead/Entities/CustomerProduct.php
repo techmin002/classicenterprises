@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Lead\Database\factories\CustomerProductFactory;
 use Modules\Product\Entities\Machinery;
+    use Modules\Lead\Entities\Customer; // adjust namespace if different
+
 
 class CustomerProduct extends Model
 {
@@ -38,4 +40,9 @@ class CustomerProduct extends Model
     {
         //return CustomerProductFactory::new();
     }
+
+public function customer()
+{
+    return $this->belongsTo(Customer::class, 'customer_id');
+}
 }

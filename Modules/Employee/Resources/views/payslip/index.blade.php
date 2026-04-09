@@ -130,7 +130,7 @@
                                                                             class="btn btn-outline-primary">#EMP0000{{ $payslip->employee_id }}</a>
                                                                     </td>
                                                                     <td>{{ $payslip->employee->name }}</td>
-                                                                    <td>Monthly Payslip</td>
+                                                                   <td>{{ \Carbon\Carbon::parse($payslip->month)->format('F Y') }}</td>
                                                                     <td>Rs. {{ $payslip->salary }}</td>
                                                                     <td>Rs. {{ $payslip->net_salary }}</td>
                                                                     <td>
@@ -145,8 +145,9 @@
                                                                             data-title="Employee Payslip" data-id="{{ $payslip->id }}">Payslip</a>
                                                                         @if ($payslip->status == 'paid')
                                                                         @else
-                                                                            <a class="btn-sm btn btn-primary">Click To
-                                                                                Paid</a>
+                                                                            <a class="btn-sm btn btn-primary click-to-paid" data-id="{{ $payslip->id }}">
+    Click To Paid
+</a>
                                                                         @endif
                                                                         <a href="javascript:void(0);" class="btn-sm btn btn-danger delete-payslip" data-id="{{ $payslip->id }}">Delete</a>
                                                                     </td>
@@ -225,31 +226,41 @@
                 }
             });
         }
-        $(document).on('click', '.click-to-paid', function(e) {
-            e.preventDefault();
+       $(document).on('click', '.click-to-paid', function(e) {
+    e.preventDefault();
 
-            let payslipId = $(this).data('id'); // Get the payslip ID
+    let payslipId = $(this).data('id');
 
-            $.ajax({
-                url: '{{ route('payslip.markAsPaid') }}', // Update this route accordingly
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}', // CSRF token for security
-                    id: payslipId
-                },
-                success: function(response) {
-                    if (response.success) {
-                        alert('Payslip marked as paid successfully!');
-                        location.reload(); // Reload the page or update the table dynamically
-                    } else {
-                        alert('Error: Could not update payslip status.');
-                    }
-                },
-                error: function(xhr) {
-                    console.log("Error updating payslip status", xhr);
-                }
-            });
-        });
+    console.log("Payslip ID:", payslipId); // ✅ DEBUG
+
+    if (!payslipId) {
+        alert('ID not found!');
+        return;
+    }
+
+    $.ajax({
+        url: '{{ route('payslip.markAsPaid') }}',
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            id: payslipId
+        },
+        success: function(response) {
+            console.log(response); // ✅ DEBUG
+
+            if (response.success) {
+                alert('Payslip marked as paid successfully!');
+                location.reload();
+            } else {
+                alert(response.message || 'Error updating status');
+            }
+        },
+        error: function(xhr) {
+            console.log(xhr);
+            alert('Server error!');
+        }
+    });
+});
         // Delete Payslip
         $(document).on('click', '.delete-payslip', function(e) {
     e.preventDefault();

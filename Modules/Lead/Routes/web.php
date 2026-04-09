@@ -77,4 +77,6 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::get('/wholeseller-leads', [LeadController::class, 'wholeseller'])
     ->name('wholeseller-leads');
+    // web.php
+Route::get('/get-branch-users/{branch}', [InstallationCategoryController::class, 'getUsersByBranch']);
 });

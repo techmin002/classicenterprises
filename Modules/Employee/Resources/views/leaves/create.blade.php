@@ -34,7 +34,8 @@
                             </div>
                             <div class="mt-3 col-lg-12">
                                 <label class="form-label12">Description </label>
-                                <textarea name="description" class="form-control" required id=""></textarea>
+                                <textarea name="message" class="form-control" required></textarea>
+                                {{-- <textarea name="description" class="form-control" required id=""></textarea> --}}
                             </div>
                         </div>
                     </div>

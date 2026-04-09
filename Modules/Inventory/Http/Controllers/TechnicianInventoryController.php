@@ -388,28 +388,24 @@ public function verifyReturn(Request $request, $staffId, $itemType, $itemId)
 {
     $request->validate([
         'returned_qty' => 'required|integer|min:0',
-        'used_qty'     => 'required|integer|min:0',
         'broken_qty'   => 'required|integer|min:0',
         'remarks'      => 'nullable|string|max:1000',
     ]);
 
-    // Get all assignments of this item for the staff that are not fully verified
     $assignments = StaffItemAssignment::with('returns')
         ->where('staff_id', $staffId)
         ->where('item_type', $itemType)
         ->where('item_id', $itemId)
         ->whereIn('status', ['assigned', 'returned'])
-        ->orderBy('assigned_at', 'asc') // optional: process oldest first
+        ->orderBy('assigned_at', 'asc')
         ->get();
 
     if ($assignments->isEmpty()) {
         return back()->withErrors(['error' => 'No pending assignments found for this item.']);
     }
 
-    // Total remaining qty across all assignments
     $totalRemaining = $assignments->sum->remaining_qty;
-
-    $totalProcessed = $request->returned_qty + $request->used_qty + $request->broken_qty;
+    $totalProcessed = $request->returned_qty + $request->broken_qty;
 
     if ($totalProcessed > $totalRemaining) {
         return back()->withErrors(['error' => 'Cannot verify more than total remaining quantity.']);
@@ -419,44 +415,34 @@ public function verifyReturn(Request $request, $staffId, $itemType, $itemId)
 
         $remainingToProcess = [
             'returned' => $request->returned_qty,
-            'used'     => $request->used_qty,
             'broken'   => $request->broken_qty,
         ];
 
-        // Loop through assignments and apply verification until qty exhausted
         foreach ($assignments as $assignment) {
 
             $assignmentRemaining = $assignment->remaining_qty;
-
             if ($assignmentRemaining <= 0) continue;
 
-            // Determine qty to apply for this assignment
             $applyReturned = min($assignmentRemaining, $remainingToProcess['returned']);
             $assignmentRemaining -= $applyReturned;
             $remainingToProcess['returned'] -= $applyReturned;
-
-            $applyUsed = min($assignmentRemaining, $remainingToProcess['used']);
-            $assignmentRemaining -= $applyUsed;
-            $remainingToProcess['used'] -= $applyUsed;
 
             $applyBroken = min($assignmentRemaining, $remainingToProcess['broken']);
             $assignmentRemaining -= $applyBroken;
             $remainingToProcess['broken'] -= $applyBroken;
 
-            // Create StaffItemReturn record
-            if ($applyReturned || $applyUsed || $applyBroken) {
+            if ($applyReturned || $applyBroken) {
                 StaffItemReturn::create([
                     'assignment_id' => $assignment->id,
                     'returned_qty'  => $applyReturned,
-                    'used_qty'      => $applyUsed,
                     'broken_qty'    => $applyBroken,
-                    'remarks'       => $request->remarks, // dynamic from modal
+                    'remarks'       => $request->remarks,
                     'verified_by'   => auth()->id(),
                     'verified_at'   => now(),
                 ]);
             }
 
-            // Reduce inventory for USED or BROKEN only
+            // Reduce inventory for BROKEN only
             if ($itemType === 'accessory') {
                 $inventory = Inventory::where('accessory_id', $itemId)
                             ->where('branch_id', $assignment->branch_id)
@@ -469,22 +455,18 @@ public function verifyReturn(Request $request, $staffId, $itemType, $itemId)
                             ->first();
             }
 
-            if (!$inventory) {
-                throw new \Exception("Inventory row not found!");
-            }
+            if (!$inventory) throw new \Exception("Inventory row not found!");
 
-            if ($applyUsed > 0) $inventory->quantity -= $applyUsed;
             if ($applyBroken > 0) $inventory->quantity -= $applyBroken;
             $inventory->save();
 
             // Update assignment status
-            if ($assignment->remaining_qty - ($applyReturned + $applyUsed + $applyBroken) <= 0) {
+            if ($assignment->remaining_qty - ($applyReturned + $applyBroken) <= 0) {
                 $assignment->update(['status' => 'verified']);
             } else {
                 $assignment->update(['status' => 'returned']);
             }
 
-            // Stop if all remaining processed
             if (array_sum($remainingToProcess) <= 0) break;
         }
     });

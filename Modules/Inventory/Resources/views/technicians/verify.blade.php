@@ -1,4 +1,4 @@
-{{-- Verify Modal (ONLY ONE COPY) --}}
+{{-- Verify Modal --}}
 <div class="modal fade" id="verifyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <form method="POST" id="verifyForm" class="needs-validation" novalidate>
@@ -17,17 +17,12 @@
                     <input type="hidden" name="return_id" id="returnId">
 
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold">Returned Quantity</label>
                             <input type="number" name="returned_qty" class="form-control border-success" min="0" value="0" required>
                         </div>
 
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Used Quantity</label>
-                            <input type="number" name="used_qty" class="form-control border-warning" min="0" value="0" required>
-                        </div>
-
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold">Broken Quantity</label>
                             <input type="number" name="broken_qty" class="form-control border-danger" min="0" value="0" required>
                         </div>
@@ -43,10 +38,9 @@
                     <button type="submit" class="btn btn-success shadow-sm">
                         <i class="fas fa-check me-1"></i> Verify
                     </button>
-                   <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">
-    <i class="fas fa-times me-1"></i> Cancel
-</button>
-
+                    <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancel
+                    </button>
                 </div>
 
             </div>

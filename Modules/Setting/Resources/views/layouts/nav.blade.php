@@ -3,7 +3,9 @@
     {{-- LEFT NAV --}}
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+            <a class="nav-link" data-widget="pushmenu" href="#">
+                <i class="fas fa-bars"></i>
+            </a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
             <a href="{{ route('home') }}" class="nav-link">Home</a>
@@ -17,10 +19,73 @@
         $currentBranch = session('branch_id')
             ? Branch::find(session('branch_id'))
             : null;
+
+        $userId = auth()->user()->id;
     @endphp
 
     {{-- RIGHT NAV --}}
     <ul class="navbar-nav ml-auto">
+
+        {{-- ✅ ATTENDANCE BUTTON (IMPROVED) --}}
+        <li class="nav-item d-flex align-items-center mr-2">
+            <button id="attendanceBtn" 
+                class="btn btn-sm btn-secondary d-flex align-items-center px-3"
+                style="gap:6px;">
+                <span class="spinner-border spinner-border-sm"></span>
+                Loading...
+            </button>
+        </li>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const btn = document.getElementById("attendanceBtn");
+
+            fetch("{{ route('employee.checkin.status', $userId) }}")
+                .then(res => res.json())
+                .then(data => {
+
+                    // Not checked in
+                    if (!data.checked_in) {
+                        btn.innerHTML = "🟢 Check In";
+                        btn.className = "btn btn-sm btn-success px-3";
+
+                        btn.onclick = function () {
+                            btn.disabled = true;
+                            btn.innerHTML = "Processing...";
+                            window.location.href = "{{ route('employee.checkin', $userId) }}";
+                        };
+                    } 
+
+                    // Checked in but not checked out
+                    else if (data.checked_in && !data.checked_out) {
+                        btn.innerHTML = "🔴 Check Out";
+                        btn.className = "btn btn-sm btn-danger px-3";
+
+                        btn.onclick = function () {
+                            btn.disabled = true;
+                            btn.innerHTML = "Processing...";
+                            window.location.href = "{{ route('employee.checkout', $userId) }}";
+                        };
+                    } 
+
+                    // Completed
+                    else {
+                        btn.innerHTML = "✔ Done";
+                        btn.className = "btn btn-sm btn-secondary px-3";
+                        btn.disabled = true;
+                    }
+                })
+                .catch(() => {
+                    btn.innerHTML = "⚠ Retry";
+                    btn.className = "btn btn-sm btn-warning px-3";
+
+                    btn.onclick = function () {
+                        location.reload();
+                    };
+                });
+        });
+        </script>
 
         {{-- SUPER ADMIN BRANCH DROPDOWN --}}
         @if(Auth::check() && Auth::user()->role->name === 'Super Admin')
@@ -61,6 +126,7 @@
                 </form>
             </div>
         </li>
+
     </ul>
 </nav>
 

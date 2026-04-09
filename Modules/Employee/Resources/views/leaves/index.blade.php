@@ -69,7 +69,7 @@
                                                 <td class="text-center">{{ $exp->title }}</td>
                                                 <td class="text-center">{{ $exp->employee_id }}</td>
                                                 <td class="text-center">{{ $exp->leave_type_id }}</td>
-                                                <td class="text-center">{{ $exp->barnch_id }}</td>
+                                                <td class="text-center">{{ optional($exp->branch)->name ?? 'N/A' }}</td>
                                                 <td class="text-center">{{ $exp->start_date }}</td>
                                                 <td class="text-center">{{ $exp->end_date }}</td>
                                                 <td class="text-center">{{ $exp->message }}</td>
@@ -101,10 +101,10 @@
                                                             </div>
                                                         </div>
                                                     @else
-                                                        <a data-toggle="modal"
+                                                        {{-- <a data-toggle="modal"
                                                             data-target="#editCategory{{ $exp->id }}"
                                                             class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
-                                                        @include('employee::leaves.edit')
+                                                        @include('employee::leaves.edit') --}}
                                                         <button id="delete" class="btn btn-danger btn-sm"
                                                             onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
                                                             <i class="fa fa-trash"></i>

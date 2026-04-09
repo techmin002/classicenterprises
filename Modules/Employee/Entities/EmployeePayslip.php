@@ -16,8 +16,5 @@ class EmployeePayslip extends Model
     {
         return $this->belongsTo(Employee::class);
     }
-    protected static function newFactory()
-    {
-        return \Modules\Employee\Database\factories\EmployeePayslipFactory::new();
-    }
+    
 }

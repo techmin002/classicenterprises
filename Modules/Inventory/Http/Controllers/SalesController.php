@@ -504,11 +504,11 @@ public function store(Request $request)
         }
     }
 
-    public function showDetails($id)
+    public function show($id)
     {
         $sale = Sale::with(['saleAccessories.accessory', 'saleMachineries.machinery'])
                     ->findOrFail($id);
 
-        return view('inventory::Sales.details', compact('sale'));
+        return view('inventory::Sales.show', compact('sale'));
     }
 }

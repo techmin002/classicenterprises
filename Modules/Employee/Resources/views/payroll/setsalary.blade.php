@@ -52,7 +52,7 @@
                                             <th>Name</th>
                                             <th class="text-center">Image</th>
                                             <th>Branch</th>
-                                            <th>Salary</th>
+                                            {{-- <th>Salary</th> --}}
                                             <th>Net Salary</th>
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -96,7 +96,7 @@
                                                     {{ $branch->name ?? 'N/A' }}
                                                 </td> --}}
                                                 @php($salary = Modules\Employee\Entities\EmployeeSalary::where('employee_id', $value->id)->first())
-                                                <td>{{ $salary->salary ?? 'N/A' }}</td>
+                                                {{-- <td>{{ $salary->salary ?? 'N/A' }}</td> --}}
                                                 <td>{{ $salary->salary ?? 'N/A' }}</td>
 
                                                 <td class="text-center">
@@ -114,7 +114,7 @@
                                             <th>Name</th>
                                             <th class="text-center">Image</th>
                                             <th>Branch</th>
-                                            <th>Salary</th>
+                                            {{-- <th>Salary</th> --}}
                                             <th>Net Salary</th>
                                             <th class="text-center">Action</th>
                                         </tr>

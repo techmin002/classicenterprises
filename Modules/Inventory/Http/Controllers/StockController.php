@@ -272,7 +272,19 @@ class StockController extends Controller
                 ->withInput();
         }
     }
+public function show($id)
+{
+    $transfer = StockTransfer::with([
+        'accessories',
+        'machineries',
+        'technicaltools',
+        'fromBranch',
+        'toBranch',
+        'user'
+    ])->findOrFail($id); // ← fails if not found
 
+    return view('inventory::StockTransfer.view', compact('transfer'));
+}
     protected function validateStockAvailability($validatedData)
     {
         $errors = [];

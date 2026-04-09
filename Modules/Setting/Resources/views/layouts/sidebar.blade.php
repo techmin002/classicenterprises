@@ -243,10 +243,10 @@
 
                     @can('access_sliders')
                         {{-- ===================== Sales Dashboard ===================== --}}
-                        <li class="nav-header text-primary"><b>Sales Dashboard</b></li>
+                        {{-- <li class="nav-header text-primary"><b>Sales Dashboard</b></li> --}}
 
                         {{-- Counter Sales --}}
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a href="#" class="nav-link @if (request()->routeIs([
                                     'installation-queue.*',
                                     'installation.complete',
@@ -286,10 +286,10 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> --}}
 
                         {{-- Retailler --}}
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a href="#" class="nav-link @if (request()->routeIs([
                                     'installation-queue.*',
                                     'installation.complete',
@@ -329,10 +329,10 @@
                                 </li>
 
                             </ul>
-                        </li>
+                        </li> --}}
 
                         {{-- Wholeseller --}}
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a href="#" class="nav-link @if (request()->routeIs([
                                     'installation-queue.*',
                                     'installation.complete',
@@ -371,7 +371,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> --}}
 
                         {{-- ===================== Installation Dashboard ===================== --}}
                         <li class="nav-header text-primary"><b>Installation Dashboard</b></li>
@@ -1372,6 +1372,13 @@
                                     class="nav-link {{ request()->routeIs('leaves.index') ? 'active' : '' }}">
                                     {{-- <i class="far fa-circle nav-icon"></i> --}}
                                     <p>Leaves</p>
+                                </a>
+                            </li>
+                             <li class="nav-item">
+                                <a href="{{ route('holidays.index') }}"
+                                    class="nav-link {{ request()->routeIs('holidays.index') ? 'active' : '' }}">
+                                    {{-- <i class="far fa-circle nav-icon"></i> --}}
+                                    <p>Holidays</p>
                                 </a>
                             </li>
 

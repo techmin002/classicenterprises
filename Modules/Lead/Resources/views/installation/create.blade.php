@@ -425,17 +425,7 @@
                                                     readonly>
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Sales Convert</label>
-                                                <select name="converted_by" class="form-control" required>
-                                                    <option value="">Select Staff</option>
-                                                    @foreach ($staffs as $staff)
-                                                        <option value="{{ $staff['id'] }}">{{ $staff['name'] }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div> --}}
+                                       
 
                                         <!-- Hidden Branch Code -->
                                         <input type="hidden" id="branch_code"

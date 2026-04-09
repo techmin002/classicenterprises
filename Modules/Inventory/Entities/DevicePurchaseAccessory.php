@@ -33,5 +33,10 @@ class DevicePurchaseAccessory extends Model
     {
         return $this->belongsTo(Accessories::class, 'accessory_id', 'id');
     }
+ 
+  public function purchase()
+{
+    return $this->belongsTo(DevicePurchase::class, 'device_purchase_id'); // correct foreign key
+}
 
 }

@@ -4,7 +4,9 @@
 @section('breadcrumb')
 <ol class="breadcrumb border-0 m-0">
     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('inventory.technicians.show', $staff->id) }}">Technician Inventory</a></li>
+    <li class="breadcrumb-item">
+        <a href="{{ route('inventory.technicians.show', $staff->id) }}">Technician Inventory</a>
+    </li>
     <li class="breadcrumb-item active">{{ $staff->name }} History</li>
 </ol>
 @endsection
@@ -24,69 +26,64 @@
 
             @php
                 $totalAssigned = $history->sum('assigned_qty');
-                $totalReturned = $history->sum(function($h){ return $h->returns->sum('returned_qty'); });
-                $totalUsed = $history->sum(function($h){ return $h->returns->sum('used_qty'); });
-                $totalBroken = $history->sum(function($h){ return $h->returns->sum('broken_qty'); });
-                $remaining = $totalAssigned - ($totalReturned + $totalUsed + $totalBroken);
+                $totalReturned = $history->sum(fn($h) => $h->returns->sum('returned_qty'));
+                $totalUsed     = $history->sum(fn($h) => $h->returns->sum('used_qty'));
+                $totalBroken   = $history->sum(fn($h) => $h->returns->sum('broken_qty'));
+                $remaining     = $totalAssigned - ($totalReturned + $totalUsed + $totalBroken);
             @endphp
 
-            {{-- Summary Boxes --}}
+            {{-- Summary --}}
             <div class="row mb-4 g-3">
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="card text-white bg-primary shadow-sm">
-                        <div class="card-body text-center py-3">
-                            <h5 class="fw-bold">{{ number_format($totalAssigned) }}</h5>
-                            <p class="mb-0">Assigned</p>
-                        </div>
+                    <div class="card text-white bg-primary shadow-sm text-center py-3">
+                        <h5>{{ number_format($totalAssigned) }}</h5>
+                        <small>Assigned</small>
                     </div>
                 </div>
+
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="card text-white bg-success shadow-sm">
-                        <div class="card-body text-center py-3">
-                            <h5 class="fw-bold">{{ number_format($totalReturned) }}</h5>
-                            <p class="mb-0">Returned</p>
-                        </div>
+                    <div class="card text-white bg-success shadow-sm text-center py-3">
+                        <h5>{{ number_format($totalReturned) }}</h5>
+                        <small>Returned</small>
                     </div>
                 </div>
+
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="card text-white bg-warning shadow-sm">
-                        <div class="card-body text-center py-3">
-                            <h5 class="fw-bold">{{ number_format($totalUsed) }}</h5>
-                            <p class="mb-0">Used</p>
-                        </div>
+                    <div class="card text-white bg-warning shadow-sm text-center py-3">
+                        <h5>{{ number_format($totalUsed) }}</h5>
+                        <small>Used</small>
                     </div>
                 </div>
+
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="card text-white bg-danger shadow-sm">
-                        <div class="card-body text-center py-3">
-                            <h5 class="fw-bold">{{ number_format($totalBroken) }}</h5>
-                            <p class="mb-0">Broken</p>
-                        </div>
+                    <div class="card text-white bg-danger shadow-sm text-center py-3">
+                        <h5>{{ number_format($totalBroken) }}</h5>
+                        <small>Broken</small>
                     </div>
                 </div>
+
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="card text-white bg-info shadow-sm">
-                        <div class="card-body text-center py-3">
-                            <h5 class="fw-bold">{{ number_format($remaining) }}</h5>
-                            <p class="mb-0">Remaining</p>
-                        </div>
+                    <div class="card text-white bg-info shadow-sm text-center py-3">
+                        <h5>{{ number_format($remaining) }}</h5>
+                        <small>Remaining</small>
                     </div>
                 </div>
             </div>
 
-            {{-- History Table --}}
+            {{-- Table --}}
             <div class="card shadow-sm">
                 <div class="card-header bg-dark text-white fw-bold">
                     <i class="fas fa-history me-2"></i> Assignment History
                 </div>
+
                 <div class="card-body table-responsive">
-                    <table class="table table-bordered table-hover text-center mb-0" id="history-table">
+                    <table class="table table-bordered table-hover text-center" id="history-table">
                         <thead class="table-dark">
                             <tr>
                                 <th>#</th>
-                                <th>Assigned Qty</th>
+                                <th>Assigned</th>
                                 <th>Returned</th>
-                                <th>Used</th>
+                                <th>Used (with date/time)</th>
                                 <th>Broken</th>
                                 <th>Remaining</th>
                                 <th>Status</th>
@@ -94,21 +91,42 @@
                                 <th>Assigned At</th>
                             </tr>
                         </thead>
+
                         <tbody>
-                            @forelse($history as $row)
+                        @forelse($history as $row)
                             @php
                                 $returned = $row->returns->sum('returned_qty');
-                                $used = $row->returns->sum('used_qty');
-                                $broken = $row->returns->sum('broken_qty');
+                                $used     = $row->returns->sum('used_qty');
+                                $broken   = $row->returns->sum('broken_qty');
                                 $rowRemaining = $row->assigned_qty - ($returned + $used + $broken);
                             @endphp
+
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $row->assigned_qty }}</td>
-                                <td>{{ $returned }}</td>
-                                <td>{{ $used }}</td>
-                                <td>{{ $broken }}</td>
+                                <td class="text-success fw-bold">{{ $returned }}</td>
+
+                                {{-- USED: show each usage with date/time --}}
+                                <td class="text-warning text-start">
+                                    @forelse($row->returns as $ret)
+                                        @if($ret->used_qty > 0)
+                                            <div>
+                                                <strong>{{ $ret->used_qty }}</strong> Used
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ $ret->verified_at->format('d M Y H:i') }}
+                                                </small>
+                                            </div>
+                                        @endif
+                                    @empty
+                                        -
+                                    @endforelse
+                                </td>
+
+                                <td class="text-danger fw-bold">{{ $broken }}</td>
                                 <td>{{ $rowRemaining }}</td>
+
+                                {{-- Status --}}
                                 <td>
                                     @php
                                         $statusClass = match($row->status) {
@@ -118,23 +136,34 @@
                                             default => 'secondary',
                                         };
                                     @endphp
-                                    <span class="badge badge-{{ $statusClass }}">{{ ucfirst($row->status) }}</span>
+                                    <span class="badge badge-{{ $statusClass }}">
+                                        {{ ucfirst($row->status) }}
+                                    </span>
                                 </td>
-                                <td>
+
+                                {{-- Remarks --}}
+                                <td class="text-start">
                                     @foreach($row->returns as $ret)
-                                        <span class="d-block small text-muted">
-                                            {{ $ret->remarks ?? '-' }}
-                                        </span>
+                                        @if($ret->remarks)
+                                            <div class="small text-muted">
+                                                💬 {{ $ret->remarks }}
+                                            </div>
+                                        @endif
                                     @endforeach
                                 </td>
+
                                 <td>{{ $row->assigned_at->format('d M, Y H:i') }}</td>
                             </tr>
-                            @empty
+
+                        @empty
                             <tr>
-                                <td colspan="9" class="text-center">No history found for this item.</td>
+                                <td colspan="9" class="text-center">
+                                    No history found for this item.
+                                </td>
                             </tr>
-                            @endforelse
+                        @endforelse
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -145,7 +174,7 @@
 
 @push('scripts')
 <script>
-$(document).ready(function() {
+$(document).ready(function () {
     $('#history-table').DataTable({
         responsive: true,
         autoWidth: false,

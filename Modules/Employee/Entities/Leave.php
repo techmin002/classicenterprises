@@ -20,8 +20,18 @@ class Leave extends Model
         'status'
     ];
     
-    protected static function newFactory()
-    {
-        return \Modules\Employee\Database\factories\LeaveFactory::new();
-    }
+ public function branch()
+{
+    return $this->belongsTo(\Modules\Branch\Entities\Branch::class, 'branch_id');
+}
+
+public function employee()
+{
+    return $this->belongsTo(Employee::class, 'employee_id');
+}
+
+public function leaveType()
+{
+    return $this->belongsTo(LeaveType::class, 'leave_type_id');
+}
 }

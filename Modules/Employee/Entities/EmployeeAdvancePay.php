@@ -18,8 +18,5 @@ class EmployeeAdvancePay extends Model
         'status'
     ];
     
-    protected static function newFactory()
-    {
-        return \Modules\Employee\Database\factories\EmployeeAdvancePayFactory::new();
-    }
+    
 }

@@ -138,7 +138,7 @@
                                                                 <tr>
                                                                     <td>{{ $loop->iteration }}</td>
                                                                     @if (auth()->user()->role['name'] === 'Super Admin')
-                                                                        <td>{{ $check->employee->name }}</td>
+                                                                        <td>{{ optional($check->employee)->name ?? 'N/A' }}</td>
                                                                     @endif
                                                                     <td>{{ \Carbon\Carbon::parse($check->date)->format('Y-M-d') }}
                                                                     </td>

@@ -4,7 +4,7 @@
 @section('breadcrumb')
 <ol class="breadcrumb border-0 m-0">
     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-    <li class="breadcrumb-item active">Machineries & Accessories</li>
+    <li class="breadcrumb-item active">Machineries, Accessories and technical tool</li>
 </ol>
 @endsection
 @php
@@ -18,7 +18,7 @@ use Modules\Product\Entities\TechnicalTools;
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Machineries And Accessories</h1>
+                    <h1>Machineries, Accessories and technical tool</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -72,7 +72,7 @@ use Modules\Product\Entities\TechnicalTools;
                                     <th>Quantity</th>
                                     <th>Unit Price</th>
                                     <th>Total</th>
-                                    <th>Status</th>
+                                    {{-- <th>Status</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -87,11 +87,11 @@ use Modules\Product\Entities\TechnicalTools;
                                     <td>{{ $machinery->quantity }}</td>
                                     <td>{{ number_format($machinery->unit_price, 2) }}</td>
                                     <td>{{ number_format($machinery->total, 2) }}</td>
-                                    <td>
+                                    {{-- <td>
                                         <span class="badge {{ $machinery->status ? 'badge-success' : 'badge-warning' }}">
                                             {{ $machinery->status ? 'Active' : 'Inactive' }}
                                         </span>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @empty
                                 <tr>
@@ -120,7 +120,7 @@ use Modules\Product\Entities\TechnicalTools;
                                     <th>Quantity</th>
                                     <th>Unit Price</th>
                                     <th>Total</th>
-                                    <th>Status</th>
+                                    {{-- <th>Status</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,11 +140,11 @@ use Modules\Product\Entities\TechnicalTools;
                                     <td>{{ $item->quantity }}</td>
                                     <td>{{ number_format($item->unit_price, 2) }}</td>
                                     <td>{{ number_format($item->total, 2) }}</td>
-                                    <td>
+                                    {{-- <td>
                                         <span class="badge {{ $item->status ? 'badge-success' : 'badge-warning' }}">
                                             {{ $item->status ? 'active' : 'inactive' }}
                                         </span>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @empty
                                 <tr>
@@ -172,7 +172,7 @@ use Modules\Product\Entities\TechnicalTools;
                                     <th>Quantity</th>
                                     <th>Unit Price</th>
                                     <th>Total</th>
-                                    <th>Status</th>
+                                    {{-- <th>Status</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,11 +186,11 @@ use Modules\Product\Entities\TechnicalTools;
                                     <td>{{ $data->quantity }}</td>
                                     <td>{{ number_format($data->unit_price, 2) }}</td>
                                     <td>{{ number_format($data->total, 2) }}</td>
-                                    <td>
+                                    {{-- <td>
                                         <span class="badge {{ $data->status ? 'badge-success' : 'badge-warning' }}">
                                             {{ $data->status ? 'Active' : 'Inactive' }}
                                         </span>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                                 @empty
                                 <tr>

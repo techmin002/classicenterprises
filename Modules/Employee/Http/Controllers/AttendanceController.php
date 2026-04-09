@@ -85,213 +85,321 @@ class AttendanceController extends Controller
     {
         //
     }
-    public function checkin($id)
-    {
-        $employee = Employee::where('user_id', $id)->with('user')->first();
+   public function checkin($id)
+{
+    $employee = Employee::where('user_id', $id)->first();
 
-        $datetime = Carbon::now();
-        $date = $datetime->format('Y-m-d');
-        $employeeAttendance = EmployeeAttendance::create([
-            'employee_id' => $employee->id,
-            'branch_id' => $employee->branch_id,
-            'check_in' => $datetime,
-            'check_out' => null,
-            'date' => $date,
-            'status' => 'checkin'
-        ]);
-
-        return back()->with('success', 'You Check In Successfully');
+    if (!$employee) {
+        return back()->with('error', 'Employee not found!');
     }
-    public function checkinStatus($id)
-    {
-        $employee = Employee::where('user_id', auth()->user()->id)->first();
-        $Attendance = EmployeeAttendance::where('employee_id', $employee->id)->first();
 
-        $todayCheckin = $Attendance->whereDate('check_in', Carbon::today())
-            ->where('status', 'checkin')->first();
+    $today = Carbon::today();
+
+    // Check if already checked in today
+    $attendance = EmployeeAttendance::where('employee_id', $employee->id)
+        ->whereDate('date', $today)
+        ->first();
+
+    if ($attendance) {
+        return back()->with('error', 'You have already checked in today!');
+    }
+
+    $now = Carbon::now();
+
+    EmployeeAttendance::create([
+        'employee_id' => $employee->id,
+        'branch_id'   => $employee->branch_id,
+        'check_in'    => $now,
+        'check_out'   => null,
+        'date'        => $today,
+        'status'      => 'checkin'
+    ]);
+
+    return back()->with('success', 'You Check In Successfully');
+}
+
+ public function checkinStatus($id)
+{
+    $employee = Employee::where('user_id', auth()->user()->id)->first();
+
+    if (!$employee) {
         return response()->json([
-            'checked_in' => !is_null($todayCheckin), // true if checked in today
-            'checkin_time' => $todayCheckin ? $todayCheckin->created_at->toDateTimeString() : null
+            'checked_in' => false,
+            'checkin_time' => null
         ]);
     }
-    public function checkout($id)
-    {
+
+    $todayAttendance = EmployeeAttendance::where('employee_id', $employee->id)
+        ->whereDate('date', Carbon::today())
+        ->first();
+
+    return response()->json([
+        'checked_in' => !is_null($todayAttendance),
+        'checkin_time' => $todayAttendance ? $todayAttendance->check_in : null
+    ]);
+}
+public function checkout($id)
+{
+    $employee = Employee::where('user_id', auth()->user()->id)->first();
+
+    if (!$employee) {
+        return back()->with('error', 'Employee not found!');
+    }
+
+    $today = Carbon::today();
+
+    // Get today's attendance
+    $attendance = EmployeeAttendance::where('employee_id', $employee->id)
+        ->whereDate('date', $today)
+        ->first();
+
+    // Must check-in first
+    if (!$attendance) {
+        return back()->with('error', 'You must check in first!');
+    }
+
+    // Already checked out
+    if (!is_null($attendance->check_out)) {
+        return back()->with('error', 'You have already checked out today!');
+    }
+
+    $attendance->update([
+        'check_out' => Carbon::now(),
+        'status'    => 'checkout'
+    ]);
+
+    return back()->with('success', 'You Check Out Successfully');
+}
+ public function checkinRequest()
+{
+    if (auth()->user()->role['name'] != 'Super Admin') {
+
         $employee = Employee::where('user_id', auth()->user()->id)->first();
-        $Attendance = EmployeeAttendance::where('employee_id', $employee->id)->orderby('created_at', 'DESC')->first();
-        $Attendance->update([
-            'check_out' => Carbon::now(),
-            'status' => 'checkout'
-        ]);
-        return back()->with('success', 'You Check Out Successfully');
-    }
-    public function checkinRequest()
-    {
-        if (auth()->user()->role['name'] != 'Super Admin') {
-            $userId = auth()->user()->id;
-            $checkin = EmployeeAttendanceRequest::where('employee_id', auth()->user()->id)->where('request_type', 'checkin')->with('employee')->orderby('created_at', 'DESC')->get();
-        } else {
-            $checkin = EmployeeAttendanceRequest::where('request_type', 'checkin')->with('employee')->orderby('created_at', 'DESC')->get();
+
+        if (!$employee) {
+            return back()->with('error', 'Employee not found!');
         }
-        return view('employee::attendance.checkinrequest', compact('checkin'));
+
+        $checkin = EmployeeAttendanceRequest::with('employee')
+            ->where('employee_id', $employee->id)
+            ->where('request_type', 'checkin')
+            ->latest()
+            ->get();
+
+    } else {
+
+        $checkin = EmployeeAttendanceRequest::with('employee')
+            ->where('request_type', 'checkin')
+            ->latest()
+            ->get();
     }
-    public function checkinRequestStore(Request $request)
-    {
-        $checkinRequest = EmployeeAttendanceRequest::create([
-            'employee_id' => auth()->user()->id,
-            'date' => $request['checkin'],
-            'branch_id' => auth()->user()->branch_id,
-            'message' => $request['message'],
-            'request_type' => 'checkin',
-        ]);
-        Log::create([
-            'perform'   => auth()->user()->name . ' Check In request : ' . 'at ' . now(),
-            'user_id'   => auth()->user()->id,
-            'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
-        ]);
-        return back()->with('success', 'Checkin Request Added is successfully');
+
+    return view('employee::attendance.checkinrequest', compact('checkin'));
+}
+public function checkinRequestStore(Request $request)
+{
+    $employee = Employee::where('user_id', auth()->user()->id)->first();
+
+    if (!$employee) {
+        return back()->with('error', 'Employee not found!');
     }
+
+    $employeeId = $employee->id;
+    $date = Carbon::parse($request['checkin'])->format('Y-m-d');
+
+    // ❌ BLOCK: Already attendance exists (VERY IMPORTANT FIX)
+    $attendanceExists = EmployeeAttendance::where('employee_id', $employeeId)
+        ->whereDate('date', $date)
+        ->exists();
+
+    if ($attendanceExists) {
+        return back()->with('error', 'You already marked attendance for this date!');
+    }
+
+    // ❌ BLOCK: Already requested
+    $requestExists = EmployeeAttendanceRequest::where('employee_id', $employeeId)
+        ->where('request_type', 'checkin')
+        ->whereDate('date', $date)
+        ->exists();
+
+    if ($requestExists) {
+        return back()->with('error', 'You already requested check-in for this date!');
+    }
+
+    EmployeeAttendanceRequest::create([
+        'employee_id' => $employeeId, // ✅ FIXED
+        'date'        => $request['checkin'],
+        'branch_id'   => $employee->branch_id,
+        'message'     => $request['message'],
+        'request_type'=> 'checkin',
+    ]);
+
+    return back()->with('success', 'Check-in request submitted successfully');
+}
+    
+
     public function checkinRequestStatus(Request $request)
-    {
-        $id = $request->query('id');
-        $status = $request->query('status');
+{
+    $id = $request->query('id');
+    $status = $request->query('status');
 
-        // Find the check-in request or fail
-        $checkinRequest = EmployeeAttendanceRequest::findOrFail($id);
+    $checkinRequest = EmployeeAttendanceRequest::findOrFail($id);
+    $date = Carbon::parse($checkinRequest->date)->format('Y-m-d');
 
-        // Parse the request date for comparison
-        $date = Carbon::parse($checkinRequest->date)->format('Y-m-d');
+    if ($status === 'accept') {
 
-        if ($status === 'accept') {
-            // Find existing attendance for the employee on the given date
-            $empAttendance = EmployeeAttendance::where('employee_id', $checkinRequest->employee_id)
-                ->whereDate('date', $date)
-                ->first();
+        $attendance = EmployeeAttendance::where('employee_id', $checkinRequest->employee_id)
+            ->whereDate('date', $date)
+            ->first();
 
-            if (!$empAttendance) {
-                // No attendance record for the date, create a new one
-                EmployeeAttendance::create([
-                    'check_in' => $checkinRequest->date,
-                    'employee_id' => $checkinRequest->employee_id,
-                    'branch_id' => $checkinRequest->branch_id,
-                    'check_out' => null,
-                    'date' => $date,
-                    'status' => 'checkin',
-                ]);
-                Log::create([
-                    'perform'   => auth()->user()->name . ' Check In request Accept: ' . 'at ' . now(),
-                    'user_id'   => auth()->user()->id,
-                    'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-                    'url'       => url()->current(),
-                ]);
-            } else {
-                // Attendance record exists, update the check-in time
-                $empAttendance->update([
-                    'check_in' => $checkinRequest->date,
-                ]);
-            }
+       if ($attendance && $attendance->check_in) {
+    return back()->with('error', 'Attendance already exists for this date!');
+}
 
-            // Update the check-in request status to accepted
-            $checkinRequest->update(['status' => 'accept']);
-
-            return back()->with('success', 'Check-In Request Accepted Successfully');
-        } else {
-            // Reject the request
-            $checkinRequest->update(['status' => 'reject']);
-            Log::create([
-                'perform'   => auth()->user()->name . ' Check In request Reject: ' . 'at ' . now(),
-                'user_id'   => auth()->user()->id,
-                'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-                'url'       => url()->current(),
+        if ($attendance) {
+            $attendance->update([
+                'check_in' => $checkinRequest->date,
+                'status'   => 'checkin'
             ]);
-            return back()->with('success', 'Check-In Request Rejected');
+        } else {
+            EmployeeAttendance::create([
+                'employee_id' => $checkinRequest->employee_id,
+                'branch_id'   => $checkinRequest->branch_id,
+                'check_in'    => $checkinRequest->date,
+                'check_out'   => null,
+                'date'        => $date,
+                'status'      => 'checkin',
+            ]);
         }
+
+        $checkinRequest->update(['status' => 'accept']);
+
+        return back()->with('success', 'Check-in request accepted');
     }
 
-    public function checkoutRequestStatus(Request $request)
-    {
-        $id = $request->query('id');
-        $status = $request->query('status');
+    $checkinRequest->update(['status' => 'reject']);
 
-        // Find the checkout request or fail
-        $checkoutRequest = EmployeeAttendanceRequest::findOrFail($id);
-
-        // Parse the request date for comparison
-        $date = Carbon::parse($checkoutRequest->date)->format('Y-m-d');
-
-        if ($status === 'accept') {
-            // Find existing attendance for the employee on the given date
-            $empAttendance = EmployeeAttendance::where('employee_id', $checkoutRequest->employee_id)
-                ->whereDate('date', $date)
-                ->first();
-
-            if ($empAttendance) {
-                // Update the check-out time if attendance exists
-                $empAttendance->update([
-                    'check_out' => $checkoutRequest->date,
-                ]);
-            } else {
-                // No attendance record for the date, create a new one with check-out
-                EmployeeAttendance::create([
-                    'check_in' => null,
-                    'check_out' => $checkoutRequest->date,
-                    'employee_id' => $checkoutRequest->employee_id,
-                    'branch_id' => $checkoutRequest->branch_id,
-                    'date' => $date,
-                    'status' => 'checkout',
-                ]);
-            }
-
-            Log::create([
-                'perform'   => auth()->user()->name . ' Check Out request Accept: ' . 'at ' . now(),
-                'user_id'   => auth()->user()->id,
-                'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-                'url'       => url()->current(),
-            ]);
-            // Update the checkout request status to accepted
-            $checkoutRequest->update(['status' => 'accept']);
-
-            return back()->with('success', 'Check-Out Request Accepted Successfully');
-        } else {
-            // Reject the request
-            $checkoutRequest->update(['status' => 'reject']);
-            Log::create([
-                'perform'   => auth()->user()->name . ' Check Out request Reject: ' . 'at ' . now(),
-                'user_id'   => auth()->user()->id,
-                'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-                'url'       => url()->current(),
-            ]);
-            return back()->with('success', 'Attendance Request Rejected');
-        }
-    }
+    return back()->with('success', 'Check-in request rejected');
+}
 
     public function checkoutRequest()
-    {
-        if (auth()->user()->role['name'] != 'Super Admin') {
-            $userId = auth()->user()->id;
-            $checkout = EmployeeAttendanceRequest::where('employee_id', auth()->user()->id)->where('request_type', 'checkout')->orderby('created_at', 'DESC')->get();
-        } else {
-            $checkout = EmployeeAttendanceRequest::where('request_type', 'checkout')->orderby('created_at', 'DESC')->get();
+{
+    if (auth()->user()->role['name'] != 'Super Admin') {
+
+        // ✅ Get correct employee
+        $employee = Employee::where('user_id', auth()->user()->id)->first();
+
+        if (!$employee) {
+            return back()->with('error', 'Employee not found!');
         }
-        Log::create([
-            'perform'   => auth()->user()->name . ' Check Out request : ' . 'at ' . now(),
-            'user_id'   => auth()->user()->id,
-            'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            'url'       => url()->current(),
-        ]);
-        return view('employee::attendance.checkoutrequest', compact('checkout'));
+
+        $checkout = EmployeeAttendanceRequest::where('employee_id', $employee->id) // ✅ FIXED
+            ->where('request_type', 'checkout')
+            ->with('employee') // ✅ load relation
+            ->latest()
+            ->get();
+
+    } else {
+
+        $checkout = EmployeeAttendanceRequest::where('request_type', 'checkout')
+            ->with('employee') // ✅ for admin view
+            ->latest()
+            ->get();
     }
-    public function checkoutRequestStore(Request $request)
-    {
-        $checkoutRequest = EmployeeAttendanceRequest::create([
-            'employee_id' => auth()->user()->id,
-            'date' => $request['checkout'],
-            'branch_id' => auth()->user()->branch_id,
-            'message' => $request['message'],
-            'request_type' => 'checkout',
-        ]);
-        return back()->with('success', 'Checkout Request Added is successfully');
+
+    // ✅ Log (clean)
+    Log::create([
+        'perform'   => auth()->user()->name . ' viewed Check-Out requests at ' . now(),
+        'user_id'   => auth()->user()->id,
+        'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
+        'url'       => url()->current(),
+    ]);
+
+    return view('employee::attendance.checkoutrequest', compact('checkout'));
+}
+public function checkoutRequestStore(Request $request)
+{
+    $employee = Employee::where('user_id', auth()->user()->id)->first();
+
+    if (!$employee) {
+        return back()->with('error', 'Employee not found!');
     }
+
+    $employeeId = $employee->id;
+    $date = Carbon::parse($request['checkout'])->format('Y-m-d');
+
+    $attendance = EmployeeAttendance::where('employee_id', $employeeId)
+        ->whereDate('date', $date)
+        ->first();
+
+    // ❌ BLOCK: No check-in exists (MAIN FIX)
+    if (!$attendance || !$attendance->check_in) {
+        return back()->with('error', 'You must check-in first before requesting check-out!');
+    }
+
+    // ❌ BLOCK: Already completed attendance
+    if ($attendance->check_in && $attendance->check_out) {
+        return back()->with('error', 'You already completed attendance for this date!');
+    }
+
+    // ❌ BLOCK: Already requested checkout
+    $requestExists = EmployeeAttendanceRequest::where('employee_id', $employeeId)
+        ->where('request_type', 'checkout')
+        ->whereDate('date', $date)
+        ->exists();
+
+    if ($requestExists) {
+        return back()->with('error', 'You already requested check-out for this date!');
+    }
+
+    // ✅ CREATE REQUEST
+    EmployeeAttendanceRequest::create([
+        'employee_id' => $employeeId,
+        'date'        => $request['checkout'],
+        'branch_id'   => $employee->branch_id,
+        'message'     => $request['message'],
+        'request_type'=> 'checkout',
+    ]);
+
+    return back()->with('success', 'Check-out request submitted successfully');
+}
+public function checkoutRequestStatus(Request $request)
+{
+    $id = $request->query('id');
+    $status = $request->query('status');
+
+    $checkoutRequest = EmployeeAttendanceRequest::findOrFail($id);
+    $date = Carbon::parse($checkoutRequest->date)->format('Y-m-d');
+
+    if ($status === 'accept') {
+
+        $attendance = EmployeeAttendance::where('employee_id', $checkoutRequest->employee_id)
+            ->whereDate('date', $date)
+            ->first();
+
+        // ❌ No check-in
+        if (!$attendance || !$attendance->check_in) {
+            return back()->with('error', 'Cannot checkout without check-in!');
+        }
+
+        if ($attendance && $attendance->check_out) {
+    return back()->with('error', 'Already checked out for this date!');
+}
+
+        $attendance->update([
+            'check_out' => $checkoutRequest->date,
+            'status'    => 'checkout'
+        ]);
+
+        $checkoutRequest->update(['status' => 'accept']);
+
+        return back()->with('success', 'Check-out request accepted');
+    }
+
+    $checkoutRequest->update(['status' => 'reject']);
+
+    return back()->with('success', 'Check-out request rejected');
+}
     public function attendanceAll()
     {
         $attendance = EmployeeAttendance::orderby('created_at', 'DESC')->get();

@@ -99,7 +99,7 @@
                             <div class="col-lg-12" id="manual-input-container-edit{{ $exp->id }}"></div>
 
                             {{-- Address --}}
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
                                 <label class="form-label12">Address</label>
                                 <input class="form-control" type="text" name="address" value="{{ $exp->address }}"
                                     required>
@@ -124,7 +124,7 @@
 
 
                             {{-- Sales Category --}}
-                            <div class="col-lg-6">
+                            {{-- <div class="col-lg-6">
                                 <label class="form-label12 mt-2">Sales Category</label>
                                 <select name="sales_type" class="form-control select2-modal">
                                     <option value="" disabled {{ is_null($exp->sales_type) ? 'selected' : '' }}>
@@ -138,7 +138,7 @@
                                         {{ $exp->sales_type === 'wholeseller' ? 'selected' : '' }}>Wholeseller</option>
                                 </select>
 
-                            </div>
+                            </div> --}}
 
 
                             {{-- Message --}}

@@ -116,11 +116,9 @@
                                         </td>
                                         <td class="text-center align-middle">
                                             <div class="btn-group">
-                                                <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#viewTransfer{{ $transfer->id }}" title="View Details">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
-                                                @include('inventory::StockTransfer.view', ['transfer' => $transfer])
-
+                                               <a href="{{ route('stock-transfers.show', $transfer->id) }}" class="btn btn-info btn-sm" title="View Details">
+    <i class="fa fa-eye"></i>
+</a>
                                                 @if($transfer->status == 'pending' || $transfer->status == 'in_transit')
                                                 <a href="{{ route('stock-transfers.edit', $transfer->id) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
                                                 @endif

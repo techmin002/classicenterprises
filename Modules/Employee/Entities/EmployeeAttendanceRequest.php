@@ -17,12 +17,9 @@ class EmployeeAttendanceRequest extends Model
         'message',
         'status',
     ];
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class,'employee_id','user_id');
-    }
-    protected static function newFactory()
-    {
-        return \Modules\Employee\Database\factories\EmployeeAttendanceRequestFactory::new();
-    }
+   public function employee()
+{
+    return $this->belongsTo(Employee::class, 'employee_id', 'id');
+}
+   
 }

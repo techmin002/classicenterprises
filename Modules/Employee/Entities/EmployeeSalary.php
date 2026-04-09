@@ -11,8 +11,5 @@ class EmployeeSalary extends Model
 
     protected $fillable = ['salary','employee_id','status'];
     
-    protected static function newFactory()
-    {
-        return \Modules\Employee\Database\factories\EmployeeSalaryFactory::new();
-    }
+   
 }
