@@ -9,11 +9,14 @@ use Modules\Inventory\Entities\Branch;
 use Modules\Inventory\Entities\DevicePurchase;
 use Modules\Inventory\Entities\Supplier;
 use Modules\Inventory\Entities\User;
+use Illuminate\Support\Facades\Gate;
 
 class SupplierController extends Controller
 {
     public function index()
     {
+    abort_if(Gate::denies('access_suppliers'), 403);
+
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branchId = session('branch_id');
         } else {
@@ -56,6 +59,8 @@ class SupplierController extends Controller
      */
     public function show($id)
     {
+    abort_if(Gate::denies('show_suppliers'), 403);
+
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branchId = session('branch_id');
         } else {
@@ -74,6 +79,7 @@ class SupplierController extends Controller
      */
     public function edit($id)
     {
+    abort_if(Gate::denies('edit_suppliers'), 403);
         $supplier = Supplier::findOrFail($id);
         $branches = Branch::all();
         $users = User::all();

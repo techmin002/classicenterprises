@@ -18,12 +18,14 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h3 class="mb-0">{{ $staff->name }} - Assigned Items</h3>
+                        @can('create_technicians')
                         <span class="badge badge-light">
                             Branch: {{ $staff->branch->name ?? 'N/A' }} | Total: {{ $assignments->count() }}
                             <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#assignModal">
                                 <i class="fas fa-plus-circle"></i> Assign Item
                             </a>
                         </span>
+                        @endcan
                     </div>
 
                     <div class="card-body p-0">
@@ -88,12 +90,16 @@
                                                             class="badge badge-{{ $statusClass }}">{{ ucfirst($row->status) }}</span>
                                                     </td>
                                                     <td>
+                                                        @can('show_technicians')
                                                         <a href="{{ route('inventory.technicians.itemHistory', [$staff->id, $type, $itemId]) }}"
                                                             class="btn btn-sm btn-info">
                                                             <i class="fas fa-history"></i> History
                                                         </a>
+                                                        @endcan
+
 
                                                         @if ($row->status === 'assigned')
+                                                        @can('create_technicians')
                                                             <button type="button" class="btn btn-sm btn-success verify-btn"
                                                                 data-staff="{{ $staff->id }}"
                                                                 data-item-type="{{ $type }}"
@@ -102,6 +108,7 @@
                                                                 data-assigned="{{ $totalAssigned }}">
                                                                 <i class="fas fa-check-circle"></i> Verify
                                                             </button>
+                                                        @endcan
                                                         @endif
                                                     </td>
                                                 </tr>

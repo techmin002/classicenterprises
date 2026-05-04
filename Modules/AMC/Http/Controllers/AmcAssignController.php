@@ -18,6 +18,7 @@ use Modules\AMC\Entities\AmcCustomer;
 use Modules\Branch\Entities\Branch;
 use Modules\Lead\Entities\Customer;
 use Modules\Lead\Entities\Lead;
+use Illuminate\Support\Facades\Gate;
 
 class AmcAssignController extends Controller
 {
@@ -26,6 +27,8 @@ class AmcAssignController extends Controller
      */
     public function index()
     {
+    abort_if(Gate::denies('access_customers'), 403);
+
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branch_id = session('branch_id');
         } else {
@@ -44,6 +47,8 @@ class AmcAssignController extends Controller
      */
     public function create()
     {
+    abort_if(Gate::denies('create_customers'), 403);
+
         $customers = Customer::with('lead')->get(); // get active customers with lead
         $amcs = AMC::where('status', 'on')->get(); // get active AMCs
 
@@ -52,6 +57,8 @@ class AmcAssignController extends Controller
 
     public function Registerassign()
     {
+    abort_if(Gate::denies('create_customers'), 403);
+
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branch_id = session('branch_id');
         } else {
@@ -65,6 +72,8 @@ class AmcAssignController extends Controller
 
     public function Outsiderassign()
     {
+    abort_if(Gate::denies('create_customers'), 403);
+
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branch_id = session('branch_id');
         } else {
@@ -321,6 +330,8 @@ class AmcAssignController extends Controller
 
     public function details($id)
     {
+    abort_if(Gate::denies('show_customers'), 403);
+
         $customer = AmcCustomer::with(['customer', 'amc', 'user'])->findOrFail($id);
         $customer->created_time = $this->formatTimeDifference($customer->created_at);
         return view('amc::AmcAssign.details', compact('customer'));

@@ -10,6 +10,7 @@ use Modules\AMC\Entities\AmcCustomer;
 use Modules\Lead\Entities\Customer;
 use Modules\SupportDashboard\Entities\CustomerTicket;
 use Modules\SupportDashboard\Entities\OutsiderCustomer;
+use Illuminate\Support\Facades\Gate;
 
 class TicketController extends Controller
 {
@@ -18,6 +19,7 @@ class TicketController extends Controller
      */
     public function index()
     {
+    abort_if(Gate::denies('access_tickets'), 403);
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branch_id = session('branch_id');
         } else {
@@ -125,6 +127,8 @@ class TicketController extends Controller
 
     public function customerDetails($id)
     {
+    abort_if(Gate::denies('show_tickets'), 403);
+
         // dd($id);
         $customer = CustomerTicket::with([
             'customer',

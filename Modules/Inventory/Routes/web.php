@@ -9,6 +9,7 @@ use Modules\Inventory\Http\Controllers\StockIssueController;
 use Modules\Inventory\Http\Controllers\SupplierController;
 use Modules\Inventory\Http\Controllers\TechnicianInventoryController;
 use Modules\Inventory\Http\Controllers\SaleReturnController;
+use Modules\Inventory\Http\Controllers\PreSaleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('sales', SalesController::class)->names('sales');
     Route::post('/sales', [SalesController::class, 'store'])->name('sales_store');
     Route::get('sales/{id}/details', [SalesController::class, 'showDetails'])->name('sales.details');
+
+    Route::prefix('pre-sales')->group(function () {
+    Route::get('/', [PreSaleController::class, 'index'])->name('pre-sales.index');
+    Route::post('/store', [PreSaleController::class, 'store'])->name('pre-sales.store');
+    Route::post('/confirm/{id}', [PreSaleController::class, 'confirm'])->name('pre-sales.confirm');
+});
+Route::post('/pre-sales/{id}/cancel', [PreSaleController::class, 'cancel'])
+    ->name('pre-sales.cancel');
 
     // Stock Transfer
     Route::resource('stock-transfers', StockController::class)->names('stock-transfers');

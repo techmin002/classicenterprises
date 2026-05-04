@@ -11,6 +11,7 @@ use Modules\Inventory\Entities\Sale;
 use Modules\Inventory\Entities\SaleReturn;
 use Modules\Inventory\Entities\SaleReturnItem;
 use Modules\Inventory\Entities\Inventory;
+use Illuminate\Support\Facades\Gate;
 
 
 class SaleReturnController extends Controller
@@ -18,6 +19,7 @@ class SaleReturnController extends Controller
 
     public function index()
     {
+        abort_if(Gate::denies('access_salesreturn'), 403);
         $returns = SaleReturn::with('sale')->latest()->get();
         $sales = Sale::latest()->get();
 
@@ -60,6 +62,8 @@ public function getSaleItems($id)
 
     public function create($sale_id)
     {
+        abort_if(Gate::denies('create_salesreturn'), 403);
+
         $sale = Sale::with('accessories', 'machineries')->findOrFail($sale_id);
 
         return view('inventory::sale_returns.create', compact('sale'));
@@ -209,6 +213,7 @@ public function store(Request $request)
 
   public function show($id)
 {
+    abort_if(Gate::denies('show_salesreturn'), 403);
     $return = SaleReturn::with('sale', 'items', 'creator')->findOrFail($id);
 
     return view('inventory::sale_returns.show', compact('return'));
@@ -216,6 +221,7 @@ public function store(Request $request)
 
     public function edit($id)
     {
+        abort_if(Gate::denies('edit_salesreturn'), 403);
         $return = SaleReturn::with('items', 'sale')->findOrFail($id);
 
         return view('inventory::sale_returns.edit', compact('return'));

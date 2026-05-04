@@ -176,6 +176,7 @@
                 @endcan
 
                 {{-- @can('access_user_management') --}}
+                @can('access_leads')
                 <li
                     class="nav-item {{ request()->routeIs('hot-leads') || request()->routeIs('warm-leads') || request()->routeIs('cold-leads') || request()->routeIs('followups') ? 'menu-is-opening menu-open' : '' }}">
                     <a href="#"
@@ -213,8 +214,9 @@
                         </li>
                     </ul>
                 </li>
-                {{-- @endcan --}}
+                @endcan
 
+                @can('access_salescategory')
                 <li class="nav-item {{ request()->routeIs('salecategories.*') ? 'menu-is-opening menu-open' : '' }}">
                     <a href="#" class="nav-link {{ request()->routeIs('salecategories.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
@@ -238,6 +240,7 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
 
                 <div class="my-3 border-top border-success pt-1">
 
@@ -247,12 +250,7 @@
 
                         {{-- Counter Sales --}}
                         {{-- <li class="nav-item">
-                            <a href="#" class="nav-link @if (request()->routeIs([
-                                    'installation-queue.*',
-                                    'installation.complete',
-                                    'installation-assign.*',
-                                    'installation.reports',
-                                ]) && request()->route('sale_type') === 'counter_sales') active @endif">
+                            <a href="#" class="nav-link @if (request()->routeIs(['installation-queue.*', 'installation.complete', 'installation-assign.*', 'installation.reports']) && request()->route('sale_type') === 'counter_sales') active @endif">
                                 <i class="nav-icon fas fa-image"></i>
                                 <p>
                                     Counter Sales
@@ -290,12 +288,7 @@
 
                         {{-- Retailler --}}
                         {{-- <li class="nav-item">
-                            <a href="#" class="nav-link @if (request()->routeIs([
-                                    'installation-queue.*',
-                                    'installation.complete',
-                                    'installation-assign.*',
-                                    'installation.reports',
-                                ]) && request()->route('sale_type') === 'retailler') active @endif">
+                            <a href="#" class="nav-link @if (request()->routeIs(['installation-queue.*', 'installation.complete', 'installation-assign.*', 'installation.reports']) && request()->route('sale_type') === 'retailler') active @endif">
                                 <i class="nav-icon fas fa-image"></i>
                                 <p>
                                     Retailler
@@ -333,12 +326,7 @@
 
                         {{-- Wholeseller --}}
                         {{-- <li class="nav-item">
-                            <a href="#" class="nav-link @if (request()->routeIs([
-                                    'installation-queue.*',
-                                    'installation.complete',
-                                    'installation-assign.*',
-                                    'installation.reports',
-                                ]) && request()->route('sale_type') === 'wholeseller') active @endif">
+                            <a href="#" class="nav-link @if (request()->routeIs(['installation-queue.*', 'installation.complete', 'installation-assign.*', 'installation.reports']) && request()->route('sale_type') === 'wholeseller') active @endif">
                                 <i class="nav-icon fas fa-image"></i>
                                 <p>
                                     Wholeseller
@@ -372,7 +360,7 @@
                                 </li>
                             </ul>
                         </li> --}}
-
+@can('access_installments')
                         {{-- ===================== Installation Dashboard ===================== --}}
                         <li class="nav-header text-primary"><b>Installation Dashboard</b></li>
 
@@ -509,7 +497,10 @@
                         </li>
                     @endcan
                 </div>
+                    @endcan
 
+
+@can('access_tickets')
                 <li class="nav-header text-primary border-top border-success pt-1 mt-2">
                     <strong>Support Dashboard</strong>
                 </li>
@@ -521,6 +512,8 @@
                         <p>Ticketing</p>
                     </a>
                 </li>
+                @endcan
+                @can('access_customers')
                 {{-- Register Customer --}}
                 <li class="nav-item">
                     <a href="#"
@@ -696,7 +689,9 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
 
+                @can('access_ime')
 
                 <li class="nav-header text-primary border-top border-success pt-1 mt-2">
                     <strong>IMS</strong>
@@ -713,31 +708,41 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                        @can('access_suppliers')
                         <li class="nav-item">
                             <a href="{{ route('suppliers.index') }}"
                                 class="nav-link {{ request()->routeIs('suppliers.index', 'suppliers_edit') ? 'active' : '' }}">
                                 <p>Suppliers</p>
                             </a>
                         </li>
+                        @endcan
+
+                        @can('access_purchases')
                         <li class="nav-item">
                             <a href="{{ route('device-purchases.index') }}"
                                 class="nav-link {{ request()->routeIs('device-purchases.index', 'device_purchase_edit', 'device_purchase_machineries_accessories') ? 'active' : '' }}">
                                 <p>Stock Purchases</p>
                             </a>
                         </li>
+                        @endcan
 
+                        @can('access_inventory')
                         <li class="nav-item">
                             <a href="{{ route('inventries') }}"
                                 class="nav-link {{ request()->routeIs('inventries', 'inventory.*') ? 'active' : '' }}">
                                 <p>Inventries</p>
                             </a>
                         </li>
+                        @endcan
+
+                        @can('access_stocktransfers')
                         <li class="nav-item">
                             <a href="{{ route('stock-transfers.index') }}"
                                 class="nav-link {{ request()->routeIs('stock-transfers.index') ? 'active' : '' }}">
                                 <p>Stock Transfer</p>
                             </a>
                         </li>
+                        @endcan
 
                         {{-- <li class="nav-item">
                             <a href="{{ route('inventory.technicians.index') }}" class="nav-link {{ request()->routeIs('inventory.technicians.*') ? 'active' : '' }}">
@@ -752,45 +757,64 @@
                         </li> --}}
                     </ul>
                 </li>
+                @endcan
                 {{-- <div class="border-top border-success mt-2"></div> --}}
 
                 {{-- Sales Section --}}
-              
 
- <li class="nav-header text-primary border-top border-success pt-1 mt-2">
+                @can('access_allsales')
+
+                <li class="nav-header text-primary border-top border-success pt-1 mt-2">
                     <strong>Sales Management</strong>
                 </li>
 
-<li class="nav-item {{ request()->routeIs('sales.*','sale-returns.*') ? 'menu-is-opening menu-open' : '' }}">
+                <li
+                    class="nav-item {{ request()->routeIs('sales.*', 'sale-returns.*') ? 'menu-is-opening menu-open' : '' }}">
 
-    <a href="#" class="nav-link {{ request()->routeIs('sales.*','sale-returns.*') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-cash-register text-white"></i>
-        <p>
-            Sales
-            <i class="right fas fa-angle-left"></i>
-        </p>
-    </a>
+                    <a href="#"
+                        class="nav-link {{ request()->routeIs('sales.*', 'sale-returns.*') ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-cash-register text-white"></i>
+                        <p>
+                            Sales
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
 
-    <ul class="nav nav-treeview">
+                    <ul class="nav nav-treeview">
 
-        {{-- Sales --}}
-        <li class="nav-item">
-            <a href="{{ route('sales.index') }}"
-               class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
-                <p>Sales List</p>
-            </a>
-        </li>
+                        {{-- pre sales --}}
+                        @can('access_presales')
+                        <li class="nav-item">
+                            <a href="{{ route('pre-sales.index') }}"
+                                class="nav-link {{ request()->routeIs('pre-sales.index') ? 'active' : '' }}">
+                                <p>Pre Sales</p>
+                            </a>
+                        </li>
+                        @endcan
 
-        {{-- Sales Returns --}}
-        <li class="nav-item">
-            <a href="{{ route('sale-returns.index') }}"
-               class="nav-link {{ request()->routeIs('sale-returns.index') ? 'active' : '' }}">
-                <p>Sales Returns</p>
-            </a>
-        </li>
+                        {{-- Sales --}}
+                        @can('access_sales')
+                        <li class="nav-item">
+                            <a href="{{ route('sales.index') }}"
+                                class="nav-link {{ request()->routeIs('sales.index') ? 'active' : '' }}">
+                                <p>Sales List</p>
+                            </a>
+                        </li>
+                        @endcan
 
-    </ul>
-</li>
+                        {{-- Sales Returns --}}
+                        @can('access_salesreturn')
+                        <li class="nav-item">
+                            <a href="{{ route('sale-returns.index') }}"
+                                class="nav-link {{ request()->routeIs('sale-returns.index') ? 'active' : '' }}">
+                                <p>Sales Returns</p>
+                            </a>
+                        </li>
+                        @endcan
+                    </ul>
+                </li>
+                @endcan
+
                 <div class="border-top border-success mt-2"></div>
 
                 {{-- <hr class="border-success opacity-50 mt-2"> --}}
@@ -991,6 +1015,7 @@
                         </ul>
                     </li>
                 @endcan
+
                 {{-- Blogs --}}
                 @can('access_blogs')
                     <li class="nav-item {{ request()->routeIs('blogs.*') ? 'menu-is-opening menu-open' : '' }}">
@@ -1374,7 +1399,7 @@
                                     <p>Leaves</p>
                                 </a>
                             </li>
-                             <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('holidays.index') }}"
                                     class="nav-link {{ request()->routeIs('holidays.index') ? 'active' : '' }}">
                                     {{-- <i class="far fa-circle nav-icon"></i> --}}

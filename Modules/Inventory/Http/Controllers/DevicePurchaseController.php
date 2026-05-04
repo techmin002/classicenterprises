@@ -17,11 +17,13 @@ use Modules\Inventory\Entities\Machineries;
 use Modules\Inventory\Entities\Supplier;
 use Modules\Inventory\Entities\User;
 use Modules\Product\Entities\TechnicalTools;
+use Illuminate\Support\Facades\Gate;
 
 class DevicePurchaseController extends Controller
 {
     public function index()
     {
+        abort_if(Gate::denies('access_purchases'), 403);
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branchId = session('branch_id');
         } else {
@@ -204,6 +206,7 @@ class DevicePurchaseController extends Controller
 
     public function edit(DevicePurchase $devicePurchase)
     {
+        abort_if(Gate::denies('edit_purchases'), 403);
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branchId = session('branch_id');
         } else {
@@ -490,6 +493,7 @@ class DevicePurchaseController extends Controller
 
     public function showMachineriesAccessories($id)
     {
+        abort_if(Gate::denies('show_purchases'), 403);
         $purchase = DevicePurchase::with(['supplier', 'branch'])->findOrFail($id);
 
         $machineries = DevicePurchaseMachinery::with(['machineries', 'branch'])
@@ -515,6 +519,7 @@ class DevicePurchaseController extends Controller
     
 public function getInventories()
 {
+    abort_if(Gate::denies('access_ime'), 403);
     $user = auth()->user();
 
     $branchId = $user->hasRole('Super Admin')

@@ -72,9 +72,11 @@
                                                 <td>{{ $tech->name }}</td>
                                                 <td>{{ $tech->branch->name ?? '-' }}</td>
                                                 <td class="text-center">
+                                                    @can('show_technicians')
                                                     <a href="{{ route('inventory.technicians.show', $tech->id) }}" class="btn btn-info btn-sm">
                                                         <i class="fas fa-eye"></i> View
                                                     </a>
+                                                    @endcan
                                                 </td>
                                             </tr>
                                         @empty
@@ -146,9 +148,12 @@
                                                                 </span>
                                                             </td>
                                                             <td>
+                                                                @can('show_inventory')
                                                                 <a href="{{ route('inventory.accessories', $inventory->accessories->id) }}" class="btn btn-sm btn-info">
                                                                     <i class="fas fa-eye"></i>
                                                                 </a>
+                                                                @endcan
+
                                                             </td>
                                                         </tr>
                                                     @endforeach

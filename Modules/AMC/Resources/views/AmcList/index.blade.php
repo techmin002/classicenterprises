@@ -35,10 +35,12 @@
                             <div class="card-header">
                                 <h3 class="card-title float-right">
                                     <!-- Button to Open Modal -->
+                                    @can('create_customers')
                                     <button type="button" class="btn btn-info text-white" data-toggle="modal"
                                         data-target="#createAmcModal">
                                         <i class="fa fa-plus"></i> Create
                                     </button>
+                                    @endcan
                                 </h3>
                                 @include('amc::AmcList.create')
                             </div>
@@ -78,11 +80,14 @@
                                                     @endif
                                                 </td>
                                                 <td>
+                                                    @can('edit_customers')
                                                     <button type="button" class="btn btn-primary text-white btn-sm"
                                                         data-toggle="modal" data-target="#editAmcModal{{ $amc->id }}" title="Edit">
                                                         <i class="fa fa-edit"></i>
                                                     </button>
+                                                    @endcan
                                                     @include('amc::AmcList.edit')
+                                                        @can('delete_customers')
                                                     <form action="{{ route('amc.destroy', $amc->id) }}" method="POST"
                                                         style="display:inline-block;">
                                                         @csrf
@@ -92,6 +97,7 @@
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
+                                                        @endcan
                                                 </td>
                                             </tr>
                                         @endforeach

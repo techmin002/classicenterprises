@@ -29,6 +29,8 @@ use Modules\Inventory\Entities\SaleReturnItem;
 use Modules\Lead\Entities\CustomerProduct;
 use Modules\Lead\Entities\CustomerAccessory;
 use Modules\Inventory\Entities\TechnicalTool; 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 
 class InventoryController extends Controller
@@ -237,6 +239,7 @@ class InventoryController extends Controller
 
   public function accessories_details($id)
 {
+    abort_if(Gate::denies('show_inventory'), 403);
     $branchId = auth()->user()->role['name'] === 'Super Admin'
         ? session('branch_id')
         : auth()->user()->branch_id;
@@ -417,6 +420,8 @@ class InventoryController extends Controller
 
     public function machineries_details($id)
     {
+    abort_if(Gate::denies('show_inventory'), 403);
+
         $branchId = auth()->user()->role['name'] === 'Super Admin'
             ? session('branch_id')
             : auth()->user()->branch_id;
@@ -566,6 +571,8 @@ class InventoryController extends Controller
 
     public function technicaltools_details($id)
 {
+    abort_if(Gate::denies('show_inventory'), 403);
+
     $branchId = auth()->user()->role['name'] === 'Super Admin'
         ? session('branch_id')
         : auth()->user()->branch_id;

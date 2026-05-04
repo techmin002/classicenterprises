@@ -107,6 +107,7 @@
                                                 <td class="text-center">{{ $exp->paid_amount ?? '0' }}</td>
                                                 <td class="text-center text-danger">{{ $exp->due_amount }}</td>
                                                 <td>
+                                                    @can('edit_installments')
                                                     <a type="button"
                                                         href="{{ route('installation-category-create.create', $exp->id) }}"
                                                         class="btn btn-secondary btn-sm" disabled data-toggle="tooltip"
@@ -116,8 +117,9 @@
                                                     <a data-toggle="modal" data-target="#editCategory{{ $exp->id }}"
                                                         class="btn btn-primary btn-sm"> <i class="fa fa-user-cog"
                                                             title="Change Technician"></i></a>
+                                                            @endcan
                                                     @include('lead::installation-category.assign_action')
-
+                                                    @can('delete_installments')
                                                     <button id="delete" class="btn btn-danger btn-sm" disabled
                                                         onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
                                                         <i class="fa fa-trash"></i>
@@ -127,11 +129,14 @@
                                                             @method('delete')
                                                         </form>
                                                     </button>
+                                                    @endcan
+                                                    @can('show_installments')
 
                                                     <a type="button" href="{{ route('customer.details', $exp->id) }}"
                                                         class="btn btn-info btn-sm" disabled data-toggle="tooltip"
                                                         data-placement="top" title="Details">Detail's
                                                     </a>
+                                                    @endcan
                                                 </td>
                                             </tr>
                                         @endforeach

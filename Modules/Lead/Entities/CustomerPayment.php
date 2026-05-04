@@ -32,12 +32,13 @@ class CustomerPayment extends Model
         'status',
     ];
 
-    protected static function newFactory(): CustomerPaymentFactory
-    {
-        //return CustomerPaymentFactory::new();
-    }
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
+    // In Modules/Lead/Entities/CustomerPayment.php
+public function verification()
+{
+    return $this->hasOne(\Modules\Finance\Entities\PaymentVerification::class, 'customer_payment_id');
+}
 }

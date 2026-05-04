@@ -15,6 +15,7 @@ use Modules\SupportDashboard\Entities\CustomerTicket;
 use Modules\SupportDashboard\Entities\CustomerTicketAccessory;
 use Modules\SupportDashboard\Entities\CustomerTicketPayment;
 use Modules\SupportDashboard\Entities\TicketNote;
+use Illuminate\Support\Facades\Gate;
 
 class RegisterCustomerController extends Controller
 {
@@ -23,11 +24,14 @@ class RegisterCustomerController extends Controller
      */
     public function index()
     {
+        abort_if(Gate::denies('access_customers'), 403);
         return view('supportdashboard::index');
     }
 
     public function dashboard()
     {
+    abort_if(Gate::denies('access_customers'), 403);
+        
         if (auth()->user()->role->name === 'Super Admin') {
             $branchId = session('branch_id');
         } else {
@@ -153,6 +157,7 @@ class RegisterCustomerController extends Controller
 
     public function queue()
     {
+    abort_if(Gate::denies('access_customers'), 403);
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branch_id = session('branch_id');
         } else {
@@ -246,6 +251,8 @@ class RegisterCustomerController extends Controller
 
     public function assign()
     {
+    abort_if(Gate::denies('edit_customers'), 403);
+
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branch_id = session('branch_id');
         } else {
@@ -265,6 +272,7 @@ class RegisterCustomerController extends Controller
 
     public function create($id)
     {
+    abort_if(Gate::denies('create_customers'), 403);
         $customer = CustomerTicket::with(['amc', 'customer'])->findOrFail($id);
         // $customer = Customer::with('lead')->findOrFail($id);
         $customerAccessories = CustomerAccessory::with('accessory')->get();
@@ -275,216 +283,231 @@ class RegisterCustomerController extends Controller
         ));
     }
 
-    public function storeregistercustomer(Request $request, $id): RedirectResponse
-    {
-        // dd($request->all());
-        if (auth()->user()->role['name'] === 'Super Admin') {
-            $branch_id = session('branch_id');
-        } else {
-            $branch_id = auth()->user()->branch_id;
+   public function storeregistercustomer(Request $request, $id): RedirectResponse
+{
+    if (auth()->user()->role['name'] === 'Super Admin') {
+        $branch_id = session('branch_id');
+    } else {
+        $branch_id = auth()->user()->branch_id;
+    }
+
+    DB::beginTransaction();
+
+    try {
+        $ticket = CustomerTicket::findOrFail($id);
+        $username = $request->username;
+        $originalUsername = $username;
+        $counter = 1;
+
+        while (Customer::where('user_name', $username)->exists()) {
+            $username = $originalUsername . $counter;
+            $counter++;
         }
-        // dd($request->all());
-        DB::beginTransaction();
 
-        try {
-            $ticket = CustomerTicket::findOrFail($id);
-            $username = $request->username; // the generated username from frontend
+        // 🧾 Handle Receipts
+        if ($request->hasFile('cash_receipt')) {
+            $cashFile     = $request->file('cash_receipt');
+            $cashFileName = $cashFile->getClientOriginalName();
+            $cashFile->move(public_path('receipts'), $cashFileName);
+        } else {
+            $cashFileName = null;
+        }
 
-            $originalUsername = $username;
-            $counter = 1;
+        if ($request->hasFile('online_receipt')) {
+            $onlineFile     = $request->file('online_receipt');
+            $onlineFileName = $onlineFile->getClientOriginalName();
+            $onlineFile->move(public_path('receipts'), $onlineFileName);
+        } else {
+            $onlineFileName = null;
+        }
 
-            // Check in customers table
-            while (Customer::where('user_name', $username)->exists()) {
-                $username = $originalUsername . $counter;
-                $counter++;
-            }
-            // 🧾 Handle Receipts
-            if ($request->hasFile('cash_receipt')) {
-                $cashFile = $request->file('cash_receipt');
-                $cashFileName = $cashFile->getClientOriginalName(); // keep original name
-                $cashFile->move(public_path('receipts'), $cashFileName); // save to public/receipts
-            } else {
-                $cashFileName = null;
-            }
-            //
+        if ($request->hasFile('cheque_receipt')) {
+            $chequeFile     = $request->file('cheque_receipt');
+            $chequeFileName = $chequeFile->getClientOriginalName();
+            $chequeFile->move(public_path('receipts'), $chequeFileName);
+        } else {
+            $chequeFileName = null;
+        }
 
-            if ($request->hasFile('online_receipt')) {
-                $onlineFile = $request->file('online_receipt');
-                $onlineFileName = $onlineFile->getClientOriginalName();
-                $onlineFile->move(public_path('receipts'), $onlineFileName);
-            } else {
-                $onlineFileName = null;
-            }
+        if ($request->hasFile('product_document')) {
+            $productFile     = $request->file('product_document');
+            $productFileName = $productFile->getClientOriginalName();
+            $productFile->move(public_path('receipts'), $productFileName);
+        } else {
+            $productFileName = null;
+        }
 
-            if ($request->hasFile('cheque_receipt')) {
-                $chequeFile = $request->file('cheque_receipt');
-                $chequeFileName = $chequeFile->getClientOriginalName();
-                $chequeFile->move(public_path('receipts'), $chequeFileName);
-            } else {
-                $chequeFileName = null;
-            }
+        if ($request->hasFile('warranty_card')) {
+            $warrantyFile     = $request->file('warranty_card');
+            $warrantyFileName = $warrantyFile->getClientOriginalName();
+            $warrantyFile->move(public_path('receipts'), $warrantyFileName);
+        } else {
+            $warrantyFileName = null;
+        }
 
-            $paidAmount = ($request->cash_amount ?? 0) + ($request->online_amount ?? 0) + ($request->cheque_amount ?? 0);
-            $grandTotal = $request->grand_total;
-            if ($request->service_type == 'free') {
-                $paidAmount = 0;
-                $dueAmount = 0;
-            } else {
-                $dueAmount = $request->remaining_amount;
-            }
-            if ($request->hasFile('product_document')) {
-                $productFile = $request->file('product_document');
-                $productFileName = $productFile->getClientOriginalName(); // keep original name
-                $productFile->move(public_path('receipts'), $productFileName); // save to public/receipts
-            } else {
-                $productFileName = null;
-            }
-            if ($request->hasFile('warranty_card')) {
-                $warrantyFile = $request->file('warranty_card');
-                $warrantyFileName = $warrantyFile->getClientOriginalName(); // keep original name
-                $warrantyFile->move(public_path('receipts'), $warrantyFileName); // save to public/receipts
-            } else {
-                $warrantyFileName = null;
-            }
+        // ✅ FIXED: Correctly calculate paid, due, total
+        $grandTotal   = (float) ($request->grand_total ?? 0);
+        $serviceCharge = (float) ($request->service_charge ?? 0);
+        $totalAmount  = $grandTotal + $serviceCharge;
 
-            $totalAmount = $grandTotal + $request->service_charge;
+        $paidAmount = (float) ($request->cash_amount   ?? 0)
+                    + (float) ($request->online_amount  ?? 0)
+                    + (float) ($request->cheque_amount  ?? 0);
 
-            // 🧩 Update Customer
-            $ticket->update([
-                'user_name' => $username,
-                'customer_name' => $request->name,
-                'contact' => $request->mobile,
-                'landline' => $request->landline,
-                'address' => $request->address,
-                'email' => $request->email,
-                'install_date' => now(),
-                'branch_id' => $branch_id,
-                'service_type' => $request->service_type,
-                'service_charge' => $request->service_charge ?? 0,
-                'amount' => $request->grand_total,
-                'total_amount' => $totalAmount,
-                'paid_amount' => $paidAmount,
-                'due_amount' => $dueAmount,
+        if ($request->service_type == 'free') {
+            $paidAmount = 0;
+            $dueAmount  = 0;
+        } else {
+            $dueAmount = max(0, $totalAmount - $paidAmount); // ✅ FIXED: was using form field
+        }
 
-                // 🧾 Payment Section
-                'payment_status' => $request->payment_status,
-                'payment_method' => $request->method,
+        // 🧩 Update Ticket
+        $ticket->update([
+            'user_name'      => $username,
+            'customer_name'  => $request->name,
+            'contact'        => $request->mobile,
+            'landline'       => $request->landline,
+            'address'        => $request->address,
+            'email'          => $request->email,
+            'install_date'   => now(),
+            'branch_id'      => $branch_id,
+            'service_type'   => $request->service_type,
+            'service_charge' => $serviceCharge,
+            'amount'         => $grandTotal,
+            'total_amount'   => $totalAmount,
+            'paid_amount'    => $paidAmount,
+            'due_amount'     => $dueAmount,
 
-                // 💰 Cash Payment
-                'cash_amount' => $request->cash_amount,
-                'cash_receipt' => $cashFileName,
+            // 🧾 Payment Section
+            'payment_status' => $request->payment_status,
+            'payment_method' => $request->method,
 
-                // 💳 Online Payment
-                'online_amount' => $request->online_amount,
-                'online_receipt' => $onlineFileName,
+            // 💰 Cash
+            'cash_amount'   => $request->cash_amount,
+            'cash_receipt'  => $cashFileName,
 
-                // 🧾 Cheque Payment
-                'cheque_amount' => $request->cheque_amount,
-                'cheque_number' => $request->cheque_number,
-                'cheque_receipt' => $chequeFileName,
+            // 💳 Online
+            'online_amount'  => $request->online_amount,
+            'online_receipt' => $onlineFileName,
 
-                'message' => $request->remarks,
-                'status' => 'complete',
+            // 🧾 Cheque
+            'cheque_amount'  => $request->cheque_amount,
+            'cheque_number'  => $request->cheque_number,
+            'cheque_receipt' => $chequeFileName,
 
-                'product_document' => $productFileName,
-                'warranty_card' => $warrantyFileName,
-            ]);
+            'message'          => $request->remarks,
+            'status'           => 'complete',
+            'product_document' => $productFileName,
+            'warranty_card'    => $warrantyFileName,
+        ]);
 
-            $amc = AmcCustomer::where('customer_id', $request->customer_id)->first();
-            if ($amc) {
-                $amc->status = 'on';
-                $amc->save();
-            }
+        $amc = AmcCustomer::where('customer_id', $request->customer_id)->first();
+        if ($amc) {
+            $amc->status = 'on';
+            $amc->save();
+        }
 
-            $customer = Customer::with('lead')->where('id', $request->customer_id)->first();
+        $customer = Customer::with('lead')->where('id', $request->customer_id)->first();
+        if ($customer) {
+            $customer->update(['ticket_status' => 'complete']);
 
-            if ($customer) {
-                $customer->update([
-                    'ticket_status' => 'complete',
+            if ($customer->lead) {
+                $customer->lead->update([
+                    'mobile'   => $request->mobile,
+                    'landline' => $request->landline,
+                    'address'  => $request->address,
                 ]);
-
-                if ($customer->lead) {
-                    $customer->lead->update([
-                        'mobile' => $request->mobile,
-                        'landline' => $request->landline,
-                        'address' => $request->address,
-                    ]);
-                }
             }
+        }
 
-            if ($ticket->support_type == 'regular_servicing') {
-                $customers = Customer::with('lead')->where('id', $request->customer_id)->first();
+        if ($ticket->support_type == 'regular_servicing') {
+            $customers = Customer::where('id', $request->customer_id)->first();
+            if ($customers) {
                 $customers->warranty__service_date = now();
                 $customers->save();
             }
+        }
 
-            // 🔁 Store Accessories
-            if ($request->has('accessories_id') && is_array($request->accessories_id)) {
-                foreach ($request->accessories_id as $index => $accessoryId) {
-                    CustomerTicketAccessory::create([
-                        'ticket_id' => $ticket->id,
-                        'created_by' => auth()->id(),
-                        'branch_id' => $branch_id,
-                        'customer_id' => $request->customer_id,
-                        'accessory_id' => $accessoryId,
-                        'accessory_qty' => $request->accessories_qty[$index] ?? 0,
-                        'accessory_price' => $request->accessories_price[$index] ?? 0,
-                        'accessory_total' => $request->accessories_total[$index] ?? 0,
-                    ]);
-                }
-            }
-
-            if ($paidAmount > 0) {
-                CustomerTicketPayment::create([
-                    'ticket_id' => $ticket->id,
-                    'branch_id' => $branch_id,
-                    'customer_id' => $request->customer_id,
-                    'created_by' => $request->converted_by ?? auth()->id(),
-                    'paid_amount' => $paidAmount,
-                    'payment_method' => $request->method,
-
-                    // 💰 Cash Payment
-                    'cash_amount' => $request->cash_amount,
-                    'cash_receipt' => $cashFileName,
-
-                    // 💳 Online Payment
-                    'online_amount' => $request->online_amount,
-                    'online_receipt' => $onlineFileName,
-
-                    // 🧾 Cheque Payment
-                    'cheque_amount' => $request->cheque_amount,
-                    'cheque_number' => $request->cheque_number,
-                    'cheque_receipt' => $chequeFileName,
-                    'status' => 'paid',
-
+        // 🔁 Store Accessories
+        if ($request->has('accessories_id') && is_array($request->accessories_id)) {
+            foreach ($request->accessories_id as $index => $accessoryId) {
+                CustomerTicketAccessory::create([
+                    'ticket_id'       => $ticket->id,
+                    'created_by'      => auth()->id(),
+                    'branch_id'       => $branch_id,
+                    'customer_id'     => $request->customer_id,
+                    'accessory_id'    => $accessoryId,
+                    'accessory_qty'   => $request->accessories_qty[$index]   ?? 0,
+                    'accessory_price' => $request->accessories_price[$index] ?? 0,
+                    'accessory_total' => $request->accessories_total[$index] ?? 0,
                 ]);
             }
-
-            TicketNote::create([
-                'ticket_id' => $ticket->id,
-                'note' => $request->message,
-            ]);
-            // Log::create([
-            //     'perform'   => auth()->user()->name . ' Convert Lead Into Client : '
-            //         . $lead->name . ' at ' . now(),
-            //     'user_id'   => auth()->user()->id,
-            //     'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-            //     'url'       => url()->current(),
-            // ]);
-
-            DB::commit();
-
-            return redirect()->route('registercustomer-ticket.report')
-                ->with('success', 'Ticket    created successfully');
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return back()->withInput()->with('error', 'Error creating installation: ' . $e->getMessage());
         }
+
+        // ✅ Create CustomerTicketPayment with status 'paid'
+        if ($paidAmount > 0) {
+            $ticketPayment = CustomerTicketPayment::create([
+                'ticket_id'      => $ticket->id,
+                'branch_id'      => $branch_id,
+                'customer_id'    => $request->customer_id,
+                'created_by'     => $request->converted_by ?? auth()->id(),
+                'paid_amount'    => $paidAmount,
+                'payment_method' => $request->method,
+
+                // 💰 Cash
+                'cash_amount'   => $request->cash_amount,
+                'cash_receipt'  => $cashFileName,
+
+                // 💳 Online
+                'online_amount'  => $request->online_amount,
+                'online_receipt' => $onlineFileName,
+
+                // 🧾 Cheque
+                'cheque_amount'  => $request->cheque_amount,
+                'cheque_number'  => $request->cheque_number,
+                'cheque_receipt' => $chequeFileName,
+
+                'status' => 'paid', // ✅ initial status
+            ]);
+
+            // ✅ Create PaymentVerification linked to ticket payment
+            \Modules\Finance\Entities\PaymentVerification::create([
+                'customer_ticket_payment_id' => $ticketPayment->id, // ✅ link to ticket payment
+                'customer_id'                => $request->customer_id,
+                'lead_id'                    => $customer->lead_id ?? null,
+                'branch_id'                  => $branch_id,
+                'ticket_id'                  => $ticket->id,
+                'total_amount'               => $totalAmount,
+                'paid_amount'                => $paidAmount,
+                'remaining_amount'           => $dueAmount,
+                'payment_method'             => $request->method ?? null,
+                'payment_date'               => now(),
+                'status'                     => 'on',
+                'message'                    => $request->remarks,
+                'created_by'                 => auth()->id(),
+            ]);
+        }
+
+        TicketNote::create([
+            'ticket_id' => $ticket->id,
+            'note'      => $request->message,
+        ]);
+
+        DB::commit();
+
+        return redirect()->route('registercustomer-ticket.report')
+            ->with('success', 'Ticket created successfully');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withInput()->with('error', 'Error creating installation: ' . $e->getMessage());
     }
+}
 
     public function report()
     {
+    abort_if(Gate::denies('show_customers'), 403);
+
         // dd('hello');
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branch_id = session('branch_id');
@@ -561,6 +584,8 @@ class RegisterCustomerController extends Controller
 
     public function complete()
     {
+    abort_if(Gate::denies('edit_customers'), 403);
+
         // dd('hello');
         if (auth()->user()->role['name'] === 'Super Admin') {
             $branch_id = session('branch_id');
@@ -658,27 +683,7 @@ class RegisterCustomerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
-    {
-        return view('supportdashboard::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
+  
     // Warranty in
     public function regular()
     {

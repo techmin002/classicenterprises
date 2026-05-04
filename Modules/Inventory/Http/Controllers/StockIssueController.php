@@ -22,6 +22,7 @@ use Modules\Inventory\Entities\StockTransferTechnicalTool;
 use Modules\Product\Entities\Accessory;
 use Modules\Product\Entities\Machinery;
 use Modules\Product\Entities\TechnicalTools;
+use Illuminate\Support\Facades\Gate;
 
 
 class StockIssueController extends Controller
@@ -31,6 +32,7 @@ class StockIssueController extends Controller
      */
     public function index()
     {
+    abort_if(Gate::denies('access_requestransfers'), 403);
         $machineries = Machinery::select('id', 'name')->get();
         $branches = Branch::all();
         $accessories = Accessory::select('id', 'name')->get();

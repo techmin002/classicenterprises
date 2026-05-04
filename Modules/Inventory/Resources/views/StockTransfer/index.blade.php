@@ -68,10 +68,13 @@
                     <div class="card shadow-sm border-0">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0">Stock Transfer List</h3>
+                            @can('create_stocktransfers')
                             <div class="ml-auto">
+
                                 <a class="btn btn-light text-primary font-weight-bold" data-toggle="modal" data-target="#createStockTransfer"><i class="fa fa-plus"></i> Create</a>
                                 @include('inventory::StockTransfer.create')
                             </div>
+                            @endcan
                         </div>
                         <div class="card-body bg-light">
                             <table id="example1" class="table table-bordered table-striped table-hover">
@@ -116,12 +119,17 @@
                                         </td>
                                         <td class="text-center align-middle">
                                             <div class="btn-group">
+                                                @can('show_stocktransfers')
                                                <a href="{{ route('stock-transfers.show', $transfer->id) }}" class="btn btn-info btn-sm" title="View Details">
     <i class="fa fa-eye"></i>
 </a>
+                                                @endcan
+                                                @can('edit_stocktransfers')
                                                 @if($transfer->status == 'pending' || $transfer->status == 'in_transit')
                                                 <a href="{{ route('stock-transfers.edit', $transfer->id) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
                                                 @endif
+                                                @endcan
+                                                @can('delete_stocktransfers')
 
                                                 <form action="{{ route('stock-transfers.destroy', $transfer->id) }}" method="POST" class="d-inline">
                                                     @csrf
@@ -130,6 +138,7 @@
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         </td>
                                     </tr>

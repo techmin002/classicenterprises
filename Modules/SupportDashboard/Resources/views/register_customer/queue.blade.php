@@ -77,11 +77,14 @@
                                         <td class="text-center text-muted">{{ $exp->created_time }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-2 mb-2">
+                                                @can('edit_customers')
                                                 <a data-toggle="modal" data-target="#editCategory{{ $exp->id }}"
                                                     style="margin-left: 3px" class="btn btn-primary btn-sm">
                                                     <i class="fa fa-user-plus" title="Move to Assign"></i>
                                                 </a>
+                                                @endcan
                                                 @include('supportdashboard::register_customer.assign_action')
+                                                @can('delete_customers')
                                                 <button id="delete" class="btn btn-danger btn-sm" disabled
                                                     onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
                                                     <i class="fa fa-trash"></i>
@@ -91,13 +94,14 @@
                                                         @method('delete')
                                                     </form>
                                                 </button>
+                                                @endcan
                                             </div>
-
+                                            @can('show_customers')
                                             <a type="button" href="{{ route('ticket_customer.details', $exp->id) }}"
                                                 class="btn btn-info btn-sm" disabled data-toggle="tooltip"
                                                 data-placement="top" title="Details">Detail's
                                             </a>
-
+                                            @endcan
                                         </td>
 
                                     </tr>

@@ -4,134 +4,274 @@ namespace Modules\Finance\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Modules\Finance\Entities\ClosingBalance;
 use Modules\Finance\Entities\DepositeAmount;
-use Modules\Finance\Entities\Payment;
-use Modules\Lead\Entities\CustomerPayment;
+use Modules\Finance\Entities\PaymentVerification;
 
-class DailyCOllectionController extends Controller
+class DailyCollectionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ─────────────────────────────────────────────────────────────
+    //  INDEX — Today's verified collections
+    // ─────────────────────────────────────────────────────────────
     public function index(Request $request)
     {
         $date = $request->input('date') ?? Carbon::today()->toDateString();
-        // dd($date, Payment::first());
 
         $alreadyClosed = ClosingBalance::whereDate('date', Carbon::today())->exists();
-        // Filter by created_at instead of payment_date
-        $collections = Payment::whereDate('created_at', $date)
-            ->where('payment_method', 'cash')
-            ->get();
 
-        $grandTotal = $collections->sum('amount');
+        $collections = $this->getVerifiedByDate($date);
+
+        $grandTotal  = $collections->sum('paid_amount');
+        $cashTotal   = $collections->where('payment_method', 'cash')->sum('paid_amount');
+        $onlineTotal = $grandTotal - $cashTotal;
+
+        // Pending = day closed but cash not yet deposited
         $balance = ClosingBalance::where('status', 'pending')
-            ->whereDate('date', now()->toDateString())
+            ->whereDate('date', Carbon::today()->toDateString())
             ->first();
-        return view('finance::dailycollection.index', compact('collections', 'grandTotal', 'date', 'alreadyClosed', 'balance'));
+
+        return view('finance::dailycollection.index', compact(
+            'collections', 'grandTotal', 'cashTotal', 'onlineTotal',
+            'date', 'alreadyClosed', 'balance'
+        ));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // ─────────────────────────────────────────────────────────────
+    //  CORE QUERY
+    //  Source of truth = payment_verifications
+    //  • payment_date  → when verified (used as the date axis)
+    //  • payment_method, paid_amount, message → all on this table
+    //  • type accessor → 'Ticket' if ticket_id set, else 'Installation'
+    //  We eager-load customer + ticket only for display names.
+    // ─────────────────────────────────────────────────────────────
+    private function getVerifiedByDate(?string $date)
     {
-        return view('finance::create');
+        $query = PaymentVerification::with([
+            'customer',
+            'customerPayment',
+            'customerTicketPayment',
+            'ticket',
+            'branch',
+        ]);
+
+        if ($date) {
+            $query->whereDate('payment_date', $date);
+        }
+
+        return $query->get()->map(function ($v) {
+            // Display name: prefer customer name, fallback to lead name
+            $name = $v->customer_name; // uses existing getCustomerNameAttribute()
+
+            // Override name for ticket type
+            if ($v->type === 'Ticket') {
+                $name = optional($v->ticket)->subject
+                    ? 'Ticket #' . $v->ticket->id . ' — ' . $v->ticket->subject
+                    : 'Ticket #' . ($v->ticket_id ?? 'N/A');
+            }
+
+            // Reference number
+            $reference = $v->type === 'Ticket'
+                ? 'TKT-' . ($v->ticket_id ?? $v->id)
+                : 'INST-' . ($v->customer_payment_id ?? $v->id);
+
+            return (object)[
+                'id'             => $v->id,
+                'name'           => $name,
+                'branch'         => optional($v->branch)->name ?? '—',
+                'payment_method' => $v->payment_method,         // raw lowercase from DB
+                'payment_date'   => $v->payment_date,
+                'amount'         => $v->paid_amount,
+                'total_amount'   => $v->total_amount,
+                'remaining'      => $v->remaining_amount,
+                'message'        => $v->message ?? '—',
+                'type'           => $v->type,                   // uses getTypeAttribute()
+                'reference_no'   => $reference,
+                'status'         => $v->status,
+            ];
+        })
+        ->sortByDesc('payment_date')
+        ->values();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('finance::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('finance::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    // ─────────────────────────────────────────────────────────────
+    //  STORE CLOSING AMOUNT
+    // ─────────────────────────────────────────────────────────────
     public function storeClosingAmount(Request $request)
     {
         $date = Carbon::today()->toDateString();
 
-        // Prevent duplicate for same day
         if (ClosingBalance::where('date', $date)->exists()) {
             return redirect()->back()->with('error', 'Closing amount already stored for today.');
         }
 
+        $collections   = $this->getVerifiedByDate($date);
+        $totalVerified = $collections->sum('amount');
+        $cashTotal     = $collections->where('payment_method', 'cash')->sum('amount');
+
         ClosingBalance::create([
-            'amount' => $request->input('amount'),
-            'date' => $date,
+            'amount'      => $totalVerified,
+            'cash_amount' => $cashTotal,
+            'date'        => $date,
+            'status'      => 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Closing amount saved.');
+        return redirect()->back()->with('success',
+            'Day closed. Total: ₹' . number_format($totalVerified, 2) .
+            '  |  Cash: ₹' . number_format($cashTotal, 2) .
+            '  |  Online: ₹' . number_format($totalVerified - $cashTotal, 2)
+        );
     }
 
+    // ─────────────────────────────────────────────────────────────
+    //  STORE DEPOSIT — only cash can be deposited
+    // ─────────────────────────────────────────────────────────────
     public function depositedHistorystore(Request $request)
     {
-        $image = '';
-        if ($request->hasFile('image')) {
-            // dd($request->all());
-            $image = time() . '.' . $request->image->extension();
-            $request->image->move(public_path('upload/images/deposite-amount'), $image);
-        }
-        // dd('hello');
-        // 1. Store deposit in DepositeAmount table
-        DepositeAmount::create([
-            'amount' => $request->amount,
-            'bank_name' => $request->bank,
-            'image' => $image,
-            'date' => now(),
+        $request->validate([
+            'image'  => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'bank'   => 'required|string',
+            'amount' => 'required|numeric|min:0.01',
         ]);
 
-        // 2. Update today's closing balance status to 'off'
-        ClosingBalance::whereDate('date', today())->update(['status' => 'deposited']);
+        $closing = ClosingBalance::whereDate('date', today())
+            ->where('status', 'pending')
+            ->first();
 
-        return redirect()->back()->with('success', 'Deposit recorded and closing balance updated.');
+        if (!$closing) {
+            return redirect()->back()->with('error',
+                'No pending closing balance for today. Please close the day first.'
+            );
+        }
+
+        $cashAvailable = (float) ($closing->cash_amount ?? 0);
+
+        if ((float) $request->amount > $cashAvailable) {
+            return redirect()->back()->with('error',
+                "Deposit ₹{$request->amount} exceeds available cash ₹{$cashAvailable}. " .
+                "Online payments are already credited to the bank automatically."
+            );
+        }
+
+        $imageName = '';
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('upload/images/deposite-amount'), $imageName);
+        }
+
+        DepositeAmount::create([
+            'amount'    => $request->amount,
+            'bank_name' => $request->bank,
+            'image'     => $imageName,
+            'date'      => now(),
+            'status'    => 'deposited',
+        ]);
+
+        $closing->update(['status' => 'deposited']);
+
+        return redirect()->back()->with('success',
+            '₹' . number_format($request->amount, 2) . ' deposited to ' . $request->bank . ' successfully.'
+        );
     }
+
+    // ─────────────────────────────────────────────────────────────
+    //  DEPOSITED HISTORY
+    // ─────────────────────────────────────────────────────────────
     public function depositedHistory()
     {
         $history = DepositeAmount::orderBy('date', 'desc')->get();
         return view('finance::dailycollection.deposited', compact('history'));
     }
-    public function AllCollection()
+
+    // ─────────────────────────────────────────────────────────────
+    //  ALL COLLECTIONS — filterable report
+    // ─────────────────────────────────────────────────────────────
+    public function AllCollection(Request $request)
     {
-        $allcollections = Payment::where('payment_method', 'cash')
-            ->orderBy('created_at', 'asc') // Ascending order by date
-            ->get();
-        $total = $allcollections->sum('amount');
-        return view('finance::dailycollection.allcollection', compact('allcollections','total'));
+        $filter   = $request->input('filter', 'all'); // all | month | year | custom
+        $month    = $request->input('month');
+        $year     = $request->input('year');
+        $dateFrom = $request->input('date_from');
+        $dateTo   = $request->input('date_to');
+
+        $allcollections = $this->getFilteredVerified($filter, $month, $year, $dateFrom, $dateTo);
+
+        $total       = $allcollections->sum('amount');
+        $cashTotal   = $allcollections->where('payment_method', 'cash')->sum('amount');
+        $onlineTotal = $total - $cashTotal;
+
+        $years = range(Carbon::now()->year, 2020);
+
+        return view('finance::dailycollection.allcollection', compact(
+            'allcollections', 'total', 'cashTotal', 'onlineTotal',
+            'filter', 'month', 'year', 'dateFrom', 'dateTo', 'years'
+        ));
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  FILTERED VERIFIED — same map as getVerifiedByDate
+    //  but with month/year/custom range on payment_date
+    // ─────────────────────────────────────────────────────────────
+    private function getFilteredVerified(
+        string $filter,
+        ?string $month,
+        ?string $year,
+        ?string $dateFrom,
+        ?string $dateTo
+    ) {
+        $query = PaymentVerification::with([
+            'customer',
+            'customerPayment',
+            'customerTicketPayment',
+            'ticket',
+            'branch',
+        ]);
+
+        switch ($filter) {
+            case 'month':
+                $m = $month ?? Carbon::now()->month;
+                $y = $year  ?? Carbon::now()->year;
+                $query->whereMonth('payment_date', $m)->whereYear('payment_date', $y);
+                break;
+            case 'year':
+                $query->whereYear('payment_date', $year ?? Carbon::now()->year);
+                break;
+            case 'custom':
+                if ($dateFrom) $query->whereDate('payment_date', '>=', $dateFrom);
+                if ($dateTo)   $query->whereDate('payment_date', '<=', $dateTo);
+                break;
+            // 'all' — no filter
+        }
+
+        return $query->get()->map(function ($v) {
+            $name = $v->customer_name;
+
+            if ($v->type === 'Ticket') {
+                $name = optional($v->ticket)->subject
+                    ? 'Ticket #' . $v->ticket->id . ' — ' . $v->ticket->subject
+                    : 'Ticket #' . ($v->ticket_id ?? 'N/A');
+            }
+
+            $reference = $v->type === 'Ticket'
+                ? 'TKT-' . ($v->ticket_id ?? $v->id)
+                : 'INST-' . ($v->customer_payment_id ?? $v->id);
+
+            return (object)[
+                'id'             => $v->id,
+                'name'           => $name,
+                'branch'         => optional($v->branch)->name ?? '—',
+                'payment_method' => $v->payment_method,
+                'payment_date'   => $v->payment_date,
+                'amount'         => $v->paid_amount,
+                'total_amount'   => $v->total_amount,
+                'remaining'      => $v->remaining_amount,
+                'message'        => $v->message ?? '—',
+                'type'           => $v->type,
+                'reference_no'   => $reference,
+                'status'         => $v->status,
+            ];
+        })
+        ->sortByDesc('payment_date')
+        ->values();
     }
 }

@@ -36,11 +36,13 @@
                     <!-- /.card -->
 
                     <div class="card">
+                        @can('create_suppliers')
                         <div class="card-header">
 
                             <h3 class="card-title float-right"><a class="btn btn-info text-white" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus"></i> Create</a> </h3>
                             @include('inventory::Suppliers.create')
                         </div>
+                        @endcan
                         <!-- /.card-header -->
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
@@ -67,18 +69,24 @@
                                         <td class="text-center">
                                             {{ $supplier->PAN  }} 
                                         </td>
+                                        @can('show_suppliers')
                                         <td class="text-center">
                                             <a href="{{ route('suppliers.show',$supplier->id) }}" class="btn btn-info btn-sm">
                                                 <i class="fa fa-eye"></i> View Details
                                             </a>
                                         </td>
+                                        @endcan
                                         <td class="text-center">
+                                            @can('edit_suppliers')
                                             <a href="{{ route('suppliers_edit', $supplier->id) }}" class="btn btn-warning btn-sm" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+                                            @endcan
+                                                @can('delete_suppliers')
                                             <form action="{{ route('suppliers_destroy', $supplier->id) }}" method="POST" style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure you want to delete this supplier?')"><i class="fa fa-trash"></i></button>
                                             </form>
+                                            @endcan
                                         </td>
                                     </tr>
                                     @endforeach

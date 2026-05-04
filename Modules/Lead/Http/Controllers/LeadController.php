@@ -22,6 +22,7 @@ use Modules\Lead\Entities\Skim;
 use Modules\Product\Entities\Accessory;
 use Modules\Product\Entities\Machinery;
 use Modules\Product\Entities\Product;
+use Illuminate\Support\Facades\Gate;
 
 class LeadController extends Controller
 {
@@ -314,6 +315,9 @@ class LeadController extends Controller
 
     public function hotLeads(Request $request)
     {
+        
+    abort_if(Gate::denies('access_leads'), 403);
+        
         $branches = Branch::all();
 
         // Start query (no get() yet)
@@ -361,6 +365,8 @@ class LeadController extends Controller
 
     public function warmLeads(Request $request)
     {
+    abort_if(Gate::denies('access_leads'), 403);
+
         // dd('hello');
         $branches = Branch::all();
 
@@ -408,6 +414,8 @@ class LeadController extends Controller
     }
     public function coldLeads(Request $request)
     {
+    abort_if(Gate::denies('access_leads'), 403);
+
         $branches = Branch::all();
 
         // Start query (no get() yet)
@@ -672,6 +680,7 @@ class LeadController extends Controller
     // }
     public function retailler()
 {
+    abort_if(Gate::denies('access_salescategory'), 403);
     $branches = Branch::all();
 
     if (auth()->user()->role['name'] === 'Super Admin') {
@@ -710,6 +719,8 @@ class LeadController extends Controller
     // }
     public function wholeseller()
 {
+    abort_if(Gate::denies('access_salescategory'), 403);
+
     $branches = Branch::all();
 
     if (auth()->user()->role['name'] === 'Super Admin') {

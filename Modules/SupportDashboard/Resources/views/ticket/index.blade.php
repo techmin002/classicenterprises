@@ -80,8 +80,9 @@
                                                     {{ $customer->products->sum('product_price') }}
                                                 </td>
                                                 <td>
+                                                    @can('create_tickets')
                                                     <a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal{{ $customer->id }}">Ticket Create</a>
-
+                                                        @endcan
                                                     <div class="modal fade" id="exampleModal{{ $customer->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                         <div class="modal-dialog modal-lg" role="document">
                                                             <div class="modal-content border-0 shadow">
@@ -217,8 +218,10 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @can('show_tickets')
                                                     <a type="button" href="{{ route('customer.details', $customer->id) }}" class="btn btn-info btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Details">Detail's
                                                     </a>
+                                                        @endcan
                                                 </td>
                                             </tr>
                                             @endforeach

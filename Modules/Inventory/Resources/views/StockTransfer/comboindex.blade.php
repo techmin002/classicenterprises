@@ -76,12 +76,13 @@
                                 <div class="d-flex justify-content-between mb-3">
 
                                     <h4>Stock Issue Requests</h4>
-
+                                    @can('create_requestransfers')
                                     <button class="btn btn-primary" data-toggle="modal" data-target="#requestModal">
 
                                         <i class="fa fa-plus"></i> New Request
 
                                     </button>
+                                    @endcan
 
                                 </div>
 
@@ -118,13 +119,14 @@
                                                 <td>{{ $issue->branch->name ?? 'N/A' }}</td>
 
                                                 <td>
-
+                                                    @can('view_requestransfers')
                                                     <button class="btn btn-info btn-sm" data-toggle="modal"
                                                         data-target="#viewModal{{ $issue->id }}">
 
                                                         <i class="fa fa-eye"></i>
 
                                                     </button>
+                                                    @endcan
 
                                                     @include('inventory::stockissue.stock_issue_details')
 
@@ -246,12 +248,13 @@
                                     <div class="d-flex justify-content-between mb-3">
 
                                         <h4>Direct Stock Transfer</h4>
-
+                                        @can('create_stocktransfers')
                                         <a class="btn btn-primary" data-toggle="modal" data-target="#createStockTransfer">
 
                                             <i class="fa fa-plus"></i> Create Transfer
 
                                         </a>
+                                        @endcan
 
                                     </div>
 
@@ -320,11 +323,11 @@
 
 
                                                     <td>
-
+                                                        @can('view_stocktransfers')
                                                       <a href="{{ route('stock-transfers.show', $transfer->id) }}" class="btn btn-info btn-sm" title="View Details">
     <i class="fa fa-eye"></i>
 </a>
-
+                                                        @endcan
                                                     </td>
 
                                                 </tr>

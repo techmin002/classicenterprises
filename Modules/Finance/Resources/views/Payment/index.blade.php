@@ -15,7 +15,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1> Payment Reports</h1>
+                        <h1> Payment Reports of All Employees</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -70,31 +70,20 @@
 
                                                 <td>
                                                     <div class="row">
-                                                        <div class="col-md-12">
-                                                            <a type="button"
-                                                                href="{{ route('customer.payment.details', $customer->id) }}"
-                                                                class="btn btn-primary btn-sm w-75" disabled
-                                                                data-toggle="tooltip" data-placement="top"
-                                                                title="Convert lead into Client">
-                                                                Payment Detail's
-                                                            </a>
-                                                        </div>
+                                                       
                                                         <div class="col-md-12 mt-2 d-flex">
-                                                            <a type="button"
-                                                                href="{{ route('customer.details', $customer->id) }}"
-                                                                class="btn btn-info btn-sm w-50 " disabled
-                                                                data-toggle="tooltip" data-placement="top"
-                                                                title="Convert lead into Client">
-                                                                View Detail's
-                                                            </a>
-                                                            @if ($customer->due_amount > 0)
+                                                           <a href="{{ route('finance.show', $customer->id) }}"
+   class="btn btn-info btn-sm">
+    <i class="fas fa-eye mr-1"></i> View Details
+</a>
+                                                            {{-- @if ($customer->due_amount > 0)
                                                                 <a type="button" data-toggle="modal"
                                                                     data-target="#pay{{ $customer->id }}"
                                                                     class="btn btn-success btn-sm" style="margin-left: 4%">
                                                                     Pay
                                                                 </a>
-                                                                @include('finance::payment.pay')
-                                                            @endif
+                                                                @include('finance::Payment.pay')
+                                                            @endif --}}
                                                         </div>
                                                     </div>
                                                 </td>

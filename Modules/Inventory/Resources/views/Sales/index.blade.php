@@ -36,10 +36,12 @@
                         <div class="card shadow">
                             <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                                 <h3 class="card-title mb-0">Sales List</h3>
+                                @can('create_sales')
                                 <div class="ml-auto">
                                     <a class="btn btn-light text-info font-weight-bold" data-toggle="modal"
                                         data-target="#salesModal"><i class="fa fa-plus"></i> Create</a>
                                 </div>
+                                @endcan
                                 @include('inventory::Sales.create')
                             </div>
                             <div class="card-body">
@@ -86,18 +88,23 @@
                                                     {{ $sale->created_at->format('d M, Y') }}
                                                 </td>
                                                 <td class="text-center">
-
+                                                    @can('edit_sales')
                                                     <a href="{{ route('sales.edit', $sale->id) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
+                                                    @endcan
+                                                    @can('delete_sales')
                                                     <form action="{{ route('sales.destroy', $sale->id) }}" method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></button>
                                                     </form>
+                                                    @endcan
                                                 </td>
+                                                @can('show_sales')
                                                 <td class="text-center">
                                                     <a href="{{ route('sales.show', $sale->id) }}" class="btn btn-sm btn-info" data-toggle="tooltip" title="View Details">
                                                     <i class="fa fa-eye"></i></a>
                                                 </td>
+                                                @endcan
                                             </tr>
                                         @endforeach
                                     </tbody>

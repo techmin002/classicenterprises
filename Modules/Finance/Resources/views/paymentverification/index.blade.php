@@ -46,38 +46,80 @@
                                         <th class="text-center">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @forelse($data as $value)
-                                        <tr>
-                                            <td class="text-center">{{ $loop->iteration }}</td>
-                                            <td class="text-center">{{ $value->customer_name ?? '-' }}</td>
-                                            <td class="text-center">{{ $value->branch->name ?? '-' }}</td>
-                                            <td class="text-center">{{ $value->lead->name ?? '-' }}</td>
-                                            <td class="text-center">{{ $value->payment_method }}</td>
-                                            <td class="text-center">{{ $value->created_at }}</td>
-                                            <td class="text-center">{{ $value->message }}</td>
-                                            <td class="text-center">₹{{ $value->total_amount }}</td>
-                                            <td class="text-center">₹{{ $value->paid_amount }}</td>
-                                            <td class="text-center">₹{{ $value->remaining_amount }}</td>
-                                            <td class="text-center">
-                                                @if ($value->status === 'on')
-                                                    <button type="button" class="btn btn-primary btn-sm text-white"
-                                                        data-toggle="modal" data-target="#verifyModal{{ $value->id }}">
-                                                        Verify Amount
-                                                    </button>
-                                                @else
-                                                    <button type="button" class="btn btn-success btn-sm text-white">
-                                                        Verified
-                                                    </button>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="11" class="text-center">No collections today.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
+                              <tbody>
+@forelse($data as $value)
+    <tr>
+        <td class="text-center">{{ $loop->iteration }}</td>
+
+        {{-- Customer --}}
+        <td class="text-center">
+            {{ $value->customer_name }}
+        </td>
+
+        {{-- Branch --}}
+        <td class="text-center">
+            {{ optional($value->branch)->name ?? '-' }}
+        </td>
+
+        {{-- Lead --}}
+        <td class="text-center">
+            {{ $value->lead_name }}
+        </td>
+
+        {{-- Method --}}
+        <td class="text-center">
+           <span class="badge badge-info">
+        {{ ucfirst($value->method ?? 'N/A') }}
+    </span>
+        </td>
+
+        {{-- Date --}}
+        <td class="text-center">
+            {{ $value->created_at ? $value->created_at->format('d M Y, h:i A') : '-' }}
+        </td>
+
+        {{-- Message --}}
+        <td class="text-center">
+            {{ $value->message ?? '-' }}
+        </td>
+
+        {{-- Amounts --}}
+        <td class="text-center text-primary font-weight-bold">
+            ₹{{ number_format($value->total_amount ?? 0) }}
+        </td>
+
+        <td class="text-center text-success font-weight-bold">
+            ₹{{ number_format($value->paid_amount ?? 0) }}
+        </td>
+
+        <td class="text-center text-danger font-weight-bold">
+            ₹{{ number_format($value->remaining_amount ?? 0) }}
+        </td>
+
+        {{-- Status --}}
+        <td class="text-center">
+            @if ($value->status === 'on')
+                <button type="button"
+                        class="btn btn-primary btn-sm"
+                        data-toggle="modal"
+                        data-target="#verifyModal{{ $value->id }}">
+                    Verify Amount
+                </button>
+            @else
+                <span class="badge badge-success p-2">
+                    Verified
+                </span>
+            @endif
+        </td>
+    </tr>
+@empty
+    <tr>
+        <td colspan="11" class="text-center text-muted">
+            No collections available.
+        </td>
+    </tr>
+@endforelse
+</tbody>
                             </table>
                         </div>
                     </div>

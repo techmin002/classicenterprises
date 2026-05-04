@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\AMC\Entities\Amc;
 use Modules\AMC\Entities\AmcAccessory;
 use Modules\Product\Entities\Accessory;
+use Illuminate\Support\Facades\Gate;
 
 class AMCController extends Controller
 {
@@ -19,6 +20,8 @@ class AMCController extends Controller
      */
     public function index()
     {
+    abort_if(Gate::denies('access_customers'), 403);
+        
         $amcs = Amc::all();
         return view('amc::AmcList.index', compact('amcs'));
     }

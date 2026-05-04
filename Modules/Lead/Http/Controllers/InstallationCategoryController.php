@@ -20,6 +20,7 @@ use Modules\Lead\Entities\Skim;
 use Modules\Inventory\Entities\Inventory;
 use Modules\Inventory\Entities\StaffItemAssignment;
 use Modules\Inventory\Entities\StaffItemReturn;
+use Illuminate\Support\Facades\Gate;
 
 class InstallationCategoryController extends Controller
 {
@@ -31,52 +32,11 @@ class InstallationCategoryController extends Controller
 
     const STATUS_EMI = 'emi_process';
 
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index(Request $request, $installation_category)
-    // {
-    //     if (auth()->user()->role['name'] == 'Super Admin') {
-    //         $users = User::where('branch_id', session('branch_id'))->get();
-    //     } else {
-    //         $users = User::where('branch_id', auth()->user()->branch_id)->get();
-    //     }
-
-    //     $leads = Lead::all();
-
-    //     // Start query
-    //     $customers = $this->getCustomersByStatus(self::STATUS_QUEUE, $installation_category);
-
-    //     // ✅ Predefined filters
-    //     if ($request->filter == '7days') {
-    //         $customers->where('updated_at', '>=', now()->subDays(7));
-    //     } elseif ($request->filter == '15days') {
-    //         $customers->where('updated_at', '>=', now()->subDays(15));
-    //     } elseif ($request->filter == '1month') {
-    //         $customers->where('updated_at', '>=', now()->subMonth());
-    //     }
-
-    //     // ✅ Custom date filter
-    //     if ($request->filled(['start_date', 'end_date'])) {
-    //         $start = $request->start_date.' 00:00:00';
-    //         $end = $request->end_date.' 23:59:59';
-    //         $customers->whereBetween('updated_at', [$start, $end]);
-    //     }
-
-    //     // ✅ Order by latest and get collection
-    //     $customers = $customers->orderBy('updated_at', 'desc')->get();
-
-    //     // ✅ Add formatted time
-    //     foreach ($customers as $customer) {
-    //         $customer->formatted_time = $this->formatTimeDifference($customer->updated_at);
-    //     }
-
-    //     $installation_category = ucfirst($installation_category);
-
-    //     return view('lead::installation-category.queue', compact('customers', 'installation_category', 'leads', 'users'));
-    // }
+   
     public function index(Request $request, $installation_category)
 {
+        abort_if(Gate::denies('access_installments'), 403);
+
     $user = auth()->user();
     $branchId = $user->hasRole('Super Admin') ? session('branch_id') : $user->branch_id;
 
@@ -225,15 +185,7 @@ class InstallationCategoryController extends Controller
         return $parts ? implode(' ', $parts).' ago' : 'Just now';
     }
 
-    /**
-     * Display completed installations
-     */
-    // public function installationCategoryComplete($installation_category)
-    // {
-    //     $customers = $this->getCustomersByStatus(self::STATUS_COMPLETE, $installation_category);
-    //     $installation_category = ucfirst($installation_category);
-    //     return view('lead::installation-category.complete', compact('customers', 'installation_category'));
-    // }
+  
     public function installationCategoryComplete(Request $request, $installation_category)
     {
         // Start query
@@ -273,184 +225,205 @@ class InstallationCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        // dd("STORE");
+   public function store(Request $request)
+{
+    DB::beginTransaction();
 
-        DB::beginTransaction();
+    try {
+        $lead = Lead::findOrFail($request->lead_id);
+        $customer = Customer::firstOrCreate(
+            ['lead_id' => $request->lead_id],
+            ['branch_id' => $lead->branch_id, 'created_by' => auth()->id()]
+        );
 
-        try {
-            $lead = Lead::findOrFail($request->lead_id);
-            $customer = Customer::firstOrCreate(
-                ['lead_id' => $request->lead_id],
-                ['branch_id' => $lead->branch_id, 'created_by' => auth()->id()]
-            );
-            // dd($lead);
+        // Handle Products
+        $this->processProducts($request, $customer, $lead);
 
-            // Handle Products
-            $this->processProducts($request, $customer, $lead);
+        // Handle Accessories
+        $this->processAccessories($request, $customer, $lead);
 
-            // Handle Accessories
-            $this->processAccessories($request, $customer, $lead);
+        // Update Lead
+        $lead->update($request->only(['name', 'mobile', 'email', 'address']) + ['status' => 'convert']);
 
-            // Update Lead
-            $lead->update($request->only(['name', 'mobile', 'email', 'address']) + ['status' => 'convert']);
+        // Process Payment and determine status
+        $status = $this->processPaymentAndDetermineStatus($request, $customer, $lead);
 
-            // Process Payment and determine status
-            $status = $this->processPaymentAndDetermineStatus($request, $customer, $lead);
+        $isGifted = $request->is_gifted == 1;
 
-            $isGifted = $request->is_gifted == 1;
+        $username = $request->username;
+        $originalUsername = $username;
+        $counter = 1;
 
-            $username = $request->username; // the generated username from frontend
-
-            $originalUsername = $username;
-            $counter = 1;
-
-            // Check in customers table
-            while (Customer::where('user_name', $username)->exists()) {
-                // dd('HiI');
-                $username = $originalUsername.$counter;
-                $counter++;
-            }
-            // 🧾 Handle Receipts
-            if ($request->hasFile('cash_receipt')) {
-                $cashFile = $request->file('cash_receipt');
-                $cashFileName = $cashFile->getClientOriginalName(); // keep original name
-                $cashFile->move(public_path('receipts'), $cashFileName); // save to public/receipts
-            } else {
-                $cashFileName = $customer->cash_receipt;
-            }
-
-            if ($request->hasFile('online_receipt')) {
-                $onlineFile = $request->file('online_receipt');
-                $onlineFileName = $onlineFile->getClientOriginalName();
-                $onlineFile->move(public_path('receipts'), $onlineFileName);
-            } else {
-                $onlineFileName = $customer->online_receipt;
-            }
-
-            if ($request->hasFile('cheque_receipt')) {
-                $chequeFile = $request->file('cheque_receipt');
-                $chequeFileName = $chequeFile->getClientOriginalName();
-                $chequeFile->move(public_path('receipts'), $chequeFileName);
-            } else {
-                $chequeFileName = $customer->cheque_receipt;
-            }
-
-            $paidAmount = ($request->cash_amount ?? 0) + ($request->online_amount ?? 0) + ($request->cheque_amount ?? 0);
-            $grandTotal = $request->grand_total;
-            if ($request->is_gifted) {
-                $paidAmount = 0;
-                $dueAmount = 0;
-                $status = 'installation_complete';
-            } else {
-                $dueAmount = $request->remaining_amount;
-                $status = 'installation_report';
-            }
-
-            if ($request->hasFile('product_document')) {
-                $productFile = $request->file('product_document');
-                $productFileName = $productFile->getClientOriginalName(); // keep original name
-                $productFile->move(public_path('receipts'), $productFileName); // save to public/receipts
-            } else {
-                $productFileName = $customer->product_document;
-            }
-            if ($request->hasFile('warranty_card')) {
-                $warrantyFile = $request->file('warranty_card');
-                $warrantyFileName = $warrantyFile->getClientOriginalName(); // keep original name
-                $warrantyFile->move(public_path('receipts'), $warrantyFileName); // save to public/receipts
-            } else {
-                $warrantyFileName = $customer->warranty_card;
-            }
-
-            $totalAmount = $grandTotal - $request->exchange_amount;
-            // 🧩 Update Customer
-            $customer->update([
-                'user_name' => $username,
-                'name' => $request->name,
-                'mobile' => $request->mobile,
-                'landline' => $request->landline,
-                'address' => $request->address,
-                'email' => $request->email,
-                'install_date' => $request->install_date,
-                'branch_id' => $lead->branch_id,
-                'total_amount' => $totalAmount,
-                'paid_amount' => $paidAmount,
-                'due_amount' => $dueAmount,
-                'customer_type' => 'indoor',
-                'message' => $request->remarks,
-                'ticket_status' => 'on',
-                'status' => $status,
-                'gifted' => $request->is_gifted,
-                'warranty_in' => $request->warranty_from,
-                'warranty_out' => $request->warranty_to,
-                'warranty_lifetime' => $request->has('lifetime') ? 1 : 0,
-                'warranty__service_date' => $request->install_date,
-
-                'product_document' => $productFileName,
-                'warranty_card' => $warrantyFileName,
-
-                // 🧾 Payment Section
-                'payment_status' => $request->payment_status,
-                'payment_method' => $request->method,
-
-                // 💰 Cash Payment
-                'cash_amount' => $request->cash_amount,
-                'cash_receipt' => $cashFileName,
-
-                // 💳 Online Payment
-                'online_amount' => $request->online_amount,
-                'online_receipt' => $onlineFileName,
-
-                // 🧾 Cheque Payment
-                'cheque_amount' => $request->cheque_amount,
-                'cheque_number' => $request->cheque_number,
-                'cheque_receipt' => $chequeFileName,
-            ]);
-
-            if ($paidAmount > 0) {
-                CustomerPayment::create([
-                    'lead_id' => $customer->lead_id,
-                    'branch_id' => $customer->branch_id,
-                    'customer_id' => $customer->id,
-                    'created_by' => $customer->converted_by ?? auth()->id(),
-                    'paid_amount' => $customer->paid_amount ?? 0,
-                    'payment_method' => $customer->payment_method ?? null,
-                    'cash_amount' => $customer->cash_amount ?? 0,
-                    'cash_receipt' => $customer->cash_receipt ?? null,
-                    'online_amount' => $customer->online_amount ?? 0,
-                    'online_receipt' => $customer->online_receipt ?? null,
-                    'cheque_amount' => $customer->cheque_amount ?? 0,
-                    'cheque_number' => $customer->cheque_number ?? null,
-                    'cheque_receipt' => $customer->cheque_receipt ?? null,
-                    'status' => 'paid',
-                ]);
-            }
-
-            CustomerNote::create([
-                'lead_id' => $customer->lead_id,
-                'customer_id' => $customer->id,
-                'note' => $request->remarks,
-            ]);
-
-            Log::create([
-                'perform' => auth()->user()->name.' Convert Lead Into Client : '
-                    .$lead->name.' at '.now(),
-                'user_id' => auth()->user()->id,
-                'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
-                'url' => url()->current(),
-            ]);
-
-            DB::commit();
-
-            return redirect()->route('installation-category.reports', ['installation_category' => $lead->installation_category])
-                ->with('success', 'Installation created successfully');
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return back()->withInput()->with('error', 'Error creating installation: '.$e->getMessage());
+        while (Customer::where('user_name', $username)->exists()) {
+            $username = $originalUsername . $counter;
+            $counter++;
         }
+
+        // 🧾 Handle Receipts
+        if ($request->hasFile('cash_receipt')) {
+            $cashFile = $request->file('cash_receipt');
+            $cashFileName = $cashFile->getClientOriginalName();
+            $cashFile->move(public_path('receipts'), $cashFileName);
+        } else {
+            $cashFileName = $customer->cash_receipt;
+        }
+
+        if ($request->hasFile('online_receipt')) {
+            $onlineFile = $request->file('online_receipt');
+            $onlineFileName = $onlineFile->getClientOriginalName();
+            $onlineFile->move(public_path('receipts'), $onlineFileName);
+        } else {
+            $onlineFileName = $customer->online_receipt;
+        }
+
+        if ($request->hasFile('cheque_receipt')) {
+            $chequeFile = $request->file('cheque_receipt');
+            $chequeFileName = $chequeFile->getClientOriginalName();
+            $chequeFile->move(public_path('receipts'), $chequeFileName);
+        } else {
+            $chequeFileName = $customer->cheque_receipt;
+        }
+
+        if ($request->hasFile('product_document')) {
+            $productFile = $request->file('product_document');
+            $productFileName = $productFile->getClientOriginalName();
+            $productFile->move(public_path('receipts'), $productFileName);
+        } else {
+            $productFileName = $customer->product_document;
+        }
+
+        if ($request->hasFile('warranty_card')) {
+            $warrantyFile = $request->file('warranty_card');
+            $warrantyFileName = $warrantyFile->getClientOriginalName();
+            $warrantyFile->move(public_path('receipts'), $warrantyFileName);
+        } else {
+            $warrantyFileName = $customer->warranty_card;
+        }
+
+        // ✅ FIXED: Correctly calculate paid, due, and total amounts
+        $grandTotal   = (float) $request->grand_total;
+        $exchangeAmount = (float) ($request->exchange_amount ?? 0);
+        $netTotal     = $grandTotal - $exchangeAmount; // amount customer actually owes
+
+        $paidAmount = (float) ($request->cash_amount   ?? 0)
+                    + (float) ($request->online_amount  ?? 0)
+                    + (float) ($request->cheque_amount  ?? 0);
+
+        if ($request->is_gifted == 1) {
+            $paidAmount = 0;
+            $dueAmount  = 0;
+            $status     = 'installation_complete';
+        } else {
+            $dueAmount = max(0, $netTotal - $paidAmount); // ✅ 701 - 101 = 600
+            $status    = 'installation_report';
+        }
+
+        $totalAmount = $netTotal; // what customer owes after exchange
+
+        // 🧩 Update Customer
+        $customer->update([
+            'user_name'             => $username,
+            'name'                  => $request->name,
+            'mobile'                => $request->mobile,
+            'landline'              => $request->landline,
+            'address'               => $request->address,
+            'email'                 => $request->email,
+            'install_date'          => $request->install_date,
+            'branch_id'             => $lead->branch_id,
+            'total_amount'          => $totalAmount,
+            'paid_amount'           => $paidAmount,
+            'due_amount'            => $dueAmount,
+            'customer_type'         => 'indoor',
+            'message'               => $request->remarks,
+            'ticket_status'         => 'on',
+            'status'                => $status,
+            'gifted'                => $request->is_gifted,
+            'warranty_in'           => $request->warranty_from,
+            'warranty_out'          => $request->warranty_to,
+            'warranty_lifetime'     => $request->has('lifetime') ? 1 : 0,
+            'warranty__service_date' => $request->install_date,
+            'product_document'      => $productFileName,
+            'warranty_card'         => $warrantyFileName,
+
+            // 🧾 Payment Section
+            'payment_status'        => $request->payment_status,
+            'payment_method'        => $request->method,
+
+            // 💰 Cash
+            'cash_amount'           => $request->cash_amount,
+            'cash_receipt'          => $cashFileName,
+
+            // 💳 Online
+            'online_amount'         => $request->online_amount,
+            'online_receipt'        => $onlineFileName,
+
+            // 🧾 Cheque
+            'cheque_amount'         => $request->cheque_amount,
+            'cheque_number'         => $request->cheque_number,
+            'cheque_receipt'        => $chequeFileName,
+        ]);
+
+        // ✅ Create CustomerPayment record (only if something was paid)
+      // ✅ Create CustomerPayment record (only if something was paid)
+if ($paidAmount > 0) {
+    $customerPayment = CustomerPayment::create([
+        'lead_id'        => $customer->lead_id,
+        'branch_id'      => $customer->branch_id,
+        'customer_id'    => $customer->id,
+        'created_by'     => $customer->converted_by ?? auth()->id(),
+        'paid_amount'    => $paidAmount,
+        'payment_method' => $request->method ?? null,
+        'cash_amount'    => $request->cash_amount   ?? 0,
+        'cash_receipt'   => $cashFileName           ?? null,
+        'online_amount'  => $request->online_amount ?? 0,
+        'online_receipt' => $onlineFileName         ?? null,
+        'cheque_amount'  => $request->cheque_amount ?? 0,
+        'cheque_number'  => $request->cheque_number ?? null,
+        'cheque_receipt' => $chequeFileName         ?? null,
+        'status'         => 'paid',
+    ]);
+
+    // ✅ FIXED: Create PaymentVerification WITH customer_payment_id
+    \Modules\Finance\Entities\PaymentVerification::create([
+        'customer_payment_id' => $customerPayment->id,  // ← THIS IS THE KEY FIX
+        'customer_id'         => $customer->id,
+        'lead_id'             => $customer->lead_id,
+        'branch_id'           => $customer->branch_id,
+        'total_amount'        => $totalAmount,
+        'paid_amount'         => $paidAmount,
+        'remaining_amount'    => $dueAmount,
+        'payment_method'      => $request->method ?? null,
+        'payment_date'        => now(),
+        'status'              => 'on',  // 'on' means pending verification
+        'message'             => $request->remarks,
+        'receipt'             => $cashFileName ?? $onlineFileName ?? $chequeFileName ?? null,
+        'created_by'          => auth()->id(),
+    ]);
+}
+
+        CustomerNote::create([
+            'lead_id'     => $customer->lead_id,
+            'customer_id' => $customer->id,
+            'note'        => $request->remarks,
+        ]);
+
+        Log::create([
+            'perform'   => auth()->user()->name . ' Convert Lead Into Client : ' . $lead->name . ' at ' . now(),
+            'user_id'   => auth()->user()->id,
+            'branch_id' => session('branch_id') ?? auth()->user()->branch_id,
+            'url'       => url()->current(),
+        ]);
+
+        DB::commit();
+
+        return redirect()->route('installation-category.reports', ['installation_category' => $lead->installation_category])
+            ->with('success', 'Installation created successfully');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withInput()->with('error', 'Error creating installation: ' . $e->getMessage());
     }
+}
 
     /**
      * Process products for installation

@@ -21,6 +21,7 @@ use Modules\Product\Entities\TechnicalTools;
 use Modules\Product\Entities\Accessory;
 use Modules\Product\Entities\Machinery;
 use Modules\Inventory\Entities\StockIssue;
+use Illuminate\Support\Facades\Gate;
 
 
 class StockController extends Controller
@@ -69,6 +70,7 @@ class StockController extends Controller
     // }
   public function index()
 {
+    abort_if(Gate::denies('access_stocktransfers'), 403);
     // ================= STOCK TRANSFER =================
     if (auth()->user()->role['name'] === 'Super Admin') {
         $branchId = session('branch_id');
@@ -274,6 +276,8 @@ class StockController extends Controller
     }
 public function show($id)
 {
+    abort_if(Gate::denies('show_stocktransfers'), 403);
+
     $transfer = StockTransfer::with([
         'accessories',
         'machineries',
@@ -743,6 +747,8 @@ public function show($id)
 
     public function edit($id)
     {
+    abort_if(Gate::denies('edit_stocktransfers'), 403);
+
         $branches = Branch::all();
         $accessories = Accessories::all();
         $machineries = Machineries::all();

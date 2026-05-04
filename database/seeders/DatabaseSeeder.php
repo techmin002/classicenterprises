@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,13 +12,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        \App\Models\User::factory()->create([
-           'name' => 'Super Admin',
-            'email' => 'super@super.com',
-            'access_type' => 'super_admin',
-            'password' => Hash::make('P@ssword002'), // Hashing the password
+        // Call Permission Seeder
+        $this->call([
+            PermissionSeeder::class,
         ]);
+
+        // Create Super Admin User
+        // \App\Models\User::factory()->create([
+        //     'name' => 'Super Admin',
+        //     'email' => 'super@super.com',
+        //     'access_type' => 'super_admin',
+        //     'password' => Hash::make('P@ssword002'),
+        // ]);
     }
 }

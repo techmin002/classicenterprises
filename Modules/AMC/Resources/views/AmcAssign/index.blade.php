@@ -52,8 +52,10 @@
                                     <div class="card-header">
                                         <div class="btn-container d-flex justify-content-between">
                                             <h3><strong>Register Customer</strong></h3>
+                                            @can('create_customers')
                                             <a href="{{ route('registercustomer.assign') }}"
                                                 class="btn btn-info text-white"><i class="fa fa-plus"></i> Assign AMC</a>
+                                            @endcan
                                         </div>
                                     </div>
                                     <div class="card-body">
@@ -82,8 +84,10 @@
                                                         <td class="text-center">Rs.{{ $customer->amount ?? '0' }}</td>
                                                         <td class="text-center">{{ $customer->date }}</td>
                                                         <td class="text-center">
+                                                            @can('view_customers')
                                                             <a href="{{ route('amc_customer.details', $customer->id) }}"
                                                                 class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>
+                                                            @endcan
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -145,9 +149,11 @@
                                                         <td class="text-center">Rs.{{ $customer->amount ?? '0' }}</td>
                                                         <td class="text-center">{{ $customer->date }}</td>
                                                         <td class="text-center">
+                                                            @can('show_customers')
                                                             <a href="{{ route('amc_customer.details', $customer->id) }}"
                                                                 class="btn btn-sm btn-primary"><i
                                                                     class="fa fa-eye"></i></a>
+                                                            @endcan
                                                         </td>
                                                     </tr>
                                                 @endforeach

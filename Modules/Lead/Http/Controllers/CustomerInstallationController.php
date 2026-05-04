@@ -20,6 +20,7 @@ use Modules\Lead\Entities\EmiCustomer;
 use Modules\Lead\Entities\Lead;
 use Modules\Lead\Entities\Skim;
 use Modules\Product\Entities\Machinery;
+use Illuminate\Support\Facades\Gate;
 
 class CustomerInstallationController extends Controller
 {
@@ -33,6 +34,8 @@ class CustomerInstallationController extends Controller
      */
     public function index(Request $request, $sale_type)
     {
+        abort_if(Gate::denies('access_installments'), 403);
+
         $users = User::where('branch_id', session('branch_id'))->get();
 
         // Get query builder
@@ -197,6 +200,8 @@ class CustomerInstallationController extends Controller
      */
     public function create($id)
     {
+        abort_if(Gate::denies('create_installments'), 403);
+
         $emiPlans = EmiPlan::where('status', 1)->get();
         $customer = Customer::with('lead')->findOrFail($id);
         $leadby = User::select('name', 'id')->where('id', $customer->lead['created_by'])->first();
@@ -410,6 +415,8 @@ class CustomerInstallationController extends Controller
      */
     public function customerPaymentDetails($id)
     {
+        abort_if(Gate::denies('show_installments'), 403);
+
         // dd('hello');
         $customer = Customer::where('id', $id)->with('lead', 'payments')->first();
         return view('lead::installation.payment', compact('customer'));

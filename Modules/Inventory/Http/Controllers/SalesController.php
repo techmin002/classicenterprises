@@ -13,12 +13,14 @@ use Modules\Inventory\Entities\Machineries;
 use Modules\Inventory\Entities\SaleAccessory;
 use Modules\Inventory\Entities\SaleMachinery;
 use Modules\Inventory\Entities\Inventory;
+use Illuminate\Support\Facades\Gate;
 
 
 class SalesController extends Controller
 {
     public function index()
     {
+        abort_if(Gate::denies('access_sales'), 403);
         $accessories = Accessories::active()->get();
         $machineries = Machineries::where('status', 'on')->get();
         $customers = Customer::where('status', 'on')->get();
@@ -171,6 +173,7 @@ public function store(Request $request)
 
     public function edit($id)
     {
+        abort_if(Gate::denies('edit_sales'), 403);
         $sale = Sale::findOrFail($id);
         $accessories = Accessories::active()->get();
         $machineries = Machineries::where('status', 'on')->get();
@@ -506,6 +509,7 @@ public function store(Request $request)
 
     public function show($id)
     {
+        abort_if(Gate::denies('show_sales'), 403);
         $sale = Sale::with(['saleAccessories.accessory', 'saleMachineries.machinery'])
                     ->findOrFail($id);
 

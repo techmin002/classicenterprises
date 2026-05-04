@@ -18,12 +18,13 @@
     <section class="content-header">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <h1 class="m-0">Stock Issue Requests</h1>
-
+@can('create_requestransfers')
             <button class="btn btn-primary"
                     data-toggle="modal"
                     data-target="#requestModal">
                 <i class="fa fa-plus"></i> New Request
             </button>
+            @endcan
 
             @include('inventory::stockissue.request')
         </div>
@@ -70,6 +71,7 @@
                                     </td>
 
                                     <!-- Details -->
+                                    @can('show_stockissue')
                                     <td>
                                         <button class="btn btn-sm btn-info"
                                                 data-toggle="modal"
@@ -79,6 +81,7 @@
 
                                         @include('inventory::stockissue.stock_issue_details')
                                     </td>
+                                    @endcan
 
                                     <!-- Date -->
                                     <td>

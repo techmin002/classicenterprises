@@ -109,7 +109,9 @@
                                                 <td class="text-center text-danger">{{ $exp->due_amount }}</td>
                                                 <td>
                                                     <div class="row">
+
                                                         <div class="col-md-12">
+                                                            @can('show_installments')
                                                             <a type="button"
                                                                 href="{{ route('customer.payment.details', $exp->id) }}"
                                                                 class="btn btn-primary btn-sm" disabled
@@ -117,8 +119,11 @@
                                                                 title="Payment Details">
                                                                 Payment Detail's
                                                             </a>
+                                                            @endcan
                                                         </div>
                                                         <div class="col-md-12 mt-2">
+                                                            @can('show_installments')
+
                                                             <a type="button"
                                                                 href="{{ route('customer.details', $exp->id) }}"
                                                                 class="btn btn-info btn-sm" disabled data-toggle="tooltip"
@@ -132,6 +137,7 @@
                                                                 data-placement="top" title="Documents">
                                                                 Documents
                                                             </a>
+                                                                @endcan
                                                         </div>
                                                     </div>
 

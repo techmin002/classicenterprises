@@ -141,10 +141,12 @@
                                                                     </span>
                                                                 </td>
                                                                 <td>
+                                                                    @can('show_inventory')
                                                                     <a href="{{ route('inventory.accessories', $inventory->accessories->id) }}"
                                                                         class="btn btn-sm btn-info" title="View">
                                                                         <i class="fas fa-eye"></i>
                                                                     </a>
+                                                                    @endcan
                                                                 </td>
                                                                 {{-- @canany(['edit_inventory', 'delete_inventory']) --}}
                                                                 {{-- <td>

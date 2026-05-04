@@ -110,15 +110,18 @@
                                                 <td>
                                                     <!-- First row: Delete + Move to Assign buttons with gap -->
                                                     <div class="d-flex align-items-center gap-2 mb-2">
+                                                        @can('edit_installments')
+
                                                         <a data-toggle="modal"
                                                             data-target="#editCategory{{ $exp->id }}"
                                                             style="margin-left: 3px" class="btn btn-primary btn-sm">
                                                             <i class="fa fa-user-plus" title="Move to Assign"></i>
                                                         </a>
+                                                        @endcan
 
                                                          @include('lead::installation-category.assign_action')
 
-                                                         
+                                                         @can('delete_installments')
                                                         <button id="delete" class="btn btn-danger btn-sm" disabled
                                                             onclick="event.preventDefault();if (confirm('Are you sure? It will delete the data permanently!')) {document.getElementById('destroy{{ $exp->id }}').submit()}">
                                                             <i class="fa fa-trash"></i>
@@ -129,14 +132,18 @@
                                                                 @method('delete')
                                                             </form>
                                                         </button>
+                                                        @endcan
                                                     </div>
                                                     <!-- Second row: Note button -->
                                                     <div>
+                                                        @can('edit_installments')
+
                                                         <button type="button" class="btn btn-info btn-sm" title="Note"
                                                             data-toggle="modal"
                                                             data-target="#noteModal{{ $exp->id }}">
                                                             <i class="fa fa-sticky-note"></i> Note
                                                         </button>
+                                                        @endcan
                                                     </div>
 
                                                     @php
@@ -222,10 +229,12 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @can('show_installments')
                                                     <a type="button" href="{{ route('customer.details', $exp->id) }}"
                                                         class="btn btn-info btn-sm my-2" disabled data-toggle="tooltip"
                                                         data-placement="top" title="Details">Detail's
                                                     </a>
+                                                    @endcan
                                                 </td>
 
                                             </tr>

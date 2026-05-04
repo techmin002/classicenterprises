@@ -16,8 +16,8 @@ use Modules\Inventory\Entities\SaleAccessory;
 use Modules\Inventory\Entities\Accessories;
 use Modules\Inventory\Entities\TechnicalTool;
 use Illuminate\Validation\ValidationException;
-
-
+use Modules\Inventory\Entities\Branch;
+use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 
 
@@ -28,6 +28,7 @@ class TechnicianInventoryController extends Controller
      */
 public function index()
 {
+    abort_if(Gate::denies('access_technicians'), 403);
     $user = auth()->user();
     $branchId = $user->hasRole('Super Admin') ? session('branch_id') : $user->branch_id;
 
@@ -246,6 +247,8 @@ public function storeAssignment(Request $request)
 
 public function show($staffId)
 {
+    abort_if(Gate::denies('show_technicians'), 403);
+
     $user = auth()->user();
 
     $branchId = $user->hasRole('Super Admin')
@@ -386,6 +389,8 @@ public function itemHistory($staffId, $itemType, $itemId)
      */
 public function verifyReturn(Request $request, $staffId, $itemType, $itemId)
 {
+    abort_if(Gate::denies('create_technicians'), 403);
+
     $request->validate([
         'returned_qty' => 'required|integer|min:0',
         'broken_qty'   => 'required|integer|min:0',

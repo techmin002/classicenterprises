@@ -1189,6 +1189,625 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {{-- ==================== LEADS ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Leads</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_leads" name="permissions[]" value="access_leads" {{ old('access_leads') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_leads">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_leads" name="permissions[]" value="create_leads" {{ old('create_leads') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_leads">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_leads" name="permissions[]" value="show_leads" {{ old('show_leads') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_leads">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_leads" name="permissions[]" value="edit_leads" {{ old('edit_leads') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_leads">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_leads" name="permissions[]" value="delete_leads" {{ old('delete_leads') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_leads">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== INSTALLMENTS ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Installments</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_installments" name="permissions[]" value="access_installments" {{ old('access_installments') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_installments">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_installments" name="permissions[]" value="create_installments" {{ old('create_installments') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_installments">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_installments" name="permissions[]" value="show_installments" {{ old('show_installments') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_installments">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_installments" name="permissions[]" value="edit_installments" {{ old('edit_installments') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_installments">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_installments" name="permissions[]" value="delete_installments" {{ old('delete_installments') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_installments">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== TICKETS ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Tickets</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_tickets" name="permissions[]" value="access_tickets" {{ old('access_tickets') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_tickets">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_tickets" name="permissions[]" value="create_tickets" {{ old('create_tickets') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_tickets">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_tickets" name="permissions[]" value="show_tickets" {{ old('show_tickets') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_tickets">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_tickets" name="permissions[]" value="edit_tickets" {{ old('edit_tickets') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_tickets">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_tickets" name="permissions[]" value="delete_tickets" {{ old('delete_tickets') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_tickets">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== SALES CATEGORY ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Sales Category</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_salescategory" name="permissions[]" value="access_salescategory" {{ old('access_salescategory') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_salescategory">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_salescategory" name="permissions[]" value="create_salescategory" {{ old('create_salescategory') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_salescategory">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_salescategory" name="permissions[]" value="show_salescategory" {{ old('show_salescategory') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_salescategory">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_salescategory" name="permissions[]" value="edit_salescategory" {{ old('edit_salescategory') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_salescategory">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_salescategory" name="permissions[]" value="delete_salescategory" {{ old('delete_salescategory') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_salescategory">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== CUSTOMERS ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Customers</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_customers" name="permissions[]" value="access_customers" {{ old('access_customers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_customers">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_customers" name="permissions[]" value="create_customers" {{ old('create_customers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_customers">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_customers" name="permissions[]" value="show_customers" {{ old('show_customers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_customers">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_customers" name="permissions[]" value="edit_customers" {{ old('edit_customers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_customers">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_customers" name="permissions[]" value="delete_customers" {{ old('delete_customers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_customers">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== ALL SALES ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">All Sales</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_allsales" name="permissions[]" value="access_allsales" {{ old('access_allsales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_allsales">Access</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== SALES ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Sales</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_sales" name="permissions[]" value="access_sales" {{ old('access_sales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_sales">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_sales" name="permissions[]" value="create_sales" {{ old('create_sales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_sales">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_sales" name="permissions[]" value="show_sales" {{ old('show_sales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_sales">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_sales" name="permissions[]" value="edit_sales" {{ old('edit_sales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_sales">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_sales" name="permissions[]" value="delete_sales" {{ old('delete_sales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_sales">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== PRE SALES ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Pre Sales</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_presales" name="permissions[]" value="access_presales" {{ old('access_presales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_presales">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_presales" name="permissions[]" value="create_presales" {{ old('create_presales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_presales">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_presales" name="permissions[]" value="show_presales" {{ old('show_presales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_presales">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_presales" name="permissions[]" value="edit_presales" {{ old('edit_presales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_presales">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_presales" name="permissions[]" value="delete_presales" {{ old('delete_presales') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_presales">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== SALES RETURN ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Sales Return</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_salesreturn" name="permissions[]" value="access_salesreturn" {{ old('access_salesreturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_salesreturn">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_salesreturn" name="permissions[]" value="create_salesreturn" {{ old('create_salesreturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_salesreturn">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_salesreturn" name="permissions[]" value="show_salesreturn" {{ old('show_salesreturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_salesreturn">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_salesreturn" name="permissions[]" value="edit_salesreturn" {{ old('edit_salesreturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_salesreturn">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_salesreturn" name="permissions[]" value="delete_salesreturn" {{ old('delete_salesreturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_salesreturn">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== INVENTORY (IME) ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Inventory (IME)</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_ime" name="permissions[]" value="access_ime" {{ old('access_ime') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_ime">Access</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== SUPPLIERS ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Suppliers</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_suppliers" name="permissions[]" value="access_suppliers" {{ old('access_suppliers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_suppliers">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_suppliers" name="permissions[]" value="create_suppliers" {{ old('create_suppliers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_suppliers">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_suppliers" name="permissions[]" value="show_suppliers" {{ old('show_suppliers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_suppliers">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_suppliers" name="permissions[]" value="edit_suppliers" {{ old('edit_suppliers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_suppliers">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_suppliers" name="permissions[]" value="delete_suppliers" {{ old('delete_suppliers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_suppliers">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== PURCHASES ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Purchases</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_purchases" name="permissions[]" value="access_purchases" {{ old('access_purchases') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_purchases">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_purchases" name="permissions[]" value="create_purchases" {{ old('create_purchases') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_purchases">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_purchases" name="permissions[]" value="show_purchases" {{ old('show_purchases') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_purchases">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_purchases" name="permissions[]" value="edit_purchases" {{ old('edit_purchases') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_purchases">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_purchases" name="permissions[]" value="delete_purchases" {{ old('delete_purchases') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_purchases">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== PURCHASE RETURN ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Purchase Return</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_purchasereturn" name="permissions[]" value="access_purchasereturn" {{ old('access_purchasereturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_purchasereturn">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_purchasereturn" name="permissions[]" value="create_purchasereturn" {{ old('create_purchasereturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_purchasereturn">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_purchasereturn" name="permissions[]" value="show_purchasereturn" {{ old('show_purchasereturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_purchasereturn">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_purchasereturn" name="permissions[]" value="edit_purchasereturn" {{ old('edit_purchasereturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_purchasereturn">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_purchasereturn" name="permissions[]" value="delete_purchasereturn" {{ old('delete_purchasereturn') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_purchasereturn">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== TECHNICIANS ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Technicians</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_technicians" name="permissions[]" value="access_technicians" {{ old('access_technicians') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_technicians">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_technicians" name="permissions[]" value="create_technicians" {{ old('create_technicians') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_technicians">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_technicians" name="permissions[]" value="show_technicians" {{ old('show_technicians') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_technicians">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_technicians" name="permissions[]" value="edit_technicians" {{ old('edit_technicians') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_technicians">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_technicians" name="permissions[]" value="delete_technicians" {{ old('delete_technicians') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_technicians">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== STOCK TRANSFERS ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Stock Transfers</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_stocktransfers" name="permissions[]" value="access_stocktransfers" {{ old('access_stocktransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_stocktransfers">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_stocktransfers" name="permissions[]" value="create_stocktransfers" {{ old('create_stocktransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_stocktransfers">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_stocktransfers" name="permissions[]" value="show_stocktransfers" {{ old('show_stocktransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_stocktransfers">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_stocktransfers" name="permissions[]" value="edit_stocktransfers" {{ old('edit_stocktransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_stocktransfers">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_stocktransfers" name="permissions[]" value="delete_stocktransfers" {{ old('delete_stocktransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_stocktransfers">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ==================== REQUEST TRANSFERS ==================== --}}
+<div class="col-lg-4 col-md-6 mb-3">
+    <div class="card h-100 border-0 shadow">
+        <div class="card-header">Request Transfers</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="access_requestransfers" name="permissions[]" value="access_requestransfers" {{ old('access_requestransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="access_requestransfers">Access</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="create_requestransfers" name="permissions[]" value="create_requestransfers" {{ old('create_requestransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="create_requestransfers">Create</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="show_requestransfers" name="permissions[]" value="show_requestransfers" {{ old('show_requestransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="show_requestransfers">View</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="edit_requestransfers" name="permissions[]" value="edit_requestransfers" {{ old('edit_requestransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="edit_requestransfers">Edit</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="delete_requestransfers" name="permissions[]" value="delete_requestransfers" {{ old('delete_requestransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="delete_requestransfers">Delete</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="status_requestransfers" name="permissions[]" value="status_requestransfers" {{ old('status_requestransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="status_requestransfers">Status</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="accept_requestransfers" name="permissions[]" value="accept_requestransfers" {{ old('accept_requestransfers') ? 'checked' : '' }}>
+                        <label class="custom-control-label" for="accept_requestransfers">Accept</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                                         {{-- Gallery permission --}}
                                         <div class="col-lg-4 col-md-6 mb-3">
                                             <div class="card h-100 border-0 shadow">

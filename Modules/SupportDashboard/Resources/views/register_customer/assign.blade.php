@@ -73,16 +73,22 @@
                                         <td>
                                             <!-- First row: Task Complete + Change Technician -->
                                             <div class="d-flex mb-2">
+                                                @can('edit_customers')
                                                 <a type="button" href="{{ route('registercustomer-ticket.create', $exp->id) }}" class="btn btn-secondary btn-sm mr-1" disabled data-toggle="tooltip" data-placement="top" title="task Complete">
                                                     <i class="fa fa-user-plus"></i>
                                                 </a>
                                                 <a data-toggle="modal" data-target="#editCategory{{ $exp->id }}" class="btn btn-primary btn-sm"> <i class="fa fa-user-cog" title="Change Technician"></i></a>
+                                                @endcan
+
                                                 @include('supportdashboard::register_customer.assign_action')
                                             </div>
                                             <div class="d-flex mb-2">
+                                                @can('edit_customers')
                                                 <button type="button" class="btn btn-info btn-sm mr-1" title="Note" data-toggle="modal" data-target="#noteModal{{ $exp->id }}">
                                                     <i class="fa fa-sticky-note"></i> Note
                                                 </button>
+                                                @endcan
+
 
                                                 @php
                                                 // Fetch all notes for this lead
@@ -166,8 +172,10 @@
                                                 </button>
                                             </div>
                                             <div class="mb-2">
+                                                @can('show_customers')
                                                 <a type="button" href="{{ route('ticket_customer.details', $exp->id) }}" class="btn btn-info btn-sm" disabled data-toggle="tooltip" data-placement="top" title="Details">Detail's
                                                 </a>
+                                                @endcan
                                             </div>
 
                                         </td>
