@@ -97,20 +97,35 @@
         </td>
 
         {{-- Status --}}
-        <td class="text-center">
-            @if ($value->status === 'on')
-                <button type="button"
-                        class="btn btn-primary btn-sm"
-                        data-toggle="modal"
-                        data-target="#verifyModal{{ $value->id }}">
-                    Verify Amount
-                </button>
-            @else
-                <span class="badge badge-success p-2">
-                    Verified
-                </span>
-            @endif
-        </td>
+      <td class="text-center">
+    @if ($value->status === 'on')
+
+        @if (Auth::user()->role->name === 'Super Admin')
+
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    data-toggle="modal"
+                    data-target="#verifyModal{{ $value->id }}">
+                Verify Amount
+            </button>
+
+        @else
+
+            {{-- ❌ Non-admin users --}}
+            <span class="badge badge-warning p-2">
+                Pending Verification
+            </span>
+
+        @endif
+
+    @else
+
+        <span class="badge badge-success p-2">
+            Verified
+        </span>
+
+    @endif
+</td>
     </tr>
 @empty
     <tr>

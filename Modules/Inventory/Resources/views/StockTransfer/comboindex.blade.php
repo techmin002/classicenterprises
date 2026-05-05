@@ -77,11 +77,11 @@
 
                                     <h4>Stock Issue Requests</h4>
                                     @can('create_requestransfers')
-                                    <button class="btn btn-primary" data-toggle="modal" data-target="#requestModal">
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#requestModal">
 
-                                        <i class="fa fa-plus"></i> New Request
+                                            <i class="fa fa-plus"></i> New Request
 
-                                    </button>
+                                        </button>
                                     @endcan
 
                                 </div>
@@ -119,13 +119,13 @@
                                                 <td>{{ $issue->branch->name ?? 'N/A' }}</td>
 
                                                 <td>
-                                                    @can('view_requestransfers')
-                                                    <button class="btn btn-info btn-sm" data-toggle="modal"
-                                                        data-target="#viewModal{{ $issue->id }}">
+                                                    @can('show_requestransfers')
+                                                        <button class="btn btn-info btn-sm" data-toggle="modal"
+                                                            data-target="#viewModal{{ $issue->id }}">
 
-                                                        <i class="fa fa-eye"></i>
+                                                            <i class="fa fa-eye"></i>
 
-                                                    </button>
+                                                        </button>
                                                     @endcan
 
                                                     @include('inventory::stockissue.stock_issue_details')
@@ -176,11 +176,25 @@
                                                     @endswitch
 
                                                 </td>
-
                                                 <td>
+                                                    @php
+                                                        $user = Auth::user();
+                                                        $activeBranch = session('branch_id') ?? $user->branch_id;
 
-                                                    @if (Auth::user()->role->name === 'Super Admin')
-                                                        @if ($issue->status === 'pending')
+                                                        // 🔥 Get latest transfer (IMPORTANT)
+                                                        $transfer = $issue->stockTransfers->last();
+
+                                                        // ✅ Branch logic
+                                                        $senderBranch = $transfer->from_branch_id ?? null;
+                                                        $receiverBranch = $transfer->to_branch_id ?? $issue->branch_id;
+
+                                                        $isSender = $activeBranch == $senderBranch;
+                                                        $isReceiver = $activeBranch == $receiverBranch;
+                                                    @endphp
+
+                                                    @if ($issue->status === 'pending')
+                                                        @if (Auth::user()->role->name === 'Super Admin')
+                                                            {{-- ✅ ONLY SUPER ADMIN CAN ACCEPT --}}
                                                             <button class="btn btn-success btn-sm" data-toggle="modal"
                                                                 data-target="#acceptModal{{ $issue->id }}">
                                                                 <i class="fa fa-check"></i>
@@ -188,39 +202,46 @@
 
                                                             @include('inventory::stockissue.accept')
 
+                                                            {{-- ✅ ONLY SUPER ADMIN CAN REJECT --}}
                                                             <button class="btn btn-danger btn-sm" data-toggle="modal"
                                                                 data-target="#rejectModal{{ $issue->id }}">
                                                                 <i class="fa fa-times"></i>
                                                             </button>
 
                                                             @include('inventory::stockissue.reject_modal')
-                                                        @elseif($issue->status === 'in_transit')
-                                                            <span class="badge badge-info">In Transit</span>
-
-                                                            @if (Auth::user()->branch_id == $issue->to_branch_id)
-                                                                <button class="btn btn-success btn-sm" data-toggle="modal"
-                                                                    data-target="#StockReceiveModal{{ $issue->id }}">
-                                                                    <i class="fa fa-truck-loading"></i> Receive
-                                                                </button>
-
-                                                                @include(
-                                                                    'inventory::stockissue.stock_receive_details',
-                                                                    ['issue' => $issue]
-                                                                )
-                                                            @endif
-                                                        @elseif($issue->status === 'completed')
-                                                            <span class="badge badge-success">Completed</span>
-                                                        @elseif($issue->status === 'rejected')
-                                                            <span class="badge badge-danger">Rejected</span>
+                                                        @else
+                                                            {{-- ❌ STAFF → ONLY SEE STATUS --}}
+                                                            <span class="badge badge-warning">Pending</span>
                                                         @endif
-                                                    @else
-                                                        <span class="badge badge-light text-dark">
-                                                            {{ ucfirst(str_replace('_', ' ', $issue->status)) }}
-                                                        </span>
+
+
+                                                        {{-- ===== IN TRANSIT ===== --}}
+                                                    @elseif ($issue->status === 'in_transit')
+                                                        <span class="badge badge-info">In Transit</span>
+
+                                                        {{-- ✅ ONLY RECEIVER CAN SEE --}}
+                                                        @if ($isReceiver)
+                                                            <button class="btn btn-success btn-sm" data-toggle="modal"
+                                                                data-target="#StockReceiveModal{{ $issue->id }}">
+                                                                <i class="fa fa-truck-loading"></i> Receive
+                                                            </button>
+
+                                                            @include(
+                                                                'inventory::stockissue.stock_receive_details',
+                                                                ['issue' => $issue]
+                                                            )
+                                                        @endif
+
+
+                                                        {{-- ===== COMPLETED ===== --}}
+                                                    @elseif ($issue->status === 'completed')
+                                                        <span class="badge badge-success">Completed</span>
+
+                                                        {{-- ===== REJECTED ===== --}}
+                                                    @elseif ($issue->status === 'rejected')
+                                                        <span class="badge badge-danger">Rejected</span>
                                                     @endif
-
                                                 </td>
-
 
                                             </tr>
 
@@ -249,11 +270,11 @@
 
                                         <h4>Direct Stock Transfer</h4>
                                         @can('create_stocktransfers')
-                                        <a class="btn btn-primary" data-toggle="modal" data-target="#createStockTransfer">
+                                            <a class="btn btn-primary" data-toggle="modal" data-target="#createStockTransfer">
 
-                                            <i class="fa fa-plus"></i> Create Transfer
+                                                <i class="fa fa-plus"></i> Create Transfer
 
-                                        </a>
+                                            </a>
                                         @endcan
 
                                     </div>
@@ -324,9 +345,10 @@
 
                                                     <td>
                                                         @can('view_stocktransfers')
-                                                      <a href="{{ route('stock-transfers.show', $transfer->id) }}" class="btn btn-info btn-sm" title="View Details">
-    <i class="fa fa-eye"></i>
-</a>
+                                                            <a href="{{ route('stock-transfers.show', $transfer->id) }}"
+                                                                class="btn btn-info btn-sm" title="View Details">
+                                                                <i class="fa fa-eye"></i>
+                                                            </a>
                                                         @endcan
                                                     </td>
 
