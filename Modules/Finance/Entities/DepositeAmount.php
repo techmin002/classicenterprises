@@ -1,22 +1,27 @@
 <?php
-
 namespace Modules\Finance\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Modules\Finance\Database\factories\DepositeAmountFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DepositeAmount extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = ['amount', 'bank_name', 'image', 'date','status'];
+    protected $fillable = [
+        'closing_balance_id', 'amount', 'bank_name',
+        'image', 'date', 'status', 'notes',
+    ];
 
-    protected static function newFactory()
+    protected $casts = [
+        'date'   => 'date',
+        'amount' => 'decimal:2',
+    ];
+
+    /** The closing day this deposit is clearing */
+    public function closingBalance()
     {
-        //return DepositeAmountFactory::new();
+        return $this->belongsTo(ClosingBalance::class, 'closing_balance_id');
     }
 }

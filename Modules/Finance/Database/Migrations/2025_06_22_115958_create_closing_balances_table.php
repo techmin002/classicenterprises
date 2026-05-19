@@ -13,9 +13,24 @@ return new class extends Migration
     {
         Schema::create('closing_balances', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount', 10, 2);
+ 
+            // Financial breakdown
+            $table->decimal('amount', 12, 2)->comment('Total verified (cash + online)');
+            $table->decimal('cash_amount', 12, 2)->default(0)->comment('Cash collected — needs physical deposit');
+            $table->decimal('online_amount', 12, 2)->default(0)->comment('Online/card — auto-credited to bank');
+ 
+            // Date is the business day — one record per day
             $table->date('date')->unique();
-            $table->string('status')->default('deposited');
+ 
+            // pending  → day closed, cash not yet deposited to bank
+            // deposited → all cash has been deposited
+            $table->string('status')->default('pending');
+ 
+            $table->text('notes')->nullable();
+ 
+            // Soft-delete support (optional but useful for auditing)
+            $table->softDeletes();
+ 
             $table->timestamps();
         });
     }
